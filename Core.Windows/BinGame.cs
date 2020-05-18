@@ -36,14 +36,14 @@ namespace Core.Windows
         }
 
 
-        public void GetResult()
+        public async void GetResult()
         {
             var key = "SESSION_ID";
             var value = cookies.FirstOrDefault(x => x.CookieName == key).Value.ToStringExtension().Trim();
             var url = "https://videoley.com/ipl/portal.php/game/betrecord_search/kind3?GameCode=1&GameType=3001&sid=SESSION_ID&lang=cn&rnd1588840209479";
 
             url = url.Replace(key, value);
-            var resulthtml = HttpClientHelper.GetAsync(url, GetCookieContainer());
+            var resulthtml = await HttpClientHelper.GetAsync(url, GetCookieContainer());
 
             HtmlAgilityPack.HtmlDocument docs = new HtmlAgilityPack.HtmlDocument();
 
@@ -51,7 +51,7 @@ namespace Core.Windows
             var table = docs.DocumentNode.SelectSingleNode("//*[@class=\"table table-hover text-middle table-bordered footable\"]");
             var trs = table.SelectSingleNode("tbody").SelectNodes("tr").ToList().Take(5);
             if (trs == null)
-                return null;
+                return;
             foreach (var item in trs)
             {
                 var tds = item.SelectNodes("td");
@@ -68,7 +68,7 @@ namespace Core.Windows
                     WinMoney = (tds[9].InnerText).ToStringExtension().Trim().ToDecimal(),
                     Remark = (tds[10].InnerText).ToStringExtension().Trim(),
                 };
-                games.Add(sx);
+                //games.Add(sx);
             }
         }
 

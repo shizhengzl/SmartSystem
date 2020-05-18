@@ -26,7 +26,14 @@ namespace Core.Console
             var dbservicecount = systemsql.Select<DBService>().Count();
             if (dbservicecount == 0)
             {
-                DBService dBSqlserver = new DBService() { Account = "sa", DataType = DataType.SqlServer, Password = "Tcn6500", ServerAddress = "47.104.62.7", DefaultDataBase = "SmartsApplicationDb" };
+                DBService dBSqlserver = new DBService() { 
+                    Account = "sa"
+                    , DataType = DataType.SqlServer
+                    , Password = "Tcn6500"
+                    , ServerAddress = "47.104.62.7"
+                    , DefaultDataBase = "SmartsApplicationDb" 
+                };
+                
                 //DBService dBMysql = new DBService() { Account = "sa", DataType = DataType.MySql, Password = "Tcn6500", ServerAddress = "47.104.62.7", DefaultDataBase = "SmartsApplicationDb" };
                 systemsql.Insert<DBService>().AppendData(dBSqlserver).ExecuteAffrows();
                 //systemsql.Insert<DBService>().AppendData(dBMysql).ExecuteAffrows();
@@ -86,24 +93,5 @@ namespace Core.Console
     }
 
     
-    /// <summary>
-    /// DBTREE
-    /// </summary>
-    public class DataBaseTree : DBService
-    {
-        /// <summary>
-        /// 获取列SQL
-        /// </summary>
-        public string GetColumnString { get; set; }
-
-        /// <summary>
-        /// 表
-        /// </summary>
-        public List<Table> Tables { get; set; }
-
-
-        /// 连接字符串
-        /// </summary>
-        public string ConnectionString { get; set; }
-    }
+ 
 }
