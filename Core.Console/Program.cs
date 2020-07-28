@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Core.UsuallyCommon;
+using Core.Services;
 
 namespace Core.Console
 {
@@ -14,6 +15,64 @@ namespace Core.Console
     {
         static void Main(string[] args)
         {
+            var connection = @"server=DESKTOP-5GDQD44\MSSQL;uid=sa;pwd=sasa;database=Tools";
+
+            IFreeSql freesqls = new FreeSqlBuilder()
+              .UseConnectionString(DataType.SqlServer, connection)
+              .UseAutoSyncStructure(false)
+              .Build();
+
+            freesqls.CodeFirst.SyncStructure<Column>();
+
+
+
+            List<String> listUrl = new List<string>();
+            List<Column> columns = new List<Column>();
+            Core.UsuallyCommon.FileExtenstion.GetFileByExtension(@"D:\workcode\emps\trunk\Entity", "*.cs", ref listUrl);
+
+            //var parh = @"D:\workcode\emps\trunk\Entity\bin\Debug";
+            //var emus = CsharpParser.GetEnums(parh);
+            //return;
+            listUrl.ForEach(x =>
+            {
+                CsharpParser parser = new CsharpParser(x);
+                var classes = parser.GetClasses();
+                classes.ForEach(u =>
+                { 
+                    var className = u.Identifier.Text;  
+                    var classcomment = CsharpParser.GetClassComment(u);
+
+                    var allproperty = parser.GetCsharpClassProperty(u);
+                    allproperty.ForEach(o =>
+                    {
+                        Column column = new Column()
+                        {
+                            ColumnName = o.PropertyName,
+                            ColumnDescription = o.PropertyComment,
+                            CSharpType = o.PropertyType.Replace("?", string.Empty),
+                            IsRequire = !(o.PropertyType.IndexOf("?") > -1),
+                            MaxLength = o.MaxLength,
+                            TableName = o.Table,
+                            TableDescription = classcomment
+                        };
+
+                        columns.Add(column);
+
+                        //var execute = freesqls.Insert<Column>(column).ExecuteAffrows();
+                         
+                        //if (!dbContext.DefaultColumns.Any(z => z.ColumnName == column.ColumnName && z.CSharpType == column.CSharpType && z.Table == column.Table))
+                        //{
+                        //    dbContext.DefaultColumns.Add(column);
+                        //    dbContext.SaveChanges();
+                        //} 
+                    }); 
+                });
+            });
+            var rs = columns.Where(o => o.TableName == "Project");
+
+
+
+            return;
             IFreeSql systemsql = new FreeSqlBuilder()
                  .UseConnectionString(DataType.SqlServer, "server=47.104.62.7;uid=sa;pwd=Tcn6500;database=DefaultSqlite")
                  .UseAutoSyncStructure(false)
@@ -82,7 +141,7 @@ namespace Core.Console
                     dataBaseTrees.Add(databasetree);
                      
                     var sql = string.Format(databasetree.GetColumnString, x.ServerAddress, x.DefaultDataBase, tables.First().TableName);  
-                    var columns = ADOHelper.ExecuteQuery(sql).Tables[0].ToList<Column>();
+                    var lcolumns = ADOHelper.ExecuteQuery(sql).Tables[0].ToList<Column>();
                      
                     freeSqls.Add(generatorfreesql);
 

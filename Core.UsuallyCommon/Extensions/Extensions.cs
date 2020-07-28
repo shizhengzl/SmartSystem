@@ -12,6 +12,21 @@ namespace Core.UsuallyCommon
     /// </summary>
     public static class Extensions
     {
+
+        /// <summary>
+        /// Any object converts a string. If the conversion fails, string.empty will be returned
+        /// 任意对象转字符串，Guid.Empty
+        /// </summary>
+        /// <param name="obj">Any object(任意对象)</param>
+        /// <returns>Guid</returns>
+        public static Guid ToGuid(this object obj)
+        {
+            Guid result = Guid.Empty;
+            if (obj != null)
+                Guid.TryParse(obj.ToStringExtension(), out result);
+            return result;
+        }
+
         /// <summary>
         /// Any object converts a string. If the conversion fails, string.empty will be returned
         /// 任意对象转字符串，如转换失败则返回String.Empty
@@ -126,7 +141,28 @@ namespace Core.UsuallyCommon
                 //创建TResult的实例
                 T ob = new T();
                 //找到对应的数据  并赋值
-                prlist.ForEach(p => { if (row[p.Name] != DBNull.Value) p.SetValue(ob, row[p.Name], null); });
+                prlist.ForEach(p =>
+                {
+                    if (row[p.Name] != DBNull.Value)
+                    {
+                        if (p.PropertyType == typeof(string))
+                            p.SetValue(ob, row[p.Name].ToStringExtension(), null);
+                        else if (p.PropertyType == typeof(Guid))
+                            p.SetValue(ob, row[p.Name].ToGuid(), null);
+                        else if (p.PropertyType == typeof(bool))
+                            p.SetValue(ob, row[p.Name].ToBoolean(), null);
+                        else if (p.PropertyType == typeof(decimal))
+                            p.SetValue(ob, row[p.Name].ToDecimal(), null);
+                        else if (p.PropertyType == typeof(Int16))
+                            p.SetValue(ob, row[p.Name].ToInt32(), null);
+                        else if (p.PropertyType == typeof(Int32))
+                            p.SetValue(ob, row[p.Name].ToInt32(), null);
+                        else if (p.PropertyType == typeof(Int64))
+                            p.SetValue(ob, row[p.Name].ToInt64(), null);
+                        else
+                            p.SetValue(ob, row[p.Name], null);
+                    }
+                });
                 //放入到返回的集合中.
                 oblist.Add(ob);
             }

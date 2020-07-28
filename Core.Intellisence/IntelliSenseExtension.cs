@@ -8,9 +8,9 @@ using Microsoft.VisualStudio.Text.Formatting;
 namespace Core.Intellisence
 {
     /// <summary>
-    /// TextInetllisence places red boxes behind all the "a"s in the editor window
+    /// IntelliSenseExtension places red boxes behind all the "a"s in the editor window
     /// </summary>
-    internal sealed class TextInetllisence
+    internal sealed class IntelliSenseExtension
     {
         /// <summary>
         /// The layer of the adornment.
@@ -33,17 +33,17 @@ namespace Core.Intellisence
         private readonly Pen pen;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TextInetllisence"/> class.
+        /// Initializes a new instance of the <see cref="IntelliSenseExtension"/> class.
         /// </summary>
         /// <param name="view">Text view to create the adornment for</param>
-        public TextInetllisence(IWpfTextView view)
+        public IntelliSenseExtension(IWpfTextView view)
         {
             if (view == null)
             {
                 throw new ArgumentNullException("view");
             }
 
-            this.layer = view.GetAdornmentLayer("TextInetllisence");
+            this.layer = view.GetAdornmentLayer("IntelliSenseExtension");
 
             this.view = view;
             this.view.LayoutChanged += this.OnLayoutChanged;

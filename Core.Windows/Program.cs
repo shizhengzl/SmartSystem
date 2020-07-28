@@ -16,7 +16,7 @@ namespace Core.Windows
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new BinGame());
+            Application.Run(new Generators());
         }
     }
 }
