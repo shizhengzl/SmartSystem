@@ -11,10 +11,34 @@ using Core.Services;
 
 namespace Core.Console
 {
+
+  
     class Program
     {
+
+        public static void MadeDateTime(DateTime standTime, out DateTime? startTime, out DateTime? endTime)
+        {
+            //1~3;4~6;7~9;10~12
+            //1-4-7-10
+            int baseMonth = standTime.Month - 1;
+            int MonthLen = baseMonth / 3;
+            startTime = new DateTime(standTime.Year, 1 + MonthLen * 3, 1);
+            endTime = startTime.Value.AddMonths(3).AddMilliseconds(-1);
+        }
+
+         
         static void Main(string[] args)
         {
+            DateTime ? startDate = DateTime.MinValue;
+            DateTime ? endDate = DateTime.MinValue; 
+            MadeDateTime("2020-10-10".ToDateTime(), out startDate , out endDate);
+
+            System.Console.WriteLine(startDate.Value.ToString("yyyy-MM-dd HH:mm:ss"));
+            System.Console.WriteLine(endDate.Value.ToString("yyyy-MM-dd HH:mm:ss"));
+
+            System.Console.ReadLine();
+            return;
+
             var connection = @"server=DESKTOP-5GDQD44\MSSQL;uid=sa;pwd=sasa;database=Tools";
 
             IFreeSql freesqls = new FreeSqlBuilder()
@@ -28,7 +52,7 @@ namespace Core.Console
 
             List<String> listUrl = new List<string>();
             List<Column> columns = new List<Column>();
-            Core.UsuallyCommon.FileExtenstion.GetFileByExtension(@"D:\workcode\emps\trunk\Entity", "*.cs", ref listUrl);
+            Core.UsuallyCommon.FileExtenstion.GetFileByExtension(@"D:\Test", "*.cs", ref listUrl);
 
             //var parh = @"D:\workcode\emps\trunk\Entity\bin\Debug";
             //var emus = CsharpParser.GetEnums(parh);

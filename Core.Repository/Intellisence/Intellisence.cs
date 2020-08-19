@@ -39,5 +39,15 @@ namespace Core.Repository
         /// SQL连接字符串
         /// </summary>
         public string ConnectionString { get; set; }
+
+        /// <summary>
+        /// 数据库类型
+        /// </summary>
+        public Int16 DataType { get; set; }
+
+        /// <summary>
+        /// 是否SQL
+        /// </summary>
+        public Boolean IsSql { get; set; }
     }
 }

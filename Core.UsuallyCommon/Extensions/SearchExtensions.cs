@@ -11,6 +11,41 @@ namespace Core.UsuallyCommon
     public static class SearchExtensions
     {
         /// <summary>
+        /// 查找匹配字符串
+        /// </summary>
+        /// <param name="source">字符串</param>
+        /// <param name="toCheck">查找字符串</param>
+        /// <param name="comparison">OrdinalIgnoreCase 不区分大小写</param>
+        /// <returns></returns>
+        public static bool Contains(this string source, string toCheck, StringComparison comparison)
+        {
+            return source.IndexOf(toCheck, comparison) >= 0;
+        }
+
+        /// <summary>
+        /// 根据类容字符串自动切割
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public static List<String> GetStringSingleColumn(string context)
+        {
+            string[] separatingChars = new string[] { "\r\n", "\n", "\r", "\t", " ", "." };
+            string[] linedatas = context.Split(separatingChars, System.StringSplitOptions.RemoveEmptyEntries);
+            return linedatas.ToList<string>();
+        }
+
+        /// <summary>
+        /// 查询列表近似值
+        /// </summary>
+        /// <param name="param"></param>
+        /// <param name="items"></param>
+        /// <returns></returns>
+        public static Boolean SearchWordExists(this string param, string[] items)
+        {
+            return Search(param, items).Length > 0;
+        }
+
+        /// <summary>
         /// 根据字符串返回查询列表匹配的字符
         /// </summary>
         /// <param name="param">查询的字符串</param>
