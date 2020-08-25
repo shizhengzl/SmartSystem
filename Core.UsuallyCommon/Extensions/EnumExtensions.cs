@@ -17,6 +17,38 @@ namespace Core.UsuallyCommon
         /// </summary>
         /// <param name="enumType"></param>
         /// <returns></returns>
+        public static List<EnumClass> GetListEnumClass(this Type type) 
+        {
+            List<EnumClass> list = new List<EnumClass>();
+            try
+            {
+                foreach (int i in Enum.GetValues(type))
+                {
+                    var name = Enum.GetName(type, i);
+                    var key = i;
+
+                    FieldInfo field = type.GetField(name);
+
+                    DescriptionAttribute attribute = Attribute.GetCustomAttribute(field, typeof(System.ComponentModel.DescriptionAttribute)) as System.ComponentModel.DescriptionAttribute;
+
+                    var description = attribute == null ? key.ToString() : attribute.Description;
+
+                    list.Add(new EnumClass() { Keys = i, Description = description, Name = name });
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+            return list;
+        }
+
+
+        /// <summary>
+        /// 根据枚举获取查询列集合
+        /// </summary>
+        /// <param name="enumType"></param>
+        /// <returns></returns>
         public static List<EnumClass> GetListEnumClass<T>() where T : struct
         {
             List<EnumClass> list = new List<EnumClass>();
@@ -136,6 +168,22 @@ namespace Core.UsuallyCommon
             foreach (int i in Enum.GetValues(typeof(T)))
             {
                 list.Add(Enum.GetName(typeof(T), i));
+            }
+            return list;
+        }
+
+
+        /// <summary>
+        /// 枚举转List<string>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static List<string> EnumToList(this Type objects) 
+        {
+            List<string> list = new List<string>();
+            foreach (int i in Enum.GetValues(objects))
+            {
+                list.Add(Enum.GetName(objects, i));
             }
             return list;
         }

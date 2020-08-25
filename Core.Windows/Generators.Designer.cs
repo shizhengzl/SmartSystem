@@ -31,15 +31,17 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Generators));
             this.tabpan = new System.Windows.Forms.TabControl();
             this.tabDatabase = new System.Windows.Forms.TabPage();
-            this.tabSetting = new System.Windows.Forms.TabPage();
             this.panDatabase = new System.Windows.Forms.Panel();
+            this.treeViewDatabase = new System.Windows.Forms.TreeView();
             this.toolStripDatabase = new System.Windows.Forms.ToolStrip();
             this.databaseAdd = new System.Windows.Forms.ToolStripButton();
-            this.treeViewDatabase = new System.Windows.Forms.TreeView();
+            this.tabSetting = new System.Windows.Forms.TabPage();
+            this.tabControls = new System.Windows.Forms.TabControl();
             this.tabpan.SuspendLayout();
             this.tabDatabase.SuspendLayout();
             this.panDatabase.SuspendLayout();
             this.toolStripDatabase.SuspendLayout();
+            this.tabSetting.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabpan
@@ -64,16 +66,6 @@
             this.tabDatabase.Text = "数据库设置";
             this.tabDatabase.UseVisualStyleBackColor = true;
             // 
-            // tabSetting
-            // 
-            this.tabSetting.Location = new System.Drawing.Point(4, 22);
-            this.tabSetting.Name = "tabSetting";
-            this.tabSetting.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSetting.Size = new System.Drawing.Size(1270, 734);
-            this.tabSetting.TabIndex = 1;
-            this.tabSetting.Text = "系统设置";
-            this.tabSetting.UseVisualStyleBackColor = true;
-            // 
             // panDatabase
             // 
             this.panDatabase.Controls.Add(this.treeViewDatabase);
@@ -83,6 +75,14 @@
             this.panDatabase.Name = "panDatabase";
             this.panDatabase.Size = new System.Drawing.Size(374, 728);
             this.panDatabase.TabIndex = 0;
+            // 
+            // treeViewDatabase
+            // 
+            this.treeViewDatabase.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeViewDatabase.Location = new System.Drawing.Point(0, 25);
+            this.treeViewDatabase.Name = "treeViewDatabase";
+            this.treeViewDatabase.Size = new System.Drawing.Size(374, 703);
+            this.treeViewDatabase.TabIndex = 1;
             // 
             // toolStripDatabase
             // 
@@ -102,13 +102,25 @@
             this.databaseAdd.Size = new System.Drawing.Size(76, 22);
             this.databaseAdd.Text = "新增链接";
             // 
-            // treeViewDatabase
+            // tabSetting
             // 
-            this.treeViewDatabase.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeViewDatabase.Location = new System.Drawing.Point(0, 25);
-            this.treeViewDatabase.Name = "treeViewDatabase";
-            this.treeViewDatabase.Size = new System.Drawing.Size(374, 703);
-            this.treeViewDatabase.TabIndex = 1;
+            this.tabSetting.Controls.Add(this.tabControls);
+            this.tabSetting.Location = new System.Drawing.Point(4, 22);
+            this.tabSetting.Name = "tabSetting";
+            this.tabSetting.Padding = new System.Windows.Forms.Padding(3);
+            this.tabSetting.Size = new System.Drawing.Size(1270, 734);
+            this.tabSetting.TabIndex = 1;
+            this.tabSetting.Text = "系统设置";
+            this.tabSetting.UseVisualStyleBackColor = true;
+            // 
+            // tabControls
+            // 
+            this.tabControls.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControls.Location = new System.Drawing.Point(3, 3);
+            this.tabControls.Name = "tabControls";
+            this.tabControls.SelectedIndex = 0;
+            this.tabControls.Size = new System.Drawing.Size(1264, 728);
+            this.tabControls.TabIndex = 0;
             // 
             // Generators
             // 
@@ -117,6 +129,7 @@
             this.ClientSize = new System.Drawing.Size(1278, 760);
             this.Controls.Add(this.tabpan);
             this.Name = "Generators";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "代码生成器";
             this.tabpan.ResumeLayout(false);
             this.tabDatabase.ResumeLayout(false);
@@ -124,6 +137,7 @@
             this.panDatabase.PerformLayout();
             this.toolStripDatabase.ResumeLayout(false);
             this.toolStripDatabase.PerformLayout();
+            this.tabSetting.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -137,6 +151,7 @@
         private System.Windows.Forms.ToolStrip toolStripDatabase;
         private System.Windows.Forms.ToolStripButton databaseAdd;
         private System.Windows.Forms.TreeView treeViewDatabase;
+        private System.Windows.Forms.TabControl tabControls;
     }
 }
 

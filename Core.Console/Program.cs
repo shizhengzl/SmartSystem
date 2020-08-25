@@ -125,7 +125,7 @@ namespace Core.Console
 
             List<IFreeSql> freeSqls = new List<IFreeSql>();
             List<DataBaseTree> dataBaseTrees = new List<DataBaseTree>();
-            SQLConfigHelper _sqlconfig = new SQLConfigHelper(systemsql);
+            SQLConfigHelper _sqlconfig = new SQLConfigHelper();
             var dbservices = systemsql.Select<DBService>();
 
             dbservices.ToList<DBService>().ForEach(x =>

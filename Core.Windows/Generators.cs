@@ -11,23 +11,51 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Core.UsuallyCommon;
+using Core.Repository;
+using Core.Windows.ControlTools;
 
 namespace Core.Windows
 {
     public partial class Generators : Form
-    {
-       public static IFreeSql systemsql = new FreeSqlBuilder()
-            .UseConnectionString(DataType.SqlServer, "server=47.104.62.7;uid=sa;pwd=Tcn6500;database=DefaultSqlite")
-            .UseAutoSyncStructure(false)
-            .Build();
-
+    { 
         List<IFreeSql> freeSqls = new List<IFreeSql>();
         List<DataBaseTree> dataBaseTrees = new List<DataBaseTree>();
-        SQLConfigHelper _sqlconfig = new SQLConfigHelper(systemsql);
+        SQLConfigHelper _sqlconfig = new SQLConfigHelper();
+
+
+        #region SystemConfig
+
+        public void InitSystemConfig()
+        {
+          
+            InitClass<SQLConfig>();
+            
+            InitClass<DataTypeConfig>();
+          
+            InitClass<Intellisence>();
+        
+        }
+
+        public void InitClass<T>() where T : class, new()
+        {
+            var type = typeof(T);
+            var className = type.Name;
+            TabPage tpclass = new TabPage() { Name = className, Text = className }; 
+            PanelExtension<T> panel = new PanelExtension<T>();
+            tpclass.Controls.Add(panel);
+            tabControls.TabPages.Add(tpclass);
+        }
+        #endregion 
 
         public Generators()
         {
             InitializeComponent();
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+
+            InitSystemConfig();
+
+            // 初始化数据
+            InitDatabase initDatabase = new InitDatabase(true);
 
             TreeNode root = new TreeNode() { 
                 Text = "服务器"
@@ -35,7 +63,7 @@ namespace Core.Windows
 
             treeViewDatabase.Nodes.Add(root);
 
-            var addresses = systemsql.Select<DBService>().ToList();
+            var addresses = FreeSqlFactory._Freesql.Select<DBService>().ToList();
 
 
             foreach (var address in addresses)
@@ -46,7 +74,7 @@ namespace Core.Windows
                 root.Nodes.Add(addressNode);
 
                 // 获取Table
-                var tablesql = _sqlconfig.GetTables(address.DataType);
+                var tablesql = string.Format(_sqlconfig.GetTables(address.DataType),address.ServerAddress,address.DefaultDataBase);
                 var columnsql = _sqlconfig.GetColumns(address.DataType);
 
                 if (address.DataType == DataType.SqlServer)
@@ -64,6 +92,17 @@ namespace Core.Windows
                     {
                         p.DataBaseName = address.DefaultDataBase;
                         p.ServerAddress = address.ServerAddress;
+
+                        TreeNode tableNode = new TreeNode()
+                        {
+                            Text = p.TableName,
+                            ToolTipText = p.TableDescription,
+                            Tag = p
+                        };
+
+                        tableNode.Nodes.Add(string.Empty);
+
+                        addressNode.Nodes.Add(tableNode);
                     });
 
                     var databasetree = new DataBaseTree()
@@ -80,8 +119,8 @@ namespace Core.Windows
                     };
                     dataBaseTrees.Add(databasetree);
 
-                    var sql = string.Format(databasetree.GetColumnString, address.ServerAddress, address.DefaultDataBase, tables.First().TableName);
-                    var columns = ADOHelper.ExecuteQuery(sql).Tables[0].ToList<Column>();
+                    //var sql = string.Format(databasetree.GetColumnString, address.ServerAddress, address.DefaultDataBase, tables.First().TableName);
+                    //var columns = ADOHelper.ExecuteQuery(sql).Tables[0].ToList<Column>();
 
                     freeSqls.Add(generatorfreesql);
 

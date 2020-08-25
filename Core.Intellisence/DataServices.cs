@@ -21,7 +21,7 @@ namespace Core.Intellisence
         /// <returns></returns>
         public static List<Core.Repository.Intellisence> GetIntellisence(String startchar, String keyword)
         {
-            var list = RepositoryFactory._Freesql.Select<Core.Repository.Intellisence>().Where(x => x.StartChar == startchar ).ToList();
+            var list = FreeSqlFactory._Freesql.Select<Core.Repository.Intellisence>().Where(x => x.StartChar == startchar ).ToList();
 
             var SqlList = list.Where(x => x.IsSql).ToList();
 
@@ -39,7 +39,7 @@ namespace Core.Intellisence
         /// <returns></returns>
         public static Boolean IsHit(String startchar)
         {
-            return RepositoryFactory._Freesql.Select<Core.Repository.Intellisence>().Any(x => x.StartChar == startchar);
+            return FreeSqlFactory._Freesql.Select<Core.Repository.Intellisence>().Any(x => x.StartChar == startchar);
         }
 
         /// <summary>
@@ -65,9 +65,9 @@ namespace Core.Intellisence
 
             intellisences.Where(x => x.IsSql && !String.IsNullOrEmpty(x.ConnectionString)).ToList().ForEach(o=> {
 
-                IFreeSql freeSql = RepositoryFactory.GetFreeSql(o.DataType, o.ConnectionString);
+                IFreeSql freeSql = FreeSqlFactory.GetFreeSql(o.DataType, o.ConnectionString);
 
-                var sql = o.DefinedSql.Replace(RepositoryFactory.ReplaceString, keyword);
+                var sql = o.DefinedSql.Replace(FreeSqlFactory.ReplaceString, keyword);
                  
                 list.AddRange(freeSql.Select<SCompletionList>().WithSql(sql).ToList());
             });

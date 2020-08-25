@@ -1,4 +1,5 @@
-﻿using FreeSql.DataAnnotations;
+﻿using FreeSql;
+using FreeSql.DataAnnotations;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -43,7 +44,7 @@ namespace Core.Repository
         /// <summary>
         /// 数据库类型
         /// </summary>
-        public Int16 DataType { get; set; }
+        public DataType DataType { get; set; }
 
         /// <summary>
         /// 是否SQL
