@@ -50,11 +50,11 @@ namespace Core.Repository
         /// <param name="DbType"></param>
         /// <param name="Connection"></param>
         /// <returns></returns>
-        public static IFreeSql GetFreeSql(Int16 DbType, String Connection)
+        public static IFreeSql GetFreeSql(DataType DbType, String Connection)
         {
-            DataType dataType = DbType.ToStringExtension().ToEnum<DataType>();
+            //DataType dataType = DbType.ToStringExtension().ToEnum<DataType>();
             return new FreeSqlBuilder()
-             .UseConnectionString(dataType, Connection)
+             .UseConnectionString(DbType, Connection)
              .UseAutoSyncStructure(false)
              .Build();
         }

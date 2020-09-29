@@ -37,6 +37,7 @@
             this.databaseAdd = new System.Windows.Forms.ToolStripButton();
             this.tabSetting = new System.Windows.Forms.TabPage();
             this.tabControls = new System.Windows.Forms.TabControl();
+            this.skinEngines = new Sunisoft.IrisSkin.SkinEngine();
             this.tabpan.SuspendLayout();
             this.tabDatabase.SuspendLayout();
             this.panDatabase.SuspendLayout();
@@ -122,6 +123,15 @@
             this.tabControls.Size = new System.Drawing.Size(1264, 728);
             this.tabControls.TabIndex = 0;
             // 
+            // skinEngines
+            // 
+            this.skinEngines.@__DrawButtonFocusRectangle = true;
+            this.skinEngines.DisabledButtonTextColor = System.Drawing.Color.Gray;
+            this.skinEngines.DisabledMenuFontColor = System.Drawing.SystemColors.GrayText;
+            this.skinEngines.InactiveCaptionColor = System.Drawing.SystemColors.InactiveCaptionText;
+            this.skinEngines.SerialNumber = "";
+            this.skinEngines.SkinFile = null;
+            // 
             // Generators
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -152,6 +162,7 @@
         private System.Windows.Forms.ToolStripButton databaseAdd;
         private System.Windows.Forms.TreeView treeViewDatabase;
         private System.Windows.Forms.TabControl tabControls;
+        private Sunisoft.IrisSkin.SkinEngine skinEngines;
     }
 }
 

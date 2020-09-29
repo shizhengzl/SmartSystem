@@ -23,22 +23,27 @@ namespace Core.Repository
         /// <summary>
         /// 显示字符
         /// </summary>
+        [Column(StringLength = -1)]
         public string DisplayText { get; set; }
         /// <summary>
         /// 回车写入字符
         /// </summary>
+        [Column(StringLength = -1)]
         public string InsertionText { get; set; }
         /// <summary>
         /// 描述
         /// </summary>
+        [Column(StringLength = -1)]
         public string Description { get; set; }
         /// <summary>
         /// 定义SQL
         /// </summary>
+        [Column(StringLength = -1)]
         public string DefinedSql { get; set; }
         /// <summary>
         /// SQL连接字符串
         /// </summary>
+        [Column(StringLength = -1)]
         public string ConnectionString { get; set; }
 
         /// <summary>

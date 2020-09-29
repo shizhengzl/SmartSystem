@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Core.Repository;
+using Core.Repository.DataBase;
 using Core.UsuallyCommon;
 
 namespace Core.Intellisence
@@ -68,8 +70,24 @@ namespace Core.Intellisence
                 IFreeSql freeSql = FreeSqlFactory.GetFreeSql(o.DataType, o.ConnectionString);
 
                 var sql = o.DefinedSql.Replace(FreeSqlFactory.ReplaceString, keyword);
-                 
-                list.AddRange(freeSql.Select<SCompletionList>().WithSql(sql).ToList());
+                var scpmpletiontable = freeSql.Ado.ExecuteDataTable(sql);
+                if (scpmpletiontable.Columns.Count == 1)
+                {
+                    foreach (DataRow item in scpmpletiontable.Rows)
+                    {
+                        var text = item[0].ToStringExtension();
+                        list.Add(new SCompletionList() {
+                            Description = text,
+                            DisplayText = text,
+                            InsertionText = text
+                        });
+
+                    }
+                }
+                else
+                    list.AddRange(scpmpletiontable.ToList<SCompletionList>());
+                
+                
             });
 
             return list;

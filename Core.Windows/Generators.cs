@@ -40,7 +40,7 @@ namespace Core.Windows
         {
             var type = typeof(T);
             var className = type.Name;
-            TabPage tpclass = new TabPage() { Name = className, Text = className }; 
+            TabPage tpclass = new TabPage() { Name = className, Text = className  }; 
             PanelExtension<T> panel = new PanelExtension<T>();
             tpclass.Controls.Add(panel);
             tabControls.TabPages.Add(tpclass);
@@ -50,7 +50,8 @@ namespace Core.Windows
         public Generators()
         {
             InitializeComponent();
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.skinEngines.SkinFile = $"{System.Environment.CurrentDirectory}\\Plugins\\Skins\\GlassOrange.ssk";
+            //this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
 
             InitSystemConfig();
 
