@@ -29,43 +29,49 @@ namespace Core.Intellisence
         {
             if (completionSets.Count != 0)
                 return;
-
-            string inputtext = session.TextView.Caret.Position.BufferPosition.GetContainingLine().GetText();
-            var alltext = m_textBuffer.CurrentSnapshot.GetText();
-            var inputlist = Core.UsuallyCommon.SearchExtensions.GetStringSingleColumn(inputtext);
-
-
-            var starttext = inputlist.LastOrDefault();
-            string lastChar = starttext.Substring(starttext.Length - 1, 1);
-            starttext = starttext.Replace(lastChar, "").Trim();
+            try
+            { 
+                string inputtext = session.TextView.Caret.Position.BufferPosition.GetContainingLine().GetText();
+                var alltext = m_textBuffer.CurrentSnapshot.GetText();
+                var inputlist = Core.UsuallyCommon.SearchExtensions.GetStringSingleColumn(inputtext);
 
 
-            var list = DataServices.GetCompletionList(lastChar, starttext);
-            var mCompList = new List<Completion>();
-            foreach (var intellisences in list)
-            {
+                var starttext = inputlist.LastOrDefault();
+                string lastChar = starttext.Substring(starttext.Length - 1, 1);
+                starttext = starttext.Replace(lastChar, "").Trim();
+
+
+                var list = DataServices.GetCompletionList(lastChar, starttext);
+                var mCompList = new List<Completion>();
+                foreach (var intellisences in list)
+                {
+                    mCompList.Add(new Completion(
+                     intellisences.DisplayText
+                   , intellisences.InsertionText
+                   , intellisences.Description
+                   , m_sourceProvider.GlyphService.GetGlyph(StandardGlyphGroup.GlyphGroupProperty, StandardGlyphItem.GlyphItemPublic)
+                   , "72"));
+
+                }
                 mCompList.Add(new Completion(
-                 intellisences.DisplayText
-               , intellisences.InsertionText
-               , intellisences.Description
-               , m_sourceProvider.GlyphService.GetGlyph(StandardGlyphGroup.GlyphGroupProperty, StandardGlyphItem.GlyphItemPublic)
-               , "72"));
+                "不吃肉的狮子"
+                , "不吃肉的狮子"
+                , "不吃肉的狮子"
+                , m_sourceProvider.GlyphService.GetGlyph(StandardGlyphGroup.GlyphExtensionMethod, StandardGlyphItem.GlyphItemPublic)
+                , "72"));
 
+                var set = new CompletionSet(
+                      "moniker",//"施政的智能提示",
+                      "施政的智能提示",
+                      FindTokenSpanAtPosition(session.GetTriggerPoint(m_textBuffer), session),
+                      mCompList,
+                      null);
+                completionSets.Add(set);
             }
-            mCompList.Add(new Completion(
-            "不吃肉的狮子"
-            , "不吃肉的狮子"
-            , "不吃肉的狮子"
-            , m_sourceProvider.GlyphService.GetGlyph(StandardGlyphGroup.GlyphExtensionMethod, StandardGlyphItem.GlyphItemPublic)
-            , "72"));
-
-            var set = new CompletionSet(
-                  "moniker",//"施政的智能提示",
-                  "施政的智能提示",
-                  FindTokenSpanAtPosition(session.GetTriggerPoint(m_textBuffer), session),
-                  mCompList,
-                  null);
-            completionSets.Add(set);
+            catch (Exception ex)
+            {
+                DataServices.AddExexptionLogs(ex, "AugmentCompletionSession 方法错误");
+            }
         }
 
         ITrackingSpan FindTokenSpanAtPosition(ITrackingPoint point, ICompletionSession session)

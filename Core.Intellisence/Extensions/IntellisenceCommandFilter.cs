@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Core.Intellisence
 {
-    internal sealed class IntellisenceCommandFilter: IOleCommandTarget
+    internal sealed class IntellisenceCommandFilter : IOleCommandTarget
     {
         /// <summary>
         /// 当前会话
@@ -117,8 +117,9 @@ namespace Core.Intellisence
                                 _CurrentSession.SelectedCompletionSet.Recalculate();
                             }
 
-                            if (DataServices.IsHit(ch.ToString()) || ch == '.')
-                            { 
+                            if (//DataServices.IsHit(ch.ToString()) ||
+                                ch == '.')
+                            {
                                 //获取插入符号,也就是光标位置.
                                 SnapshotPoint caret = _TextView.Caret.Position.BufferPosition;
                                 //文本快照
@@ -126,11 +127,11 @@ namespace Core.Intellisence
                                 //在当前插入符号位置创建积极的。。跟踪点
                                 ITrackingPoint trackingPoint = snapShot.CreateTrackingPoint(caret, PointTrackingMode.Positive);
                                 //由代理创建Completion会话
-                                _CurrentSession = _Broker.CreateCompletionSession(_TextView, trackingPoint, true); 
+                                _CurrentSession = _Broker.CreateCompletionSession(_TextView, trackingPoint, true);
                                 //添加放弃事件
                                 _CurrentSession.Dismissed += (sender, args) => _CurrentSession = null;
                                 //启动该会话. 
-                                _CurrentSession.Start(); 
+                                _CurrentSession.Start();
                             }
                             break;
                         case VSConstants.VSStd2KCmdID.BACKSPACE:
@@ -165,43 +166,50 @@ namespace Core.Intellisence
         {
             if (_CurrentSession == null || !_CurrentSession.IsStarted)
                 return false;
+            try
+            {  
+                //如果用户没有选择并且主动丢弃
+                if (!_CurrentSession.SelectedCompletionSet.SelectionStatus.IsSelected && !force)
+                {
+                    _CurrentSession.Dismiss();
+                    return false;
+                }
+                else
+                {
+                    ITextEdit edit = _CurrentSession.TextView.TextBuffer.CreateEdit();
+                    ITextSnapshot snapshot = edit.Snapshot;
 
-            //如果用户没有选择并且主动丢弃
-            if (!_CurrentSession.SelectedCompletionSet.SelectionStatus.IsSelected && !force)
-            {
-                _CurrentSession.Dismiss();
-                return false;
+
+                    string inputtext = _CurrentSession.TextView.Caret.Position.BufferPosition.GetContainingLine().GetText();
+
+                    var inputlist = Core.UsuallyCommon.SearchExtensions.GetStringSingleColumn(inputtext);
+                    var starttext = inputlist.LastOrDefault();
+                    string lastChar = starttext.Substring(starttext.Length - 1, 1);
+                    starttext = starttext.Replace(lastChar, "").Trim();
+
+                    int position = (starttext.LastIndexOf(" ") > 0) ? (starttext.Length + 1 - starttext.LastIndexOf(" "))
+                            : (starttext.LastIndexOf("\t") > 0 ? (starttext.Length + 1 - starttext.LastIndexOf("\t")) : starttext.Length + 1);
+
+
+                    edit.Delete(_CurrentSession.TextView.Caret.Position.BufferPosition.Position - position, position);
+
+                    string text = _CurrentSession.SelectedCompletionSet.SelectionStatus.Completion.InsertionText;
+
+                    edit.Insert(_CurrentSession.TextView.Caret.Position.BufferPosition.Position - position, text);
+
+
+                    edit.Apply();
+                    if (_CurrentSession != null)
+                        _CurrentSession.Dismiss();
+                    return true;
+                }
+
             }
-            else
+            catch (Exception ex)
             {
-                ITextEdit edit = _CurrentSession.TextView.TextBuffer.CreateEdit();
-                ITextSnapshot snapshot = edit.Snapshot;
-
-
-                string inputtext = _CurrentSession.TextView.Caret.Position.BufferPosition.GetContainingLine().GetText();
-                 
-                var inputlist = Core.UsuallyCommon.SearchExtensions.GetStringSingleColumn(inputtext); 
-                var starttext = inputlist.LastOrDefault();
-                string lastChar = starttext.Substring(starttext.Length - 1, 1); 
-                starttext = starttext.Replace(lastChar, "").Trim();
-
-                int position = (starttext.LastIndexOf(" ") > 0) ? (starttext.Length + 1 - starttext.LastIndexOf(" "))
-                        : (starttext.LastIndexOf("\t") > 0 ? (starttext.Length + 1 - starttext.LastIndexOf("\t")) : starttext.Length + 1);
-
-              
-                edit.Delete(_CurrentSession.TextView.Caret.Position.BufferPosition.Position - position , position);
-
-                string text = _CurrentSession.SelectedCompletionSet.SelectionStatus.Completion.InsertionText;
-
-                edit.Insert(_CurrentSession.TextView.Caret.Position.BufferPosition.Position - position, text);
-                 
-
-                edit.Apply();
-                if (_CurrentSession != null)
-                    _CurrentSession.Dismiss(); 
-                return true;
+                DataServices.AddExexptionLogs(ex, "Complete 方法错误");
             }
-
+            return true;
         }
     }
 }

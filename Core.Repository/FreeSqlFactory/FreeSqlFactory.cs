@@ -18,7 +18,11 @@ namespace Core.Repository
         {
             get
             {
-                return System.Configuration.ConfigurationManager.ConnectionStrings["DefaultBaseConnection"].ToStringExtension();
+                var connectionstring = "Data Source=cd-cdb-5dczq90q.sql.tencentcdb.com;port=62299;Initial Catalog=DefaultSqlite;uid=root;password=Shizi120;Charset=utf8";
+                var dc =System.Configuration.ConfigurationManager.ConnectionStrings["DefaultBaseConnection"].ToStringExtension();
+                if (!string.IsNullOrEmpty(dc))
+                    connectionstring = dc;
+                return connectionstring;
             }
         }
 
@@ -29,7 +33,11 @@ namespace Core.Repository
         {
             get
             {
-                return System.Configuration.ConfigurationManager.ConnectionStrings["DataType"].ToStringExtension().ToEnum<DataType>();
+                var datetype = DataType.MySql;
+                var datatypestring = System.Configuration.ConfigurationManager.ConnectionStrings["DataType"].ToStringExtension();
+                if (!string.IsNullOrEmpty(datatypestring))
+                    datetype = System.Configuration.ConfigurationManager.ConnectionStrings["DataType"].ToStringExtension().ToEnum<DataType>();
+                return datetype; 
             }
         }
 
@@ -40,9 +48,14 @@ namespace Core.Repository
         {
             get
             {
-                return System.Configuration.ConfigurationManager.ConnectionStrings["ReplaceString"].ToStringExtension();
+                var replacestring = "@TableName";
+                var rp = System.Configuration.ConfigurationManager.ConnectionStrings["ReplaceString"].ToStringExtension();
+                if (!string.IsNullOrEmpty(rp))
+                    replacestring = rp;
+                return replacestring;
             }
         }
+
 
         /// <summary>
         /// 获取连接池

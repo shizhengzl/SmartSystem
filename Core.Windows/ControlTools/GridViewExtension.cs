@@ -21,6 +21,8 @@ namespace Core.Windows.ControlTools
             this.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             this.BackgroundColor = Color.White;
             this.CellDoubleClick += GridViewExtension_CellDoubleClick;
+            this.RowsDefaultCellStyle.BackColor = Color.Violet;
+            this.AlternatingRowsDefaultCellStyle.BackColor = Color.Yellow;
         }
 
         private void GridViewExtension_CellDoubleClick(object sender, DataGridViewCellEventArgs e)

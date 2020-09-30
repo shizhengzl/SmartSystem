@@ -27,10 +27,16 @@ namespace Core.Intellisence
 
             var SqlList = list.Where(x => x.IsSql).ToList();
 
-            //var containsList = list.Where(x => x.DisplayText.SearchWordExists(new String[] { keyword })).ToList();
+            var containsList = list.Where(x => !x.IsSql
+               &&
 
-            var containsList = list.Where(x => !x.IsSql && (x.DisplayText.Contains(keyword,StringComparison.OrdinalIgnoreCase) || keyword.SearchWordExists(new String[] { x.DisplayText }))).ToList();
+               (
+                   (x.DisplayText.ToStringExtension().Contains(keyword, StringComparison.OrdinalIgnoreCase) || keyword.SearchWordExists(new String[] { x.DisplayText.ToStringExtension() }))
+                   ||
+                   (x.SearchText.ToStringExtension().Contains(keyword, StringComparison.OrdinalIgnoreCase) || keyword.SearchWordExists(new String[] { x.SearchText.ToStringExtension() }))
+               )
 
+               ).ToList();
             return SqlList.Concat(containsList).ToList();
         }
 
@@ -91,6 +97,26 @@ namespace Core.Intellisence
             });
 
             return list;
+        }
+
+
+
+        /// <summary>
+        /// 记录日志
+        /// </summary>
+        /// <param name="ex"></param>
+        /// <param name="description"></param>
+        public static void AddExexptionLogs(Exception ex, string description)
+        {
+            SystemLogs logs = new SystemLogs()
+            {
+                CreateTime = DateTime.Now,
+                Message = ex.Message,
+                StackTrace = ex.StackTrace,
+                Description = description
+
+            };
+            FreeSqlFactory._Freesql.Insert<SystemLogs>(logs).ExecuteAffrows();
         }
     }
 }

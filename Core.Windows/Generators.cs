@@ -33,7 +33,10 @@ namespace Core.Windows
             InitClass<DataTypeConfig>();
           
             InitClass<Intellisence>();
-        
+
+            InitClass<SystemLogs>(); 
+
+
         }
 
         public void InitClass<T>() where T : class, new()
@@ -50,7 +53,7 @@ namespace Core.Windows
         public Generators()
         {
             InitializeComponent();
-            this.skinEngines.SkinFile = $"{System.Environment.CurrentDirectory}\\Plugins\\Skins\\GlassOrange.ssk";
+            this.skinEngines.SkinFile = $"{System.Environment.CurrentDirectory}\\Plugins\\Skins\\SportsCyan.ssk";
             //this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
 
             InitSystemConfig();

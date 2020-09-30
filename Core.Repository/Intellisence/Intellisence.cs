@@ -26,6 +26,11 @@ namespace Core.Repository
         [Column(StringLength = -1)]
         public string DisplayText { get; set; }
         /// <summary>
+        /// 显示字符
+        /// </summary>
+        [Column(StringLength = -1)]
+        public string SearchText { get; set; }
+        /// <summary>
         /// 回车写入字符
         /// </summary>
         [Column(StringLength = -1)]

@@ -47,12 +47,12 @@ namespace Core.Windows.ControlTools
                     textBox = new ComboBox() { Name = $"{proprety.Name}" };
                     var firstenum = enumList.FirstOrDefault(x => x.Name == proprety.PropertyType.Name);
 
-                    textBox.DataSource =   firstenum.GetListEnumClass();
-                    textBox.ValueMember = "Keys";
-                    textBox.DisplayMember = "Name";
+                    
+                    textBox.Items.AddRange(Core.UsuallyCommon.EnumExtensions.EnumToList(firstenum).ToArray());
 
-                   
-                     
+                    //textBox.DataSource =   firstenum.GetListEnumClass();
+                    //textBox.ValueMember = "Keys";
+                    //textBox.DisplayMember = "Name"; 
                     textBox.SelectedText = val;
                 }
                 else if ("Boolean" == proprety.PropertyType.Name)
@@ -131,7 +131,7 @@ namespace Core.Windows.ControlTools
                 {
                     case "ComboBox":
                         tb = (item as ComboBox); 
-                        SetPropertyInfo(_objectself.GetType().GetProperties().FirstOrDefault(x => x.Name == tb.Name), (tb.SelectedItem  as EnumClass).Keys.ToInt32());
+                        SetPropertyInfo(_objectself.GetType().GetProperties().FirstOrDefault(x => x.Name == tb.Name), (int)Core.UsuallyCommon.EnumExtensions.ToEnum<DataType>(tb.Text));
                         break;
                     case "CheckBox":
                         tb = (item as CheckBox);
