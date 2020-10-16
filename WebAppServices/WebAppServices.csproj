@@ -9,6 +9,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\websystem\.github\FUNDING.yml" />
+    <None Include="wwwroot\websystem\.github\ISSUE_TEMPLATE\bug_report.md" />
+    <None Include="wwwroot\websystem\.github\ISSUE_TEMPLATE\feature_request.md" />
+    <None Include="wwwroot\websystem\.github\ISSUE_TEMPLATE\question.md" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.6.0" />

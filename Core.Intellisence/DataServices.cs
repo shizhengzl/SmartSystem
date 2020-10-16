@@ -4,8 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Core.Repository;
-using Core.Repository.DataBase;
+using Core.Repository; 
 using Core.UsuallyCommon;
 
 namespace Core.Intellisence

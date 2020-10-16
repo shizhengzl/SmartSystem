@@ -458,6 +458,10 @@
       <Project>{6D5BBBA4-D6C2-4321-969B-94F64C3A42DF}</Project>
       <Name>Core.Repository</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Core.Services\Core.Services.csproj">
+      <Project>{BA97889C-A2A6-43F0-B3E4-7CE2C0D21219}</Project>
+      <Name>Core.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Core.UsuallyCommon\Core.UsuallyCommon.csproj">
       <Project>{7644f592-a7ed-4648-aab6-8341e406c014}</Project>
       <Name>Core.UsuallyCommon</Name>
