@@ -159,6 +159,16 @@ namespace Core.UsuallyCommon
                             p.SetValue(ob, row[p.Name].ToInt32(), null);
                         else if (p.PropertyType == typeof(Int64))
                             p.SetValue(ob, row[p.Name].ToInt64(), null);
+
+                        else if (p.PropertyType == typeof(decimal?))
+                            p.SetValue(ob, row[p.Name].ToDecimal(), null);
+                        else if (p.PropertyType == typeof(Int16?))
+                            p.SetValue(ob, row[p.Name].ToInt32(), null);
+                        else if (p.PropertyType == typeof(Int32?))
+                            p.SetValue(ob, row[p.Name].ToInt32(), null);
+                        else if (p.PropertyType == typeof(Int64?))
+                            p.SetValue(ob, row[p.Name].ToInt64(), null);
+
                         else
                             p.SetValue(ob, row[p.Name], null);
                     }

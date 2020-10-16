@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Core.Repository.Generator
+namespace Core.Repository
 {
     /// <summary>
     /// 列

@@ -18,7 +18,8 @@ namespace Core.Repository
         {
             get
             {
-                var connectionstring = "Data Source=cd-cdb-5dczq90q.sql.tencentcdb.com;port=62299;Initial Catalog=DefaultSqlite;uid=root;password=Shizi120;Charset=utf8";
+                //var connectionstring = "Data Source=cd-cdb-5dczq90q.sql.tencentcdb.com;port=62299;Initial Catalog=DefaultSqlite;uid=root;password=Shizi120;Charset=utf8";
+                var connectionstring = "Data Source=192.168.0.99;Initial Catalog=JZB_TEST;Persist Security Info=True;User ID=empsadmin;Password=BatSe686mpsadmin((sdf#%=iosxXYy;pooling=false;";
                 var dc =System.Configuration.ConfigurationManager.ConnectionStrings["DefaultBaseConnection"].ToStringExtension();
                 if (!string.IsNullOrEmpty(dc))
                     connectionstring = dc;
@@ -33,7 +34,8 @@ namespace Core.Repository
         {
             get
             {
-                var datetype = DataType.MySql;
+                //var datetype = DataType.MySql;
+                var datetype = DataType.SqlServer;
                 var datatypestring = System.Configuration.ConfigurationManager.ConnectionStrings["DataType"].ToStringExtension();
                 if (!string.IsNullOrEmpty(datatypestring))
                     datetype = System.Configuration.ConfigurationManager.ConnectionStrings["DataType"].ToStringExtension().ToEnum<DataType>();

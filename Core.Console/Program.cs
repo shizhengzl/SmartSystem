@@ -1,5 +1,6 @@
 ﻿using Core.Repository.DataBase;
 using Core.Repository.Generator;
+using Core.Repository;
 using FreeSql;
 using System;
 using System.Collections.Generic;

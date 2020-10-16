@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Core.Repository.Generator
+namespace Core.Repository
 {
     /// <summary>
     /// SQL配置类
@@ -55,5 +55,12 @@ namespace Core.Repository.Generator
         /// </summary>
         [Column(StringLength = -1)]
         public string GetSYNONYMSQL { get; set; }
+
+
+        /// <summary>
+        /// 设置属性SQL
+        /// </summary>
+        [Column(StringLength = -1)]
+        public string SetExtendedproperty { get; set; }
     }
 }

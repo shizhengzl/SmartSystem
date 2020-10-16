@@ -18,14 +18,14 @@ namespace Core.Repository
 
 
             if (!FreeSqlFactory._Freesql.Select<SQLConfig>().Any())
-            { 
+            {
                 SQLConfig configSqlserver = new SQLConfig()
                 {
                     Type = FreeSql.DataType.SqlServer,
                     GetDataBaseSQL = "SELECT name AS DataBaseName FROM sys.sysdatabases ORDER BY name",
-                    GetTableSQL = @"USE [{1}] select a.name AS TableName,ISNULL(b.value,'') AS TableDescription from sys.tables a LEFT JOIN  sys.extended_properties  b 
+                    GetTableSQL = @"select a.name AS TableName,ISNULL(b.value,'') AS TableDescription from sys.tables a LEFT JOIN  sys.extended_properties  b 
                                 on a.object_id = b.major_id AND  b.minor_id = 0 ORDER BY a.name",
-                    GetColumnSQL = @"USE [{1}] 
+                    GetColumnSQL = @" 
                                 select
                                 col.name as ColumnName,
                                 col.is_identity IsIdentity,
@@ -55,7 +55,13 @@ namespace Core.Repository
                                 on ep.major_id=obj.id
                                 and ep.minor_id=col.column_id
                                 and ep.name='MS_Description'
-                                where obj.name= '{2}'"
+                                where obj.name= '{0}'",
+                    SetExtendedproperty = @"BEGIN TRY
+	EXECUTE sp_addextendedproperty N'MS_Description', '{2}', N'user', N'dbo', N'table', N'{0}', N'column', N'{1}'
+END TRY
+BEGIN CATCH
+	EXECUTE sp_updateextendedproperty 'MS_Description', '{2}', 'user', dbo, 'table', '{0}', 'column', {1}
+END CATCH"
                 };
                 SQLConfig configMySql = new SQLConfig()
                 {
