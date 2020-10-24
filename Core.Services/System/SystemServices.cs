@@ -1,11 +1,12 @@
 ﻿using Core.Repository;
+using Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Core.Services
 {
-    public class SystemServices
+    public class SystemServices : IServices
     {
         /// <summary>
         /// 记录日志

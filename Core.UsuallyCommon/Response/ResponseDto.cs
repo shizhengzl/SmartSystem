@@ -26,5 +26,10 @@ namespace Core.UsuallyCommon
         /// 总数
         /// </summary>
         public Int32 Total { get; set; }
+
+        /// <summary>
+        /// 成功编码
+        /// </summary>
+        public Int64 Code { get; set; } = 20000;
     }
 }

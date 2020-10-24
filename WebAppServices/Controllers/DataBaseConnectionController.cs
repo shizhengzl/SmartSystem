@@ -51,8 +51,10 @@ namespace WebAppServices.Controllers
                 var baseconnection = services.GetConnectionString(Id);
                 var data = services.GetTables(baseconnection);
                 List<TreeDto> responsedto = new List<TreeDto>();
+                var i = 1;
                 data.ForEach(x => {
-                    responsedto.Add(new TreeDto() { id = x.Id, label = $"{ x.TableName}" ,parentId=Id,description = x.TableDescription});
+                    responsedto.Add(new TreeDto() { id = i, label = $"{ x.TableName}" ,parentId=Id,description = x.TableDescription});
+                    i++;
                 });
                 response.Data = responsedto.ToList();
             }
