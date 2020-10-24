@@ -49,6 +49,38 @@ namespace WebAppServices.Controllers
             }
             return response;
         }
-         
+
+
+        [HttpPost("Register")]
+        public ResponseDto<bool> Register([FromBody] UserDto user)
+        {
+            ResponseDto<bool> response = new ResponseDto<bool>();
+            try
+            {
+                if (string.IsNullOrEmpty(user.Phone))
+                {
+                    response.Message = "请输入手机号";
+                    response.Success = false;
+                }
+
+                var searchuser = _userServices.GetUser(user.Phone);
+                if (searchuser != null)
+                {
+                    response.Message = "手机号码已经注册";
+                    response.Success = false;
+                }
+
+
+                response.Data = _userServices.RegisterUser(user);
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.Success = false;
+                _sysservices.AddExexptionLogs(ex, "Register");
+            }
+            return response;
+        }
+
     }
 }

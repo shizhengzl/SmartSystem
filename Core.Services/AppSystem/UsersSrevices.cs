@@ -3,6 +3,7 @@ using Core.Repository;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace Core.Services.AppSystem
 {
@@ -26,6 +27,18 @@ namespace Core.Services.AppSystem
             var list = FreeSqlFactory._Freesql.Select<Users>().ToList();
             response = _mapper.Map<List<UserDto>>(list);
             return response;
+        }
+
+
+        /// <summary>
+        /// 注册用户
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        public UserDto GetUser(String phone)
+        { 
+            var response =  FreeSqlFactory._Freesql.Select<Users>().Where(x => x.Phone == phone).ToList().FirstOrDefault(); 
+            return _mapper.Map<UserDto>(response);
         }
 
         /// <summary>

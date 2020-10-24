@@ -48,18 +48,17 @@
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
 
       <div style="position:relative">
-        <div class="tips">
-          <span>Username : admin</span>
-          <span>Password : any</span>
-        </div>
-        <div class="tips">
-          <span style="margin-right:18px;">Username : editor</span>
-          <span>Password : any</span>
-        </div>
 
-        <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
-          Or connect with
-        </el-button>
+        <!--<el-button class="thirdparty-button" type="primary" @click="showDialog=true">
+    Or connect with
+  </el-button>-->
+
+        <el-link type="primary" @click="toRegister">
+          注册账号
+        </el-link>
+        <el-link type="primary" style="margin-left:10px;" @click="showDialog=true">
+          其他登录方式
+        </el-link>
       </div>
     </el-form>
 
@@ -76,6 +75,7 @@
 <script>
 import { validUsername } from '@/utils/validate'
 import SocialSign from './components/SocialSignin'
+import { debounce } from '@/utils';
 
 export default {
   name: 'Login',
@@ -137,7 +137,11 @@ export default {
   destroyed() {
     // window.removeEventListener('storage', this.afterQRScan)
   },
-  methods: {
+    methods: {
+      toRegister: function () {
+      
+        this.$router.push({ path: '/register', query: {}})
+      },
     checkCapslock(e) {
       const { key } = e
       this.capsTooltip = key && key.length === 1 && (key >= 'A' && key <= 'Z')

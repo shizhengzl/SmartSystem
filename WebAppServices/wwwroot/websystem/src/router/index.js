@@ -56,6 +56,11 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/register',
+    component: () => import('@/views/login/register'),
+    hidden: true
+  },
+  {
     path: '/auth-redirect',
     component: () => import('@/views/login/auth-redirect'),
     hidden: true
@@ -91,7 +96,7 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   {
-    path: '/datadictionaries',
+    path: '/tools',
     component: Layout,
     redirect: 'noRedirect',
     name: '研发工具',
@@ -107,7 +112,7 @@ export const asyncRoutes = [
         meta: { title: '数据字典', noCache: true }
       },
       {
-        path: 'tools',
+        path: 'stringtools',
         component: () => import('@/views/tools/index'),
         name: '字符串工具',
         meta: { title: '字符串工具', noCache: true }

@@ -5,6 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\DataDictionarie\**" />
+    <Content Remove="wwwroot\DataDictionarie\**" />
+    <EmbeddedResource Remove="wwwroot\DataDictionarie\**" />
+    <None Remove="wwwroot\DataDictionarie\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="wwwroot\websystem\.github\FUNDING.yml" />
     <None Include="wwwroot\websystem\.github\ISSUE_TEMPLATE\bug_report.md" />
     <None Include="wwwroot\websystem\.github\ISSUE_TEMPLATE\feature_request.md" />

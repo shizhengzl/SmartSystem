@@ -40,6 +40,13 @@ namespace Core.Repository
         /// 如果离职情况请标记为禁用
         /// </summary> 
         [Description("启用")]
-        public Boolean IsEnabled { get; set; }
+        public Boolean IsEnabled { get; set; } = true;
+
+        /// <summary>
+        /// 密码
+        /// </summary>
+        [Column(StringLength = 50)]
+        [Description("密码")]
+        public string Password { get; set; }
     }
 }
