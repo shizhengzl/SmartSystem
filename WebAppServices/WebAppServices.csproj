@@ -36,4 +36,8 @@
     <ProjectReference Include="..\Core.UsuallyCommon\Core.UsuallyCommon.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\websystem\src\views\users\" />
+  </ItemGroup>
+
 </Project>

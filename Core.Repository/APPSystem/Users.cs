@@ -30,6 +30,16 @@ namespace Core.Repository
         [Description("手机号码")]
         public string Phone { get; set; }
 
+
+
+        /// <summary>
+        /// 密码
+        /// </summary>
+        [Column(StringLength = 100)]
+        [Description("密码")]
+        public string Password { get; set; }
+
+
         /// <summary>
         /// 邮箱
         /// </summary>
@@ -41,7 +51,7 @@ namespace Core.Repository
         /// 如果离职情况请标记为禁用
         /// </summary> 
         [Description("启用")]
-        public Boolean IsEnabled { get; set; }
+        public Boolean IsEnabled { get; set; } = true;
 
         
     }

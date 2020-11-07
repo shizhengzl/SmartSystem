@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Core.UsuallyCommon
@@ -65,5 +66,56 @@ namespace Core.UsuallyCommon
             }
             return sb.ToStringExtension();
         }
+
+        /// <summary>
+        /// 解决安全测评 Header Manipulation
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static string ToHeaderManipulation(this object obj)
+        {
+            string result = string.Empty;
+            if (obj != null)
+                result = result.ToStringExtension().Replace("\r", "").Replace("\n", "").Replace("\r\n", "").Replace("%0d", "").Replace("%0a", "");
+            return result;
+        }
+
+        /// <summary>
+        /// 密码加密
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static System.Security.SecureString ToPasswordToSecureString(this string obj)
+        {
+            System.Security.SecureString ss = new System.Security.SecureString();
+            obj.ToStringExtension().ToArray().ToList().ForEach(x =>
+            {
+                ss.AppendChar(x);
+            });
+            ss.MakeReadOnly();
+            return ss;
+        }
+
+
+        /// <summary>
+        /// 密码解密
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static String ToSecureStringToPassword(this System.Security.SecureString obj)
+        {
+            string password = string.Empty;
+            IntPtr ptr = System.Runtime.InteropServices.Marshal.SecureStringToBSTR(obj);
+            try
+            {
+                password = System.Runtime.InteropServices.Marshal.PtrToStringBSTR(ptr);
+            }
+            finally
+            {
+                System.Runtime.InteropServices.Marshal.ZeroFreeBSTR(ptr);
+            }
+            return password;
+        }
+
     }
 }

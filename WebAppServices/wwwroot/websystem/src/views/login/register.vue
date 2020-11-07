@@ -26,6 +26,7 @@
 <script>
   import { validUsername } from '@/utils/validate'
   import { register  } from '@/api/user'
+import { debounce } from '@/utils';
 export default {
   name: 'register', 
   data() {
@@ -51,8 +52,13 @@ export default {
       registeruser: function () {
         const owner = this;
         register(owner.ruleForm) 
-          .then(response => {
-            console.log(response);
+          .then(response => { 
+            if (response.success) {
+              this.$router.push({ name: '/login', query: {} })
+            }
+            else {
+              owner.$message.error(response.message);
+            }
           })
           .catch(function (error) { 
             console.log(error)

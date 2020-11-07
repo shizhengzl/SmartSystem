@@ -112,6 +112,12 @@ export const asyncRoutes = [
         meta: { title: '数据字典', noCache: true }
       },
       {
+        path: 'Intellisence',
+        component: () => import('@/views/tools/Intellisence'),
+        name: '代码片段',
+        meta: { title: '代码片段', noCache: true }
+      },
+      {
         path: 'stringtools',
         component: () => import('@/views/tools/index'),
         name: '字符串工具',

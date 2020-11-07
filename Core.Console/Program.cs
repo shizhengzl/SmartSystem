@@ -9,46 +9,71 @@ using System.Threading.Tasks;
 using Core.UsuallyCommon;
 using Core.Services;
 using System.Text.RegularExpressions;
+using System.Security;
 
 namespace Core.Console
 {
+    public static class Extenstion
+    {
+        /// <summary>
+        /// 密码加密
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static SecureString PasswordToSecureString(this string obj)
+        {
+            System.Security.SecureString ss = new System.Security.SecureString();
+            obj.ToStringExtension().ToArray().ToList().ForEach(x => {
+                ss.AppendChar(x);
+            });
+            ss.MakeReadOnly();
+            return ss;
+        }
 
-  
+
+        /// <summary>
+        /// 密码解密
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static String SecureStringToPassword(this System.Security.SecureString obj)
+        {
+            string password = string.Empty;
+            IntPtr ptr = System.Runtime.InteropServices.Marshal.SecureStringToBSTR(obj);
+            try
+            {
+                password = System.Runtime.InteropServices.Marshal.PtrToStringBSTR(ptr);
+            }
+            finally
+            {
+                System.Runtime.InteropServices.Marshal.ZeroFreeBSTR(ptr);
+            }
+            return password;
+        }
+
+
+    }
+
     class Program
     {
          
          
         static void Main(string[] args)
         {
-            var snippet = "'\"+~+\"'";
 
-            string input = "string sql = \"select left(isnull(max(SortCode),'000-'),4) as lastcode from TS_ScheduleRecord_Con where Id = \"+Id+\" and ContId = '\" + con_id + \"'\";";
+            var pwd = "shizheng";
 
+            var s = pwd.PasswordToSecureString();
 
-            var space = "\\s'\\s\"\\s+";
+            var n = s.SecureStringToPassword();
 
-            StringBuilder sb = new StringBuilder();
-
-           
-
-
-            string pattern = "(\\s*[']*\\s*\"\\s*\\+\\s*(\\w+)\\s*\\+\\s*\"\\s*[']*)";
-            //Regex.Matches(input, "(\\s*)'(\\s*)\"(\\s*)+(\\s*)(.*)(\\s*)+")
-            //MatchCollection col = Regex.Matches(input, pattern);
-
-            //foreach (Match item in col)
-            //{
-            //    var s = item.Value;
-            //}
-
-
-
-            var formst = "string.Format(@ \" select *, (select count(*) from TM_ContractBillView where bill_id=bb.bill_id) as ischangehsl, (bill_hsl*bill_price)bill_hsjes,(bill_ysl*bill_price)bill_ysjes  from TM_ContractBill as bb where cont_id= { 0} order by bill_code asc\", querycondition);";
-
-
-         
-          
+            var a = n;
         }
+
+
+
+
+       
 
         private static List<String> GetValues(string context)
         {

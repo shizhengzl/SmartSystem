@@ -75,8 +75,10 @@
 <script>
 import { validUsername } from '@/utils/validate'
 import SocialSign from './components/SocialSignin'
-import { debounce } from '@/utils';
+import { debounce } from '@/utils'
+import { setToken ,getToken} from '@/utils/auth' // get token from cookie
 
+  import {login } from '@/api/user'
 export default {
   name: 'Login',
   components: { SocialSign },
@@ -97,8 +99,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        username: 'shizheng',
+        password: 'shizi120'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -156,13 +158,29 @@ export default {
         this.$refs.password.focus()
       })
     },
-    handleLogin() {
+      handleLogin() {
+      let owner = this;
       this.$refs.loginForm.validate(valid => {
         if (valid) {
-          this.loading = true
+          owner.loading = true
+
+          //login( this.loginForm) 
+          //  .then(response => { 
+          //    setToken(response.data);
+          //    owner.$router.push({ path: owner.redirect || '/', query: owner.otherQuery })
+          //    owner.loading = false
+          //  })
+          //  .catch(function (error) { // 请求失败处理
+          //    console.log(error)
+          //    owner.loading = false
+          //  })
+
           this.$store.dispatch('user/login', this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+            .then(res => {
+  
+              console.log(res);
+              setToken(res)
+              this.$router.push({ path: owner.redirect || '/', query: owner.otherQuery })
               this.loading = false
             })
             .catch(() => {

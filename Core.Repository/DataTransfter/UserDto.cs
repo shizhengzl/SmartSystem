@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Core.Repository
 {
-    public class UserDto
+    public class UserDto : SysBaseEntity
     {
         /// <summary>
         /// 用户名

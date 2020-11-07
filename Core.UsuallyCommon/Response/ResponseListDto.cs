@@ -25,7 +25,7 @@ namespace Core.UsuallyCommon
         /// <summary>
         /// 总数
         /// </summary>
-        public Int32 Total { get; set; }
+        public Int64 Total { get; set; }
 
         /// <summary>
         /// 成功编码

@@ -1,26 +1,29 @@
 <template>
   <div>
     <div class="header" />
-    <div class="navbar">
-      <el-input
-        v-model="filterText"
-        placeholder="输入关键字进行过滤"
-      />
-      <el-tree
-        ref="tree"
-        class="filter-tree"
-        :load="getdatabase"
-        node-key="id"
-        lazy
-        :props="defaultProps"
-        :filter-node-method="filterNode"
-        @node-click="handleNodeClick"
-      />
+    <div class="navbar" style="overflow-x: hidden; overflow-y: hidden;">
+      
+      <el-input v-model="filterText"  
+                  placeholder="输入关键字进行过滤" />
+      
+      <div  style="overflow:scroll;height:95%;">
+        <el-tree ref="tree"
+                 class="filter-tree"
+                 :load="getdatabase"
+                 node-key="id"
+                 lazy
+                 :props="defaultProps"
+                 :filter-node-method="filterNode"
+                 @node-click="handleNodeClick" />
+      </div>
     </div>
     <div class="main">
+      <el-tag  >{{tablename}}</el-tag>
+
       <el-table
         :data="tableData"
         highlight-current-row
+                height="97%"
         border
         :row-class-name="tableRowClassName"
         style="width: 100%"
@@ -93,25 +96,32 @@
 </template>
 <style>
   .el-table .warning-row {
+  
     background: oldlace;
   }
 
   .el-table .success-row {
+ 
     background: #f0f9eb;
+  }
+  .el-table--medium th, .el-table--medium td {
+
+    padding : 5px 0;
   }
 </style>
 <script>
 import { datadictionariesgetdatabase, datadictionariesgettables, datadictionariesgetcolumns, datadictionariessetextendedproperty } from '@/api/datadictionaries'
+import { debounce } from '@/utils';
 export default {
   name: 'HelloWorld',
 
   data() {
     return {
-      goableurl: 'http://192.168.0.164:8088',
+      goableurl: 'http://localhost:5000',
       // goableurl: 'http://localhost:5000',
       tableData: [],
       filterText: '',
-
+      tablename:'TableName',
       defaultProps: {
         children: 'children',
         label: 'label',
@@ -158,7 +168,9 @@ export default {
     handleNodeClick(data) {
       var owner = this
       if (data.parentId) {
-        var params = '' + data.parentId + ',' + data.label
+        var params = '' + data.parentId + ',' + data.label;
+        owner.tablename = '表名:' + data.label;
+       
         owner.getcolumns(params)
       }
     },

@@ -74,6 +74,18 @@ namespace Core.Repository
              .Build();
         }
 
+
+        /// <summary>
+        /// 获取连接池
+        /// </summary>
+        /// <param name="DbType"></param>
+        /// <param name="Connection"></param>
+        /// <returns></returns>
+        public static IFreeSql GetFreeSql()
+        {
+            return _Freesql;
+        }
+
         public static IFreeSql _Freesql = new FreeSqlBuilder()
              .UseConnectionString(GetDataType, DefaultBaseConnection)
              .UseAutoSyncStructure(true)

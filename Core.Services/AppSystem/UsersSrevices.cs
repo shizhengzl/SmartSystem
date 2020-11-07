@@ -37,9 +37,10 @@ namespace Core.Services.AppSystem
         /// <returns></returns>
         public UserDto GetUser(String phone)
         { 
-            var response =  FreeSqlFactory._Freesql.Select<Users>().Where(x => x.Phone == phone).ToList().FirstOrDefault(); 
+            var response =  FreeSqlFactory._Freesql.Select<Users>().Where(x => x.Phone == phone || x.UserName == phone).ToList().FirstOrDefault(); 
             return _mapper.Map<UserDto>(response);
         }
+         
 
         /// <summary>
         /// 注册用户

@@ -24,6 +24,7 @@ namespace Core.Services
 
             };
             FreeSqlFactory._Freesql.Insert<SystemLogs>(logs).ExecuteAffrows();
-        }
+        } 
+         
     }
 }

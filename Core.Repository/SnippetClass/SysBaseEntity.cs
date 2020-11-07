@@ -33,7 +33,7 @@ namespace Core.Repository
         /// 创建用户时间
         /// </summary>
         [Description("创建用户时间")]
-        public DateTime CreateTime { get; set; }
+        public DateTime CreateTime { get; set; } = DateTime.UtcNow;
 
 
         /// <summary>

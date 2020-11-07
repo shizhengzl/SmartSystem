@@ -29,7 +29,7 @@ export default {
     return {
       textinput: '',
       textoutput: '',
-      goableurl: 'http://192.168.0.164:8088'
+      goableurl: 'http://localhost:5000'
 
     }
   },

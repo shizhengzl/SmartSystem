@@ -46,5 +46,28 @@ namespace Core.Services
             propertysql = string.Format(propertysql, table,column,description);
             return FreeSqlFactory.GetFreeSql(baseConnection.DataBaseType, baseConnection.ConnectinString).Ado.ExecuteNonQuery(propertysql) > 0;
         }
+
+
+
+        public List<Table> GetTables()
+        {
+            var tablesql = services.GetTables(FreeSqlFactory.GetDataType);
+            return FreeSqlFactory.GetFreeSql().Ado.ExecuteDataTable(tablesql).ToList<Table>();
+        }
+
+        public List<Column> GetColumns( string tableName)
+        {
+            var columnsql = services.GetColumns(FreeSqlFactory.GetDataType);
+            columnsql = string.Format(columnsql, tableName);
+            return FreeSqlFactory.GetFreeSql().Ado.ExecuteDataTable(columnsql).ToList<Column>();
+        }
+
+
+        public bool SetExtendedproperty(string table, string column, string description)
+        {
+            var propertysql = services.SetExtendedproperty(FreeSqlFactory.GetDataType);
+            propertysql = string.Format(propertysql, table, column, description);
+            return FreeSqlFactory.GetFreeSql().Ado.ExecuteNonQuery(propertysql) > 0;
+        }
     }
 }
