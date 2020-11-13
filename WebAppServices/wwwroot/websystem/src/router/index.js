@@ -124,6 +124,36 @@ export const asyncRoutes = [
         meta: { title: '字符串工具', noCache: true }
       }
     ]
+  },
+  {
+    path: '/system',
+    component: Layout,
+    redirect: 'noRedirect',
+    name: '系统管理',
+    meta: {
+      title: '系统管理',
+      icon: '404'
+    },
+    children: [
+      {
+        path: 'roles',
+        component: () => import('@/views/system/roles'),
+        name: '角色管理',
+        meta: { title: '角色管理', noCache: true }
+      },
+      {
+        path: 'users',
+        component: () => import('@/views/system/users'),
+        name: '用户管理',
+        meta: { title: '用户管理', noCache: true }
+      },
+      {
+        path: 'syslogs',
+        component: () => import('@/views/system/systemlogs'),
+        name: '系统日志',
+        meta: { title: '系统日志', noCache: true }
+      }
+    ]
   }
 ]
 

@@ -16,40 +16,40 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using WebAppServices.Model;
 using static AutoMapper.Internal.ExpressionFactory;
-
 namespace WebAppServices.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
-    public class IntellisenceController : ControllerBase
+    public class SystemLogsController : ControllerBase
     {
-        private IMapper _mapper { get; set; } 
-        private UsersSrevices _userServices { get; set; } 
+        private IMapper _mapper { get; set; }
+        private UsersSrevices _userServices { get; set; }
         private DataBaseServices _dataBaseServices { get; set; }
 
-        private AppSystemServices _appSystemServices { get; set; } 
+        private AppSystemServices _appSystemServices { get; set; }
         private SystemServices _sysservices { get; set; }
-        public IntellisenceController(IMapper mapper
+        public SystemLogsController(IMapper mapper
             , UsersSrevices usersSrevices
             , SystemServices sysservices
             , DataBaseServices dataBaseServices
             , AppSystemServices appSystemServices
             )
         {
-            _mapper = mapper; 
+            _mapper = mapper;
             _sysservices = sysservices;
             _dataBaseServices = dataBaseServices;
             _appSystemServices = appSystemServices;
         }
 
-      
+
         [HttpPost("GetHeader")]
         public ResponseListDto<Column> GetHeader()
         {
             ResponseListDto<Column> response = new ResponseListDto<Column>();
             try
-            { 
-                response.Data = _dataBaseServices.GetColumns(typeof(Intellisence).Name); 
+            {
+                response.Data = _dataBaseServices.GetColumns(typeof(SystemLogs).Name);
             }
             catch (Exception ex)
             {
@@ -63,17 +63,18 @@ namespace WebAppServices.Controllers
 
 
         [HttpPost("GetResult")]
-        public ResponseListDto<Intellisence> GetResult([FromBody] BaseRequest<Intellisence> request)    
+        public ResponseListDto<SystemLogs> GetResult([FromBody] BaseRequest<SystemLogs> request)
         {
-            ResponseListDto<Intellisence> response = new ResponseListDto<Intellisence>();
+            ResponseListDto<SystemLogs> response = new ResponseListDto<SystemLogs>();
             try
-            { 
-                var data = _appSystemServices.GetEntitys<Intellisence>();
+            {
+                var data = _appSystemServices.GetEntitys<SystemLogs>();
 
                 if (!request.IsNull())
-                { 
-                    if (!string.IsNullOrEmpty(request.Filter.ToStringExtension())) {
-                        data = data.Where(x => x.StartChar.Contains(request.Filter));
+                {
+                    if (!string.IsNullOrEmpty(request.Filter.ToStringExtension()))
+                    {
+                        data = data.Where(x => x.StackTrace.Contains(request.Filter));
                     }
 
                     if (!string.IsNullOrEmpty(request.Sort.ToStringExtension()))
@@ -84,10 +85,10 @@ namespace WebAppServices.Controllers
                     {
                         data = data.OrderBy(x => x.Id);
                     }
-                }  
+                }
 
                 response.Total = data.Count();
-                response.Data = data.Page(request.PageIndex, request.PageSize).ToList<Intellisence>();
+                response.Data = data.Page(request.PageIndex, request.PageSize).ToList<SystemLogs>();
 
             }
             catch (Exception ex)
@@ -102,19 +103,19 @@ namespace WebAppServices.Controllers
 
 
         [HttpPost("Save")]
-        public ResponseDto<Intellisence> Save([FromBody] Intellisence request)
+        public ResponseDto<SystemLogs> Save([FromBody] SystemLogs request)
         {
-            ResponseDto<Intellisence> response = new ResponseDto<Intellisence>();
+            ResponseDto<SystemLogs> response = new ResponseDto<SystemLogs>();
             try
             {
-                var _entity = _appSystemServices.GetEntitys<Intellisence>();
+                var _entity = _appSystemServices.GetEntitys<SystemLogs>();
                 if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
                 {
-                    _appSystemServices.Create<Intellisence>(request);
+                    _appSystemServices.Create<SystemLogs>(request);
                 }
                 else
                 {
-                    _appSystemServices.Modify<Intellisence>(request);
+                    _appSystemServices.Modify<SystemLogs>(request);
                 }
             }
             catch (Exception ex)
@@ -128,7 +129,7 @@ namespace WebAppServices.Controllers
 
 
         [HttpPost("Remove")]
-        public ResponseDto<Boolean> Remove([FromBody] Intellisence request)
+        public ResponseDto<Boolean> Remove([FromBody] SystemLogs request)
         {
             ResponseDto<Boolean> response = new ResponseDto<Boolean>();
 
@@ -142,7 +143,7 @@ namespace WebAppServices.Controllers
                     return response;
                 }
 
-                var _entity = _appSystemServices.GetEntitys<Intellisence>();
+                var _entity = _appSystemServices.GetEntitys<SystemLogs>();
                 response.Data = _entity.Where(x => x.Id == request.Id).ToDelete().ExecuteAffrows() > 0;
             }
             catch (Exception ex)

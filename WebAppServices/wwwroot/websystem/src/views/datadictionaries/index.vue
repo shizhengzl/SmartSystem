@@ -48,7 +48,7 @@
                          width="180" />
         <el-table-column prop="columnDescription"
                          label="字段描述"
-                         width="280">
+                         width="250">
 
           <template slot-scope="scope">
             <span v-if="scope.row.isSet">
@@ -71,7 +71,7 @@
                          width="80" />
         <el-table-column prop="sqlType"
                          label="数据库类型"
-                         width="180" />
+                         width="120" />
         <el-table-column prop="maxLength"
                          label="最大长度"
                          width="120" />
@@ -312,7 +312,7 @@ export default {
   /* 左侧样式 */
   .navbar {
     position: absolute;
-    width: 500px;
+    width: 400px;
     top: 10px; /* 距离上面50像素 */
     left: 0px;
     bottom: 0px;
@@ -323,7 +323,7 @@ export default {
   .main {
     position: absolute;
     top: 0px;
-    left: 500px;
+    left: 400px;
     bottom: 0px;
     right: 0px; /* 距离右边0像素 */
     padding: 10px;

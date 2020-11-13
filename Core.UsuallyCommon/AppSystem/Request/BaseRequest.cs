@@ -36,5 +36,11 @@ namespace Core.UsuallyCommon
         /// 排序字段
         /// </summary>
         public String Sort { get; set; }
+
+
+        /// <summary>
+        /// 升序
+        /// </summary>
+        public Boolean Asc { get; set; }
     }
 }

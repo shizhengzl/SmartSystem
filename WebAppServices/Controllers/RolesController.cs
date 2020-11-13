@@ -21,35 +21,35 @@ namespace WebAppServices.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class IntellisenceController : ControllerBase
+    public class RolesController : ControllerBase
     {
-        private IMapper _mapper { get; set; } 
-        private UsersSrevices _userServices { get; set; } 
+        private IMapper _mapper { get; set; }
+        private UsersSrevices _userServices { get; set; }
         private DataBaseServices _dataBaseServices { get; set; }
 
-        private AppSystemServices _appSystemServices { get; set; } 
+        private AppSystemServices _appSystemServices { get; set; }
         private SystemServices _sysservices { get; set; }
-        public IntellisenceController(IMapper mapper
+        public RolesController(IMapper mapper
             , UsersSrevices usersSrevices
             , SystemServices sysservices
             , DataBaseServices dataBaseServices
             , AppSystemServices appSystemServices
             )
         {
-            _mapper = mapper; 
+            _mapper = mapper;
             _sysservices = sysservices;
             _dataBaseServices = dataBaseServices;
             _appSystemServices = appSystemServices;
         }
 
-      
+
         [HttpPost("GetHeader")]
         public ResponseListDto<Column> GetHeader()
         {
             ResponseListDto<Column> response = new ResponseListDto<Column>();
             try
-            { 
-                response.Data = _dataBaseServices.GetColumns(typeof(Intellisence).Name); 
+            {
+                response.Data = _dataBaseServices.GetColumns(typeof(Roles).Name);
             }
             catch (Exception ex)
             {
@@ -63,17 +63,18 @@ namespace WebAppServices.Controllers
 
 
         [HttpPost("GetResult")]
-        public ResponseListDto<Intellisence> GetResult([FromBody] BaseRequest<Intellisence> request)    
+        public ResponseListDto<Roles> GetResult([FromBody] BaseRequest<Roles> request)
         {
-            ResponseListDto<Intellisence> response = new ResponseListDto<Intellisence>();
+            ResponseListDto<Roles> response = new ResponseListDto<Roles>();
             try
-            { 
-                var data = _appSystemServices.GetEntitys<Intellisence>();
+            {
+                var data = _appSystemServices.GetEntitys<Roles>();
 
                 if (!request.IsNull())
-                { 
-                    if (!string.IsNullOrEmpty(request.Filter.ToStringExtension())) {
-                        data = data.Where(x => x.StartChar.Contains(request.Filter));
+                {
+                    if (!string.IsNullOrEmpty(request.Filter.ToStringExtension()))
+                    {
+                        data = data.Where(x => x.RoleName.Contains(request.Filter));
                     }
 
                     if (!string.IsNullOrEmpty(request.Sort.ToStringExtension()))
@@ -84,10 +85,10 @@ namespace WebAppServices.Controllers
                     {
                         data = data.OrderBy(x => x.Id);
                     }
-                }  
+                }
 
                 response.Total = data.Count();
-                response.Data = data.Page(request.PageIndex, request.PageSize).ToList<Intellisence>();
+                response.Data = data.Page(request.PageIndex, request.PageSize).ToList<Roles>();
 
             }
             catch (Exception ex)
@@ -102,19 +103,19 @@ namespace WebAppServices.Controllers
 
 
         [HttpPost("Save")]
-        public ResponseDto<Intellisence> Save([FromBody] Intellisence request)
+        public ResponseDto<Roles> Save([FromBody] Roles request)
         {
-            ResponseDto<Intellisence> response = new ResponseDto<Intellisence>();
+            ResponseDto<Roles> response = new ResponseDto<Roles>();
             try
             {
-                var _entity = _appSystemServices.GetEntitys<Intellisence>();
+                var _entity = _appSystemServices.GetEntitys<Roles>();
                 if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
                 {
-                    _appSystemServices.Create<Intellisence>(request);
+                    _appSystemServices.Create<Roles>(request);
                 }
                 else
                 {
-                    _appSystemServices.Modify<Intellisence>(request);
+                    _appSystemServices.Modify<Roles>(request);
                 }
             }
             catch (Exception ex)
@@ -128,7 +129,7 @@ namespace WebAppServices.Controllers
 
 
         [HttpPost("Remove")]
-        public ResponseDto<Boolean> Remove([FromBody] Intellisence request)
+        public ResponseDto<Boolean> Remove([FromBody] Roles request)
         {
             ResponseDto<Boolean> response = new ResponseDto<Boolean>();
 
@@ -142,7 +143,7 @@ namespace WebAppServices.Controllers
                     return response;
                 }
 
-                var _entity = _appSystemServices.GetEntitys<Intellisence>();
+                var _entity = _appSystemServices.GetEntitys<Roles>();
                 response.Data = _entity.Where(x => x.Id == request.Id).ToDelete().ExecuteAffrows() > 0;
             }
             catch (Exception ex)

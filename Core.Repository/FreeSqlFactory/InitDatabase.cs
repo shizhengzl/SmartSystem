@@ -1,4 +1,5 @@
 ﻿using Core.Repository.Generator;
+using Core.UsuallyCommon;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,8 +14,22 @@ namespace Core.Repository
             if (isClean)
             {
                 FreeSqlFactory._Freesql.Delete<SQLConfig>().Where("1=1").ExecuteAffrows();
+                FreeSqlFactory._Freesql.Delete<Roles>().Where("1=1").ExecuteAffrows();
             }
 
+            // 初始化角色
+            if(!FreeSqlFactory._Freesql.Select<Roles>().Where(x=>x.RoleName == CommonEnum.SupperAdmin).Any())
+            {
+                Roles roles = new Roles() {  RoleName = CommonEnum.SupperAdmin,RoleDescription = CommonEnum.SupperAdmin};
+                FreeSqlFactory._Freesql.Insert<Roles>(roles).ExecuteAffrows();
+            }
+
+            // 初始化用户 
+            if (!FreeSqlFactory._Freesql.Select<Users>().Where(x => x.UserName == CommonEnum.SupperUser).Any())
+            {
+                Users users = new Users() { UserName = CommonEnum.SupperUser, Password="123456".ToMD5() };
+                FreeSqlFactory._Freesql.Insert<Users>(users).ExecuteAffrows();
+            }
 
 
             if (!FreeSqlFactory._Freesql.Select<SQLConfig>().Any())
@@ -55,7 +70,7 @@ namespace Core.Repository
                                 on ep.major_id=obj.id
                                 and ep.minor_id=col.column_id
                                 and ep.name='MS_Description'
-                                where obj.name= '{0}'",
+                                where obj.name= '{0}' order by col.is_ansi_padded desc",
                     AddExtendedproperty = @"EXECUTE sp_addextendedproperty N'MS_Description', '{2}', N'user', N'dbo', N'table', N'{0}', N'column', N'{1}'"
                    , ModifyExtendedproperty = @"EXECUTE sp_updateextendedproperty 'MS_Description', '{2}', 'user', dbo, 'table', '{0}', 'column', {1}"
                    , AddTableExtendedproperty = @"EXECUTE sp_addextendedproperty   N'MS_Description','{1}',N'user',N'dbo',N'table',N'{0}',NULL,NULL"

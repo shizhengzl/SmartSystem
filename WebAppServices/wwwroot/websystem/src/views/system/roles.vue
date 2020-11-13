@@ -8,7 +8,12 @@
 
     <el-table style="margin-top:5px; width: 100%" border :data="tableData"  @sort-change="SortChange">
       <template v-for="(item,index) in tableHead">
-        <el-table-column :prop="capitalize(item.columnName)" :label="item.columnDescription || item.columnName" :key="index" show-overflow-tooltip sortable="custom" ></el-table-column>
+        <el-table-column :prop="capitalize(item.columnName)"
+                         :label="item.columnDescription || item.columnName"
+                         v-if="hiddenColumn[item.columnName] !== true"
+                         :key="index"
+                         show-overflow-tooltip
+                         sortable="custom" ></el-table-column>
       </template>
 
       <el-table-column label="操作" width="200">
@@ -29,7 +34,7 @@
     </el-pagination> 
 
 
-    <el-dialog title="创建模板" :visible.sync="createdialog" :close-on-click-modal="false" :close-on-press-escape="false" @close="reset">
+    <el-dialog title="创建角色" :visible.sync="createdialog" :close-on-click-modal="false" :close-on-press-escape="false" @close="reset">
       <el-form id="#create" :model="model" :rules="rules" ref="create" label-width="130px">
         <template v-for="(item,index) in tableHead">
 
@@ -64,12 +69,21 @@
   </div>
 </template>
 <script>
-  import { getHeader, GetResult ,Save,Remove} from '@/api/Intellisence'
+  import { getHeader, GetResult ,Save,Remove} from '@/api/role'
   import { debounce } from '@/utils';
   export default {
-    name: 'Intellisence',
+    name: 'Roles',
     data() {
       return {
+        hiddenColumn: {
+          Id:true
+          , CreateUserId: true
+          , CreateUserName: true
+          , CreateTime: false
+          , ModifyUserId: true
+          , ModifyUserName: true
+          , ModifyTime: true
+        },
         tableData: [],
         tableHead: [],
         model: { IsSql:false },
@@ -123,8 +137,6 @@
         const owner = this
         Remove(row).then(response => {
           owner.GetResult();
-        }).catch(function (error) {
-          console.log(error)
         })
       },
 
@@ -139,8 +151,6 @@
         const owner = this
         getHeader().then(response => {
           owner.tableHead = response.data
-        }).catch(function (error) {
-          console.log(error)
         })
       },
       GetResult: function () {
@@ -148,8 +158,6 @@
         GetResult(owner.paging).then(response => {
           owner.tableData = response.data;
           owner.paging.TotalCount = response.total;
-        }).catch(function (error) {
-          console.log(error)
         })
       },
 
@@ -157,19 +165,18 @@
         const owner = this; 
         Save(owner.model).then(response => {
           owner.createdialog = false;
+          owner.reset();
           owner.GetResult();
-        }).catch(function (error) {
-          console.log(error)
-        }) 
+        })
       },
 
       create: function () {
         this.createdialog = true;  
-      },
-
+      }, 
         // 重置表单
       reset() {
         this.$refs.create.resetFields();
+        this.model = {};
       },
     }
   }</script>
