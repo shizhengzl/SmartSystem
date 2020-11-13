@@ -18,3 +18,21 @@ export function getHeader(data) {
       data
     }) 
   }
+
+
+export function Save(data) {
+  return request({
+    url: 'http://localhost:5000/api/Intellisence/Save',
+    method: 'post',
+    data
+  })
+}
+
+
+export function Remove(data) {
+  return request({
+    url: 'http://localhost:5000/api/Intellisence/Remove',
+    method: 'post',
+    data
+  })
+}

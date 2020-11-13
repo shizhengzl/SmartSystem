@@ -2,11 +2,11 @@
   <div>
     <div class="header" />
     <div class="navbar" style="overflow-x: hidden; overflow-y: hidden;">
-      
-      <el-input v-model="filterText"  
-                  placeholder="输入关键字进行过滤" />
-      
-      <div  style="overflow:scroll;height:95%;">
+
+      <el-input v-model="filterText"
+                placeholder="输入关键字进行过滤" />
+
+      <div style="overflow:scroll;height:95%;">
         <el-tree ref="tree"
                  class="filter-tree"
                  :load="getdatabase"
@@ -14,30 +14,41 @@
                  lazy
                  :props="defaultProps"
                  :filter-node-method="filterNode"
-                 @node-click="handleNodeClick" />
+                 @node-click="handleNodeClick">
+          <span class="custom-tree-node" slot-scope="{ node, data }">
+            <span>{{ node.label }}</span>
+            <span>
+              <el-link  type="warning" round  
+                       v-if="data.description"
+                       size="mini">
+
+                {{data.description}}
+              </el-link> &nbsp; &nbsp;
+              <el-button type="text" v-if="data.parentId > 0"
+                         size="mini"
+                         @click="() => updatetabledescription(node, data)">
+                备注
+              </el-button>
+            </span>
+          </span>
+        </el-tree>
       </div>
     </div>
     <div class="main">
-      <el-tag  >{{tablename}}</el-tag>
+      <el-tag>{{tablename}}</el-tag>
 
-      <el-table
-        :data="tableData"
-        highlight-current-row
+      <el-table :data="tableData"
+                highlight-current-row
                 height="97%"
-        border
-        :row-class-name="tableRowClassName"
-        style="width: 100%"
-      >
-        <el-table-column
-          prop="columnName"
-          label="字段名称"
-          width="180"
-        />
-        <el-table-column
-          prop="columnDescription"
-          label="字段描述"
-          width="280"
-        >
+                border
+                :row-class-name="tableRowClassName"
+                style="width: 100%">
+        <el-table-column prop="columnName"
+                         label="字段名称"
+                         width="180" />
+        <el-table-column prop="columnDescription"
+                         label="字段描述"
+                         width="280">
 
           <template slot-scope="scope">
             <span v-if="scope.row.isSet">
@@ -46,44 +57,30 @@
             <span v-else>{{ scope.row.columnDescription }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="isRequire"
-          label="必须"
-          :formatter="formatterisRequire"
-          width="80"
-        />
-        <el-table-column
-          prop="isPrimarykey"
-          label="主键"
-          :formatter="formatterisPrimarykey"
-          width="80"
-        />
-        <el-table-column
-          prop="isIdentity"
-          label="自增"
-          :formatter="formatterisIdentity"
-          width="80"
-        />
-        <el-table-column
-          prop="sqlType"
-          label="数据库类型"
-          width="180"
-        />
-        <el-table-column
-          prop="maxLength"
-          label="最大长度"
-          width="120"
-        />
-        <el-table-column
-          prop="scale"
-          label="精度"
-          width="80"
-        />
-        <el-table-column
-          prop="defaultValue"
-          label="默认值"
-          width="180"
-        />
+        <el-table-column prop="isRequire"
+                         label="必须"
+                         :formatter="formatterisRequire"
+                         width="80" />
+        <el-table-column prop="isPrimarykey"
+                         label="主键"
+                         :formatter="formatterisPrimarykey"
+                         width="80" />
+        <el-table-column prop="isIdentity"
+                         label="自增"
+                         :formatter="formatterisIdentity"
+                         width="80" />
+        <el-table-column prop="sqlType"
+                         label="数据库类型"
+                         width="180" />
+        <el-table-column prop="maxLength"
+                         label="最大长度"
+                         width="120" />
+        <el-table-column prop="scale"
+                         label="精度"
+                         width="80" />
+        <el-table-column prop="defaultValue"
+                         label="默认值"
+                         width="180" />
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button size="small" type="success" round @click="pwdChange(scope.row,scope.$index,true)"> {{ scope.row.isSet?'保存':"编辑备注" }}</el-button>
@@ -92,6 +89,28 @@
 
       </el-table>
     </div>
+
+
+
+    <el-dialog title="修改表备注" :visible.sync="createdialog" :close-on-click-modal="false" width="600px" :close-on-press-escape="false" @close="reset">
+      <el-form id="#create" :model="tablemodel" label-width="100px"  ref="create" >
+
+        <el-form-item label="表名">
+          <el-input v-model="tablemodel.label"   :disabled="true" clearable></el-input>
+        </el-form-item>
+
+        <el-form-item label="描述">
+          <el-input v-model="tablemodel.description" :autosize="{ minRows: 2, maxRows: 4}"
+                    type="textarea" clearable></el-input>
+        </el-form-item>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="createdialog=false">取 消</el-button>
+        <el-button type="primary"   @click="SaveTableDescription">确 定</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 <style>
@@ -108,9 +127,22 @@
 
     padding : 5px 0;
   }
+
+  .custom-tree-node {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    padding-right: 8px;
+  }
 </style>
 <script>
-import { datadictionariesgetdatabase, datadictionariesgettables, datadictionariesgetcolumns, datadictionariessetextendedproperty } from '@/api/datadictionaries'
+  import {
+    datadictionariesgetdatabase, datadictionariesgettables
+    , datadictionariesgetcolumns, datadictionariessetextendedproperty
+    , settabledescription
+  } from '@/api/datadictionaries'
 import { debounce } from '@/utils';
 export default {
   name: 'HelloWorld',
@@ -121,7 +153,11 @@ export default {
       // goableurl: 'http://localhost:5000',
       tableData: [],
       filterText: '',
-      tablename:'TableName',
+      createdialog:false,
+      tablename: 'TableName',
+      tablemodel: {
+
+      },
       defaultProps: {
         children: 'children',
         label: 'label',
@@ -135,7 +171,29 @@ export default {
     }
   },
 
-  methods: {
+    methods: {
+
+      // 重置表单
+      reset() {
+        this.$refs.create.resetFields();
+      },
+      updatetabledescription: function (node, data) {
+        this.createdialog = true;
+        this.tablemodel = data;
+      },
+      SaveTableDescription: function () {
+        var data = this.tablemodel;
+        var requestdata = '' + data.parentId + ',' + data.label + ',' + data.description;
+ 
+        settabledescription(requestdata)  
+          .then(response => {
+            this.createdialog = false;
+          })
+          .catch(function (error) {  
+            console.log(error)
+          })
+      },
+
     filterNode(value, data) {
       if (!value) return true
       return data.label.toLowerCase().indexOf(value.toLowerCase()) !== -1
@@ -254,7 +312,7 @@ export default {
   /* 左侧样式 */
   .navbar {
     position: absolute;
-    width: 300px;
+    width: 500px;
     top: 10px; /* 距离上面50像素 */
     left: 0px;
     bottom: 0px;
@@ -265,11 +323,16 @@ export default {
   .main {
     position: absolute;
     top: 0px;
-    left: 300px;
+    left: 500px;
     bottom: 0px;
     right: 0px; /* 距离右边0像素 */
     padding: 10px;
     overflow-y: auto; /* 当内容过多时y轴出现滚动条 */
     /* background-color: red; */
+  }
+
+  .el-tree-node {
+
+      height:62px;
   }
 </style>

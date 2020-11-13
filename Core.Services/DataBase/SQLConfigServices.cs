@@ -47,9 +47,43 @@ namespace Core.Services
         /// </summary>
         /// <param name="dataType"></param>
         /// <returns></returns>
-        public string SetExtendedproperty(DataType dataType)
+        public string AddExtendedproperty(DataType dataType)
         {
-            return FreeSqlFactory._Freesql.Select<SQLConfig>().Where(x => x.Type == dataType).First().SetExtendedproperty.ToStringExtension();
+            return FreeSqlFactory._Freesql.Select<SQLConfig>().Where(x => x.Type == dataType).First().AddExtendedproperty.ToStringExtension();
+        }
+
+
+        /// <summary>
+        /// 获取数据库表的列
+        /// </summary>
+        /// <param name="dataType"></param>
+        /// <returns></returns>
+        public string ModifyExtendedproperty(DataType dataType)
+        {
+            return FreeSqlFactory._Freesql.Select<SQLConfig>().Where(x => x.Type == dataType).First().ModifyExtendedproperty.ToStringExtension();
+        }
+
+
+
+        /// <summary>
+        /// 获取数据库表的列
+        /// </summary>
+        /// <param name="dataType"></param>
+        /// <returns></returns>
+        public string AddTableExtendedproperty(DataType dataType)
+        {
+            return FreeSqlFactory._Freesql.Select<SQLConfig>().Where(x => x.Type == dataType).First().AddTableExtendedproperty.ToStringExtension();
+        }
+
+
+        /// <summary>
+        /// 获取数据库表的列
+        /// </summary>
+        /// <param name="dataType"></param>
+        /// <returns></returns>
+        public string ModifyTableExtendedproperty(DataType dataType)
+        {
+            return FreeSqlFactory._Freesql.Select<SQLConfig>().Where(x => x.Type == dataType).First().ModifyTableExtendedproperty.ToStringExtension();
         }
     }
 }

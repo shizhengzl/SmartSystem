@@ -44,3 +44,11 @@ export function parsersqlformat(data) {
     data
   })
 }
+
+
+export function settabledescription(table) {
+  return request({
+    url: 'http://localhost:5000/api/DataBaseConnection/SetTableExtendedproperty/' + table, // 假地址 自行替换
+    method: 'get'
+  })
+}

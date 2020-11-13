@@ -10,13 +10,31 @@ namespace Core.UsuallyCommon
         /// 第几页
         /// </summary>
         public Int32 PageIndex { get; set; } = 1;
-
-
         /// <summary>
         /// 页大小
         /// </summary>
         public Int32 PageSize { get; set; } = 20;
 
-        public  T Search { get; set; }
+
+        /// <summary>
+        /// 总数
+        /// </summary>
+        public Int64 TotalCount { get; set; } = 20;
+
+        /// <summary>
+        /// 查询属性
+        /// </summary>
+        public  T Model { get; set; }
+
+        /// <summary>
+        /// 模糊查询
+        /// </summary>
+        public String Filter { get; set; }
+
+
+        /// <summary>
+        /// 排序字段
+        /// </summary>
+        public String Sort { get; set; }
     }
 }

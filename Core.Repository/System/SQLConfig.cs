@@ -61,6 +61,26 @@ namespace Core.Repository
         /// 设置属性SQL
         /// </summary>
         [Column(StringLength = -1)]
-        public string SetExtendedproperty { get; set; }
+        public string AddExtendedproperty { get; set; }
+
+        /// <summary>
+        /// 设置属性SQL
+        /// </summary>
+        [Column(StringLength = -1)]
+        public string ModifyExtendedproperty { get; set; }
+
+
+
+        /// <summary>
+        /// 设置属性SQL
+        /// </summary>
+        [Column(StringLength = -1)]
+        public string AddTableExtendedproperty { get; set; }
+
+        /// <summary>
+        /// 设置属性SQL
+        /// </summary>
+        [Column(StringLength = -1)]
+        public string ModifyTableExtendedproperty { get; set; }
     }
 }

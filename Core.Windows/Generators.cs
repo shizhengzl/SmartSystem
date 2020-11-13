@@ -59,6 +59,8 @@ namespace Core.Windows
             // 初始化数据
             InitDatabase initDatabase = new InitDatabase(true);
 
+           var list = FreeSqlFactory._Freesql.Select<SQLConfig>().ToList();
+
             TreeNode root = new TreeNode() { 
                 Text = "服务器"
             };

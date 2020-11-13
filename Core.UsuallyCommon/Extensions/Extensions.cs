@@ -12,6 +12,15 @@ namespace Core.UsuallyCommon
     /// </summary>
     public static class Extensions
     {
+        /// <summary>
+        /// 扩展判断是否为空
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static Boolean IsNull(this object obj)
+        {
+            return obj == null;
+        } 
 
         /// <summary>
         /// Any object converts a string. If the conversion fails, string.empty will be returned

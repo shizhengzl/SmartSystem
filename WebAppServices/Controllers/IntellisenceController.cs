@@ -68,12 +68,16 @@ namespace WebAppServices.Controllers
             ResponseListDto<Intellisence> response = new ResponseListDto<Intellisence>();
             try
             { 
-                var data = _appSystemServices.GetData<Intellisence>();
-                if (request.Search != null &&  !string.IsNullOrEmpty( request.Search.InsertionText))
-                    data.Where(x => x.InsertionText.Contains(request.Search.InsertionText));
+                var data = _appSystemServices.GetEntitys<Intellisence>();
 
+                if (!request.IsNull())
+                { 
+                    if (!string.IsNullOrEmpty(request.Filter.ToStringExtension())) {
+                        data = data.Where(x => x.StartChar.Contains(request.Filter));
+                    }
+                } 
                 response.Total = data.Count();
-                response.Data = data.Page((request.PageIndex - 1) * request.PageSize + 1, request.PageSize).ToList<Intellisence>();
+                response.Data = data.Page(request.PageIndex, request.PageSize).ToList<Intellisence>();
 
             }
             catch (Exception ex)
@@ -85,5 +89,59 @@ namespace WebAppServices.Controllers
             return response;
         }
 
+
+
+        [HttpPost("Save")]
+        public ResponseDto<Intellisence> Save([FromBody] Intellisence request)
+        {
+            ResponseDto<Intellisence> response = new ResponseDto<Intellisence>();
+            try
+            {
+                var _entity = _appSystemServices.GetEntitys<Intellisence>();
+                if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
+                {
+                    _appSystemServices.Create<Intellisence>(request);
+                }
+                else
+                {
+                    _appSystemServices.Modify<Intellisence>(request);
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.Success = false;
+                _sysservices.AddExexptionLogs(ex, "Save");
+            }
+            return response;
+        }
+
+
+        [HttpPost("Remove")]
+        public ResponseDto<Boolean> Remove([FromBody] Intellisence request)
+        {
+            ResponseDto<Boolean> response = new ResponseDto<Boolean>();
+
+            try
+            {
+                if (string.IsNullOrEmpty(request.Id.ToStringExtension()))
+                {
+
+                    response.Message = "Key 不能为空";
+                    response.Success = false;
+                    return response;
+                }
+
+                var _entity = _appSystemServices.GetEntitys<Intellisence>();
+                response.Data = _entity.Where(x => x.Id == request.Id).ToDelete().ExecuteAffrows() > 0;
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.Success = false;
+                _sysservices.AddExexptionLogs(ex, "Remove");
+            }
+            return response;
+        }
     }
 }

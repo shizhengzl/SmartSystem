@@ -107,9 +107,14 @@ namespace WebAppServices.Controllers
                 var des = TableName.Split(',')[3].ToStringExtension();
 
                 var baseconnection = services.GetConnectionString(Id);
-                var data = services.SetExtendedproperty(baseconnection, table,column,des);
-               
-                response.Data = data;
+
+
+                var isnull = services.GetColumns(baseconnection, table).Where(x => x.ColumnName.ToUpper() == column.ToUpper()).FirstOrDefault().ColumnDescription.IsNull();
+                if(isnull)
+                    response.Data = services.AddExtendedproperty(baseconnection, table,column,des);
+                else
+                    response.Data = services.ModifyExtendedproperty(baseconnection, table, column, des);
+
             }
             catch (Exception ex)
             {
@@ -121,5 +126,36 @@ namespace WebAppServices.Controllers
             return response;
         }
 
+
+        [HttpGet("SetTableExtendedproperty/{TableName}")]
+        public ResponseDto<Boolean> SetTableExtendedproperty(string TableName)
+        {
+            ResponseDto<Boolean> response = new ResponseDto<Boolean>();
+            try
+            {
+                var Id = TableName.Split(',')[0].ToInt64();
+                var table = TableName.Split(',')[1].ToStringExtension();
+                var des = TableName.Split(',')[2].ToStringExtension();
+
+                var baseconnection = services.GetConnectionString(Id);
+
+
+                var isnull = string.IsNullOrEmpty(services.GetTables(baseconnection).Where(x => x.TableName.ToUpper() == table.ToUpper()).FirstOrDefault().TableDescription.ToStringExtension());
+                if (isnull)
+                    response.Data = services.AddTableExtendedproperty(baseconnection, table, des);
+                else
+                    response.Data = services.ModifyTableExtendedproperty(baseconnection, table, des);
+
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.Success = false;
+
+                sysservices.AddExexptionLogs(ex, "ResponseListDto");
+            }
+            return response;
+
+        }
+        }
     }
-}

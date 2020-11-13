@@ -40,13 +40,36 @@ namespace Core.Services
         }
 
 
-        public bool SetExtendedproperty(DataBaseConnection baseConnection,string table,string column,string description)
+        public bool AddExtendedproperty(DataBaseConnection baseConnection,string table,string column,string description)
         { 
-            var propertysql = services.SetExtendedproperty(baseConnection.DataBaseType);
+            var propertysql = services.AddExtendedproperty(baseConnection.DataBaseType);
             propertysql = string.Format(propertysql, table,column,description);
             return FreeSqlFactory.GetFreeSql(baseConnection.DataBaseType, baseConnection.ConnectinString).Ado.ExecuteNonQuery(propertysql) > 0;
         }
 
+
+        public bool ModifyExtendedproperty(DataBaseConnection baseConnection, string table, string column, string description)
+        {
+            var propertysql = services.ModifyExtendedproperty(baseConnection.DataBaseType);
+            propertysql = string.Format(propertysql, table, column, description);
+            return FreeSqlFactory.GetFreeSql(baseConnection.DataBaseType, baseConnection.ConnectinString).Ado.ExecuteNonQuery(propertysql) > 0;
+        }
+
+
+        public bool AddTableExtendedproperty(DataBaseConnection baseConnection, string table,  string description)
+        {
+            var propertysql = services.AddTableExtendedproperty(baseConnection.DataBaseType);
+            propertysql = string.Format(propertysql, table, description);
+            return FreeSqlFactory.GetFreeSql(baseConnection.DataBaseType, baseConnection.ConnectinString).Ado.ExecuteNonQuery(propertysql) > 0;
+        }
+
+
+        public bool ModifyTableExtendedproperty(DataBaseConnection baseConnection, string table,  string description)
+        {
+            var propertysql = services.ModifyTableExtendedproperty(baseConnection.DataBaseType);
+            propertysql = string.Format(propertysql, table, description);
+            return FreeSqlFactory.GetFreeSql(baseConnection.DataBaseType, baseConnection.ConnectinString).Ado.ExecuteNonQuery(propertysql) > 0;
+        }
 
 
         public List<Table> GetTables()
@@ -63,10 +86,32 @@ namespace Core.Services
         }
 
 
-        public bool SetExtendedproperty(string table, string column, string description)
+        public bool AddExtendedproperty(string table, string column, string description)
         {
-            var propertysql = services.SetExtendedproperty(FreeSqlFactory.GetDataType);
+            var propertysql = services.AddExtendedproperty(FreeSqlFactory.GetDataType);
             propertysql = string.Format(propertysql, table, column, description);
+            return FreeSqlFactory.GetFreeSql().Ado.ExecuteNonQuery(propertysql) > 0;
+        }
+
+        public bool ModifyExtendedproperty(string table, string column, string description)
+        {
+            var propertysql = services.ModifyExtendedproperty(FreeSqlFactory.GetDataType);
+            propertysql = string.Format(propertysql, table, column, description);
+            return FreeSqlFactory.GetFreeSql().Ado.ExecuteNonQuery(propertysql) > 0;
+        } 
+
+
+        public bool AddTableExtendedproperty(string table, string description)
+        {
+            var propertysql = services.AddTableExtendedproperty(FreeSqlFactory.GetDataType);
+            propertysql = string.Format(propertysql, table, description);
+            return FreeSqlFactory.GetFreeSql().Ado.ExecuteNonQuery(propertysql) > 0;
+        } 
+
+        public bool ModifyTableExtendedproperty(string table, string description)
+        {
+            var propertysql = services.ModifyTableExtendedproperty(FreeSqlFactory.GetDataType);
+            propertysql = string.Format(propertysql, table, description);
             return FreeSqlFactory.GetFreeSql().Ado.ExecuteNonQuery(propertysql) > 0;
         }
     }

@@ -56,12 +56,10 @@ namespace Core.Repository
                                 and ep.minor_id=col.column_id
                                 and ep.name='MS_Description'
                                 where obj.name= '{0}'",
-                    SetExtendedproperty = @"BEGIN TRY
-	EXECUTE sp_addextendedproperty N'MS_Description', '{2}', N'user', N'dbo', N'table', N'{0}', N'column', N'{1}'
-END TRY
-BEGIN CATCH
-	EXECUTE sp_updateextendedproperty 'MS_Description', '{2}', 'user', dbo, 'table', '{0}', 'column', {1}
-END CATCH"
+                    AddExtendedproperty = @"EXECUTE sp_addextendedproperty N'MS_Description', '{2}', N'user', N'dbo', N'table', N'{0}', N'column', N'{1}'"
+                   , ModifyExtendedproperty = @"EXECUTE sp_updateextendedproperty 'MS_Description', '{2}', 'user', dbo, 'table', '{0}', 'column', {1}"
+                   , AddTableExtendedproperty = @"EXECUTE sp_addextendedproperty   N'MS_Description','{1}',N'user',N'dbo',N'table',N'{0}',NULL,NULL"
+                   , ModifyTableExtendedproperty = @"EXECUTE sp_updateextendedproperty   N'MS_Description','{1}',N'user',N'dbo',N'table',N'{0}',NULL,NULL"
                 };
                 SQLConfig configMySql = new SQLConfig()
                 {
