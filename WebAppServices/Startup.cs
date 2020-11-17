@@ -10,6 +10,7 @@ using Core.Services.AppSystem;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -17,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using WebAppServices.Middleware;
 using WebAppServices.Model;
 
 namespace WebAppServices
@@ -87,10 +89,11 @@ namespace WebAppServices
             else
             {
                 app.UseHsts();
-            } 
-            
+            }
+            app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto });
             app.UseHttpsRedirection();
             app.UseCors(MyAllowSpecificOrigins);
+            app.UseRequestResponseLogging();
             app.UseMvc();
         }
     }

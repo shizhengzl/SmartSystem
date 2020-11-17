@@ -36,6 +36,7 @@ namespace WebAppServices.Controllers
             )
         {
             _mapper = mapper;
+            _userServices = usersSrevices;
             _sysservices = sysservices;
             _dataBaseServices = dataBaseServices;
             _appSystemServices = appSystemServices;
