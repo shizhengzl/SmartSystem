@@ -16,12 +16,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using WebAppServices.Model;
 using static AutoMapper.Internal.ExpressionFactory;
-
 namespace WebAppServices.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RolesController : BaseController
+    public class MenusController : BaseController
     {
         private IMapper _mapper { get; set; }
         private UsersSrevices _userServices { get; set; }
@@ -29,7 +28,7 @@ namespace WebAppServices.Controllers
 
         private AppSystemServices _appSystemServices { get; set; }
         private SystemServices _sysservices { get; set; }
-        public RolesController(IMapper mapper
+        public MenusController(IMapper mapper
             , UsersSrevices usersSrevices
             , SystemServices sysservices
             , DataBaseServices dataBaseServices
@@ -51,7 +50,7 @@ namespace WebAppServices.Controllers
             {
                 var user = this.CurrentUser;
 
-                response.Data = _dataBaseServices.GetColumns(typeof(Roles).Name);
+                response.Data = _dataBaseServices.GetColumns(typeof(Menus).Name);
             }
             catch (Exception ex)
             {
@@ -65,18 +64,18 @@ namespace WebAppServices.Controllers
 
 
         [HttpPost("GetResult")]
-        public ResponseListDto<Roles> GetResult([FromBody] BaseRequest<Roles> request)
+        public ResponseListDto<Menus> GetResult([FromBody] BaseRequest<Menus> request)
         {
-            ResponseListDto<Roles> response = new ResponseListDto<Roles>();
+            ResponseListDto<Menus> response = new ResponseListDto<Menus>();
             try
             {
-                var data = _appSystemServices.GetEntitys<Roles>();
+                var data = _appSystemServices.GetEntitys<Menus>();
 
                 if (!request.IsNull())
                 {
                     if (!string.IsNullOrEmpty(request.Filter.ToStringExtension()))
                     {
-                        data = data.Where(x => x.RoleName.Contains(request.Filter));
+                        data = data.Where(x => x.MenuName.Contains(request.Filter));
                     }
 
                     if (!string.IsNullOrEmpty(request.Sort.ToStringExtension()))
@@ -90,7 +89,7 @@ namespace WebAppServices.Controllers
                 }
 
                 response.Total = data.Count();
-                response.Data = data.Page(request.PageIndex, request.PageSize).ToList<Roles>();
+                response.Data = data.Page(request.PageIndex, request.PageSize).ToList<Menus>();
 
             }
             catch (Exception ex)
@@ -105,19 +104,19 @@ namespace WebAppServices.Controllers
 
 
         [HttpPost("Save")]
-        public ResponseDto<Roles> Save([FromBody] Roles request)
+        public ResponseDto<Menus> Save([FromBody] Menus request)
         {
-            ResponseDto<Roles> response = new ResponseDto<Roles>();
+            ResponseDto<Menus> response = new ResponseDto<Menus>();
             try
             {
-                var _entity = _appSystemServices.GetEntitys<Roles>();
+                var _entity = _appSystemServices.GetEntitys<Menus>();
                 if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
                 {
-                    _appSystemServices.Create<Roles>(request);
+                    _appSystemServices.Create<Menus>(request);
                 }
                 else
                 {
-                    _appSystemServices.Modify<Roles>(request);
+                    _appSystemServices.Modify<Menus>(request);
                 }
             }
             catch (Exception ex)
@@ -131,7 +130,7 @@ namespace WebAppServices.Controllers
 
 
         [HttpPost("Remove")]
-        public ResponseDto<Boolean> Remove([FromBody] Roles request)
+        public ResponseDto<Boolean> Remove([FromBody] Menus request)
         {
             ResponseDto<Boolean> response = new ResponseDto<Boolean>();
 
@@ -145,7 +144,7 @@ namespace WebAppServices.Controllers
                     return response;
                 }
 
-                var _entity = _appSystemServices.GetEntitys<Roles>();
+                var _entity = _appSystemServices.GetEntitys<Menus>();
                 response.Data = _entity.Where(x => x.Id == request.Id).ToDelete().ExecuteAffrows() > 0;
             }
             catch (Exception ex)
@@ -158,3 +157,4 @@ namespace WebAppServices.Controllers
         }
     }
 }
+

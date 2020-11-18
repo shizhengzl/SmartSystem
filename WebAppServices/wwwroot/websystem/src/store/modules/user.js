@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, logout, getInfo, getUserInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 import { debounce } from '@/utils';
@@ -50,14 +50,10 @@ const actions = {
   },
 
   // get user info
-  getInfo({ commit, state }) {
-  
-    return new Promise((resolve, reject) => {
-
-      //var tokens = state.token || getToken(); 
-
-      getInfo('admin-token').then(response => {
-        const { data } = response
+  getInfo({ commit, state }) { 
+    return new Promise((resolve, reject) => { 
+      getUserInfo().then(response => { 
+        const  data  = response
         
         if (!data) {
           reject('Verification failed, please Login again.')
@@ -74,6 +70,7 @@ const actions = {
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         commit('SET_INTRODUCTION', introduction)
+      
         resolve(data)
       }).catch(error => {
         reject(error)

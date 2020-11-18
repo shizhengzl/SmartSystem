@@ -124,7 +124,8 @@ export const asyncRoutes = [
         meta: { title: '字符串工具', noCache: true }
       }
     ]
-  },
+  }
+  ,
   {
     path: '/system',
     component: Layout,
@@ -152,6 +153,12 @@ export const asyncRoutes = [
         component: () => import('@/views/system/systemlogs'),
         name: '系统日志',
         meta: { title: '系统日志', noCache: true }
+      },
+      {
+        path: 'menus',
+        component: () => import('@/views/system/menus'),
+        name: '菜单管理',
+        meta: { title: '菜单管理', noCache: true }
       }
     ]
   }

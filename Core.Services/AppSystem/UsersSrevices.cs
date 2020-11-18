@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using Core.UsuallyCommon;
 
 namespace Core.Services.AppSystem
 {
@@ -16,6 +17,29 @@ namespace Core.Services.AppSystem
         public UsersSrevices(IMapper mapper) : base(mapper) {
 
         }
+
+
+        public List<RoleUsers> GetUserRoles(Int32 UserId)
+        {
+            return FreeSqlFactory._Freesql.Select<RoleUsers>().Where(x=>x.UserId == UserId).ToList();
+        }
+
+        public List<Menus> GetUserMenus(Int32 UserId)
+        {
+            var roles = this.GetUserRoles(UserId).Select(x=>x.RoleId).ToList(); 
+            var adminrole = FreeSqlFactory._Freesql.Select<Roles>().Where(x => x.RoleName == CommonEnum.SupperAdmin).First().Id;
+
+            Boolean isAdmin = roles.Any(x => x == adminrole);
+            if (isAdmin)
+                return FreeSqlFactory._Freesql.Select<Menus>().ToList();
+            else
+            {
+                var menuIds = FreeSqlFactory._Freesql.Select<RoleMenus>().Where(x => roles.Contains(x.RoleId)).ToList().Select(p=>p.MenuId);
+                return FreeSqlFactory._Freesql.Select<Menus>().Where(x=> menuIds.Contains(x.Id)).ToList();
+            }
+        }
+
+
 
         /// <summary>
         /// 获取所有用户

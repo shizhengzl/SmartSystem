@@ -20,7 +20,7 @@ namespace WebAppServices.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UsersController : BaseController
     {
         private IMapper _mapper { get; set; }
         private UsersSrevices _userServices { get; set; }
@@ -60,6 +60,56 @@ namespace WebAppServices.Controllers
             return response;
         }
 
+
+
+        [HttpPost("GetUserInfo")]
+        public IActionResult GetUserInfo()
+        {
+
+            // 获取用请求携带token
+            var users = this.CurrentUser;
+
+            // 判断是否是管理员
+            var menus = _userServices.GetUserMenus(this.CurrentUser.Id);
+
+
+            List<MenuTree> router = new List<MenuTree>();
+            // 组织menus
+            var parent = menus.Where(x => x.ParentMenuID.ToInt32() == 0).ToList();
+            parent.ForEach(p => {
+                router.Add(GetMenuTree(p,menus)); 
+            });
+
+            // 获取用户角色
+            var roles = new List<string>() { "admin"};
+            // 获取用户菜单
+            return Ok(new { code =20000, roles , router = router, name = users.UserName, avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif" });
+        }
+
+
+        private MenuTree GetMenuTree(Menus menu,List<Menus> menus)
+        {
+            var child = GetChilds(menu.Id, menus);
+            return  new MenuTree()
+            {
+                Id = menu.Id,
+                path = menu.MenuPath,
+                component = menu.Url,
+                alwaysShow = menu.IsAlwaysShow.ToBoolean(), 
+                name = menu.MenuName,
+                meta = new MenuMeta() { icon = menu.MenuIcon, title = menu.MenuName , noCache  = true},
+                children =   child,
+                redirect = child.Count == 0 ? null : child.FirstOrDefault().path
+            };
+        }
+
+
+        public List<MenuTree> GetChilds(Int32 ParentID, List<Menus> menus)
+        {
+            List<MenuTree> result = new List<MenuTree>(); 
+            menus.Where(x => x.ParentMenuID == ParentID).ToList().ForEach(p=> result.Add(GetMenuTree(p, menus))) ; 
+            return   result;
+        }
 
 
         [HttpPost("GetResult")]
@@ -231,6 +281,7 @@ namespace WebAppServices.Controllers
                 response.Data = new JwtSecurityTokenHandler().WriteToken(token);
 
 
+                MemoryCacheManager.SetRefushCache<UserDto>(response.Data, users, TimeSpan.FromMinutes(30));
             }
             catch (Exception ex)
             {

@@ -73,6 +73,13 @@ namespace Core.Repository
         public Int32 Port { get; set; }
 
 
+        /// <summary>
+        /// 用户名
+        /// </summary>
+        [Description("用户名")]
+        public String UserName { get; set; }
+
+
         //public override string ToString()
         //{
         //    string headers = "[" + string.Join(",", this.Headers.Select(i => "{" + $"\"{i.Key}\":\"{i.Value}\"" + "}")) + "]";

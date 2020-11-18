@@ -164,28 +164,29 @@ export default {
         if (valid) {
           owner.loading = true
 
-          //login( this.loginForm) 
-          //  .then(response => { 
-          //    setToken(response.data);
-          //    owner.$router.push({ path: owner.redirect || '/', query: owner.otherQuery })
-          //    owner.loading = false
-          //  })
-          //  .catch(function (error) { // 请求失败处理
-          //    console.log(error)
-          //    owner.loading = false
-          //  })
+          login( this.loginForm) 
+            .then(response => { 
+              setToken(response.data);
+              owner.$router.push({ path: owner.redirect || '/', query: owner.otherQuery })
+              owner.loading = false
+            })
+            .catch(function (error) { // 请求失败处理
+              console.log(error)
+              owner.loading = false
+            })
 
-          this.$store.dispatch('user/login', this.loginForm)
-            .then(res => {
+          //this.$store.dispatch('user/login', this.loginForm)
+          //  .then(res => {
   
-              console.log(res);
-              setToken(res)
-              this.$router.push({ path: owner.redirect || '/', query: owner.otherQuery })
-              this.loading = false
-            })
-            .catch(() => {
-              this.loading = false
-            })
+          //    console.log(res);
+          //    debugger;
+          //    setToken(res)
+          //    this.$router.push({ path: owner.redirect || '/', query: owner.otherQuery })
+          //    this.loading = false
+          //  })
+          //  .catch(() => {
+          //    this.loading = false
+          //  })
         } else {
           console.log('error submit!!')
           return false

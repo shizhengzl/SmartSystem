@@ -8,6 +8,7 @@ using Core.Repository;
 using Core.Services;
 using Core.Services.AppSystem;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -73,7 +74,7 @@ namespace WebAppServices
             services.AddScoped<SystemServices>();
             services.AddScoped<DataBaseServices>();
             services.AddScoped<AppSystemServices>();
-
+            services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
             //services.sa
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
            

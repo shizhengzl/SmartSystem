@@ -39,6 +39,13 @@ export function register(data) {
   })
 }
 
+export function getUserInfo() {
+  return request({
+    url: 'http://localhost:5000/api/Users/GetUserInfo',
+    method: 'post'
+  })
+
+}
 
 
 

@@ -29,6 +29,11 @@ namespace WebAppServices.Middleware
         {
             RequestResponseLog _logInfo = new RequestResponseLog();
 
+
+            var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            var users = MemoryCacheManager.GetCache<UserDto>(token);
+
             HttpRequest request = context.Request;
             _logInfo.Url = request.Path.ToString();
             IDictionary<string, string> Headers = request.Headers.ToDictionary(k => k.Key, v => string.Join(";", v.Value.ToList()));
@@ -37,7 +42,7 @@ namespace WebAppServices.Middleware
 
             _logInfo.Method = request.Method;
             _logInfo.ExcuteStartTime = DateTime.Now;
-
+            _logInfo.UserName = users?.UserName;
             _logInfo.IPAddress = request.HttpContext.Connection.RemoteIpAddress.ToString();
             _logInfo.Port = request.HttpContext.Connection.RemotePort;
 
