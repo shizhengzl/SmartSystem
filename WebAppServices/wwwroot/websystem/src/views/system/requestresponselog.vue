@@ -5,34 +5,15 @@
               prefix-icon="el-icon-search">
     </el-input>
 
-    <vxe-table resizable
-               row-id="id"
-               :tree-config="{children: 'children', expandRowKeys: defaultExpandKeys}"
-               :data="tableData">
 
-      <template v-for="(item,index) in tableHead">
-        <vxe-table-column :field="capitalize(item.columnName)"
-                          :title="item.columnDescription || item.columnName"
-                          v-if="hiddenColumn[item.columnName] !== true"
-                          :tree-node="item.columnName == 'MenuName'"
-                          :key="index"
-                          show-overflow-tooltip></vxe-table-column>
-      </template>
-      <vxe-table-column label="操作" width="200">
-        <template slot-scope="scope">
-          <el-button type="success" size="small" @click="Modify(scope.row)">编辑</el-button>
-          <el-button type="danger" size="small" @click="Remove(scope.row)">删除</el-button>
-        </template>
-      </vxe-table-column>
-    </vxe-table>
-    <!--<el-table style="margin-top:5px; width: 100%" border :data="tableData" @sort-change="SortChange">
+    <el-table style="margin-top:5px; width: 100%" border :data="tableData"  @sort-change="SortChange">
       <template v-for="(item,index) in tableHead">
         <el-table-column :prop="capitalize(item.columnName)"
                          :label="item.columnDescription || item.columnName"
                          v-if="hiddenColumn[item.columnName] !== true"
                          :key="index"
                          show-overflow-tooltip
-                         sortable="custom"></el-table-column>
+                         sortable="custom" ></el-table-column>
       </template>
 
       <el-table-column label="操作" width="200">
@@ -41,7 +22,7 @@
           <el-button type="danger" size="small" @click="Remove(scope.row)">删除</el-button>
         </template>
       </el-table-column>
-    </el-table>-->
+    </el-table>
 
     <el-pagination @size-change="handleSizeChange"
                    @current-change="handleCurrentChange"
@@ -50,36 +31,20 @@
                    :page-size="paging.PageSize"
                    layout="total, sizes, prev, pager, next, jumper"
                    :total="paging.TotalCount">
-    </el-pagination>
+    </el-pagination> 
 
 
-    <el-dialog title="创建菜单" :visible.sync="createdialog" :close-on-click-modal="false" :close-on-press-escape="false" @close="reset">
+    <el-dialog title="创建角色" :visible.sync="createdialog" :close-on-click-modal="false" :close-on-press-escape="false" @close="reset">
       <el-form id="#create" :model="model" :rules="rules" ref="create" label-width="130px">
         <template v-for="(item,index) in tableHead">
-          <!--主键-->
-          <el-form-item v-if="(item.sqlType == 'int' || item.sqlType == 'bigint') && item.columnName != 'Id' && hiddenColumn[item.columnName] !== true"
-                        visible.sync="true"
-                        :label="item.columnDescription || item.columnName" :prop="item.columnName">
-            <el-input v-model="model[capitalize(item.columnName)]" clearable></el-input>
-          </el-form-item>
 
-
-          <!-- 数字类型 -->
-          <el-form-item v-else-if="(item.sqlType == 'int' || item.sqlType == 'bigint') && hiddenColumn[item.columnName] !== true"
-                        :label="item.columnDescription || item.columnName" :prop="item.columnName">
-            <el-input v-model="model[capitalize(item.columnName)]"
-                      clearable></el-input>
-          </el-form-item>
-
-          <!--字符串 （不长）-->
-          <el-form-item v-else-if="item.sqlType == 'nvarchar' && item.maxLength > 0"
+          <el-form-item v-if="item.sqlType == 'nvarchar' && item.maxLength > 0"
                         :visible.sync="item.columnName != 'Id'"
                         :label="item.columnDescription || item.columnName" :prop="item.columnName">
             <el-input v-model="model[capitalize(item.columnName)]"
                       type="textarea" clearable></el-input>
           </el-form-item>
 
-          <!--字符串 （非常长）-->
           <el-form-item v-else-if="item.sqlType == 'nvarchar' && item.maxLength < 0"
                         :visible.sync="item.columnName != 'Id'"
                         :label="item.columnDescription || item.columnName" :prop="item.columnName">
@@ -87,11 +52,10 @@
                       type="textarea" clearable></el-input>
           </el-form-item>
 
-          <!--boolean 类型-->
           <el-form-item v-else-if="item.sqlType == 'bit'" :label="item.columnDescription || item.columnName">
             <el-radio-group v-model="model[item.columnName]">
-              <el-radio :label=true>是</el-radio>
-              <el-radio :label=false>否</el-radio>
+              <el-radio :label="true">是</el-radio>
+              <el-radio :label="false">否</el-radio>
             </el-radio-group>
           </el-form-item>
 
@@ -105,10 +69,10 @@
   </div>
 </template>
 <script>
-  import { getHeader, GetResult ,Save,Remove} from '@/api/menus'
+  import { getHeader, GetResult, Save, Remove } from '@/api/requestresponselog'
   import { debounce } from '@/utils';
   export default {
-    name: 'Menus',
+    name: 'requestresponselog',
     data() {
       return {
         hiddenColumn: {
@@ -132,7 +96,7 @@
           PageIndex: 1,
           TotalCount: 0,
           Sort: 'Id',
-          Asc:true,
+          Asc:false,
           Filter:'',
           Model: { 
           }

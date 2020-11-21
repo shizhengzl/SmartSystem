@@ -28,8 +28,7 @@ export default {
   data() {
     return {
       textinput: '',
-      textoutput: '',
-      goableurl: 'http://localhost:5000'
+      textoutput: ''
 
     }
   },

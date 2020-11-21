@@ -20,6 +20,14 @@ namespace WebAppServices
         };
         public static MemoryCache myCache = new MemoryCache(cacheOps);
 
+        /// <summary>
+        /// 移除缓存
+        /// </summary>
+        /// <param name="key"></param>
+        public static void Remove(string key)
+        {
+            myCache.Remove(key);
+        }
 
         /// <summary>
         /// 设置缓存

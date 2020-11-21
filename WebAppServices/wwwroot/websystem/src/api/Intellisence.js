@@ -4,7 +4,7 @@ import { debounce } from '@/utils';
 
 export function getHeader(data) {
   return request({
-    url: 'http://localhost:5000/api/Intellisence/GetHeader',
+    url: '/api/Intellisence/GetHeader',
     method: 'post',
     data
   })
@@ -13,7 +13,7 @@ export function getHeader(data) {
 
   export function GetResult(data) {
     return request({
-      url: 'http://localhost:5000/api/Intellisence/GetResult',
+      url: '/api/Intellisence/GetResult',
       method: 'post',
       data
     }) 
@@ -22,7 +22,7 @@ export function getHeader(data) {
 
 export function Save(data) {
   return request({
-    url: 'http://localhost:5000/api/Intellisence/Save',
+    url: '/api/Intellisence/Save',
     method: 'post',
     data
   })
@@ -31,7 +31,7 @@ export function Save(data) {
 
 export function Remove(data) {
   return request({
-    url: 'http://localhost:5000/api/Intellisence/Remove',
+    url: '/api/Intellisence/Remove',
     method: 'post',
     data
   })

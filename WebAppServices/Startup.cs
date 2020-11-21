@@ -19,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Serialization;
 using WebAppServices.Middleware;
 using WebAppServices.Model;
 
@@ -75,9 +76,16 @@ namespace WebAppServices
             services.AddScoped<DataBaseServices>();
             services.AddScoped<AppSystemServices>();
             services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+
+            //services.AddMvc().AddJsonOptions(options => { options.SerializerSettings.ContractResolver = new DefaultContractResolver(); options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss"; });
+
             //services.sa
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-           
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(options =>
+            {
+                options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
+            }); ;
+
+          
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

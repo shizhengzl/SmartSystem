@@ -8,7 +8,7 @@ export function login(data) {
   //  data
   //})
   return request({
-    url: 'http://localhost:5000/api/Users/Login',
+    url: '/api/Users/Login',
     method: 'post',
     data
   })
@@ -25,7 +25,7 @@ export function getInfo(token) {
 
 export function logout() {
   return request({
-    url: '/vue-element-admin/user/logout',
+    url: '/api/Users/Logout',
     method: 'post'
   })
 }
@@ -41,7 +41,7 @@ export function register(data) {
 
 export function getUserInfo() {
   return request({
-    url: 'http://localhost:5000/api/Users/GetUserInfo',
+    url: '/api/Users/GetUserInfo',
     method: 'post'
   })
 
@@ -51,7 +51,7 @@ export function getUserInfo() {
 
 export function getHeader(data) {
   return request({
-    url: 'http://localhost:5000/api/Users/GetHeader',
+    url: '/api/Users/GetHeader',
     method: 'post',
     data
   })
@@ -60,7 +60,7 @@ export function getHeader(data) {
 
 export function GetResult(data) {
   return request({
-    url: 'http://localhost:5000/api/Users/GetResult',
+    url: '/api/Users/GetResult',
     method: 'post',
     data
   })
@@ -69,7 +69,7 @@ export function GetResult(data) {
 
 export function Save(data) {
   return request({
-    url: 'http://localhost:5000/api/Users/Save',
+    url: '/api/Users/Save',
     method: 'post',
     data
   })
@@ -78,7 +78,7 @@ export function Save(data) {
 
 export function Remove(data) {
   return request({
-    url: 'http://localhost:5000/api/Users/Remove',
+    url: '/api/Users/Remove',
     method: 'post',
     data
   })

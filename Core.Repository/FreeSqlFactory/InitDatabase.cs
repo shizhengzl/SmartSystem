@@ -20,8 +20,12 @@ namespace Core.Repository
             // 初始化角色
             if(!FreeSqlFactory._Freesql.Select<Roles>().Where(x=>x.RoleName == CommonEnum.SupperAdmin).Any())
             {
-                Roles roles = new Roles() {  RoleName = CommonEnum.SupperAdmin,RoleDescription = CommonEnum.SupperAdmin};
-                FreeSqlFactory._Freesql.Insert<Roles>(roles).ExecuteAffrows();
+                Roles supperadmin = new Roles() {  RoleName = CommonEnum.SupperAdmin,RoleDescription = CommonEnum.SupperAdmin};
+
+                Roles tourist = new Roles() { RoleName = CommonEnum.Tourist, RoleDescription = CommonEnum.Tourist };
+
+                FreeSqlFactory._Freesql.Insert<Roles>(supperadmin).ExecuteAffrows();
+                FreeSqlFactory._Freesql.Insert<Roles>(tourist).ExecuteAffrows();
             }
 
             // 初始化用户 

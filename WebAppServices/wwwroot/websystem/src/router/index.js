@@ -78,13 +78,13 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/dictionarie',
     children: [
       {
-        path: 'dashboard',
-        component: () => import('@/views/dashboard/index'),
-        name: 'Dashboard',
-        meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
+        path: 'dictionarie',
+        component: () => import('@/views/tools/dictionarie'),
+        name: 'Smart',
+        meta: { title: 'Smart System', noCache: true }
       }
     ]
   }
@@ -104,19 +104,7 @@ export const asyncRoutes = [
       title: '资料库',
       icon: '404'
     },
-    children: [
-      {
-        path: 'datadictionaries',
-        component: () => import('@/views/datadictionaries/index'),
-        name: '数据字典',
-        meta: { title: '数据字典', noCache: true }
-      },
-      {
-        path: 'Intellisence',
-        component: () => import('@/views/tools/Intellisence'),
-        name: '代码片段',
-        meta: { title: '代码片段', noCache: true }
-      },
+    children: [ 
       {
         path: 'stringtools',
         component: () => import('@/views/tools/index'),

@@ -17,6 +17,39 @@ namespace WebAppServices.Controllers
         DataBaseServices services = new DataBaseServices();
         SystemServices sysservices = new SystemServices();
 
+        private AppSystemServices _appSystemServices { get; set; }
+
+        public DataBaseConnectionController(AppSystemServices appSystemServices)
+        {
+            _appSystemServices = appSystemServices;
+        }
+
+        [HttpPost("Save")]
+        public ResponseDto<TableArea> Save([FromBody] TableArea request)
+        {
+            ResponseDto<TableArea> response = new ResponseDto<TableArea>();
+            try
+            {
+                var _entity = _appSystemServices.GetEntitys<TableArea>();
+                if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
+                {
+                    _appSystemServices.Create<TableArea>(request);
+                }
+                else
+                {
+                    _appSystemServices.Modify<TableArea>(request);
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.Success = false;
+                sysservices.AddExexptionLogs(ex, "Save");
+            }
+            return response;
+
+        }
+
 
         [HttpGet("GetDataBaseList")]
         public ResponseListDto<TreeDto> GetDataBaseConnectionList()

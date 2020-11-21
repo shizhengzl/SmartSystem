@@ -63,6 +63,7 @@ namespace WebAppServices.Controllers
 
 
         [HttpPost("GetUserInfo")]
+        [Authorize]
         public IActionResult GetUserInfo()
         {
 
@@ -222,6 +223,16 @@ namespace WebAppServices.Controllers
                 _sysservices.AddExexptionLogs(ex, "GetUsersList");
             }
             return response;
+        }
+
+
+
+
+        [HttpPost("Logout")]
+        public ResponseDto<String> Logout()
+        {
+            MemoryCacheManager.Remove(this.Token);
+            return new ResponseDto<string>() { Code = CommonEnum.ToLoginCode };
         }
 
         [HttpPost("Login")]

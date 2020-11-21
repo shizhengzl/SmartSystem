@@ -1,6 +1,7 @@
 ﻿using FreeSql.DataAnnotations;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Core.Repository
@@ -14,25 +15,30 @@ namespace Core.Repository
         /// 主键
         /// </summary>
         [Column(IsIdentity = true, IsPrimary = true)]
+        [Description("主键")]
         public int Id { get; set; }
         /// <summary>
-        /// 字符串StackTrace
+        /// 堆栈信息
         /// </summary>
         [Column(StringLength = -1)]
+        [Description("堆栈信息")]
         public string StackTrace { get; set; }
         /// <summary>
-        /// Message
+        /// 错误消息
         /// </summary>
         [Column(StringLength = -1)]
+        [Description("错误消息")]
         public string Message { get; set; }
         /// <summary>
-        /// Message
+        /// 错误描述
         /// </summary>
         [Column(StringLength = -1)]
+        [Description("错误描述")]
         public string Description { get; set; }
         /// <summary>
-        /// 操作日志
+        /// 异常时间
         /// </summary> 
+        [Description("异常时间")]
         public DateTime CreateTime { get; set; }
 
 

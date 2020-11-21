@@ -18,6 +18,13 @@ namespace WebAppServices.Controllers
             return users;
         }
 
+        public String GetToken()
+        {
+            return HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+        }
+
+        public String Token { get { return GetToken(); }  }
+
 
         public UserDto CurrentUser { get { return GetUsers(); } }
     }

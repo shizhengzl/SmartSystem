@@ -16,9 +16,9 @@
                  :filter-node-method="filterNode"
                  @node-click="handleNodeClick">
           <span class="custom-tree-node" slot-scope="{ node, data }">
-            <span>{{ node.label }}</span>
+            <span style="color:orangered;font-weight:600;">{{ node.label }}</span>
             <span>
-              <el-link  type="warning" round  
+              <el-link type="warning" round
                        v-if="data.description"
                        size="mini">
 
@@ -93,10 +93,10 @@
 
 
     <el-dialog title="修改表备注" :visible.sync="createdialog" :close-on-click-modal="false" width="600px" :close-on-press-escape="false" @close="reset">
-      <el-form id="#create" :model="tablemodel" label-width="100px"  ref="create" >
+      <el-form id="#create" :model="tablemodel" label-width="100px" ref="create">
 
         <el-form-item label="表名">
-          <el-input v-model="tablemodel.label"   :disabled="true" clearable></el-input>
+          <el-input v-model="tablemodel.label" :disabled="true" clearable></el-input>
         </el-form-item>
 
         <el-form-item label="描述">
@@ -107,7 +107,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="createdialog=false">取 消</el-button>
-        <el-button type="primary"   @click="SaveTableDescription">确 定</el-button>
+        <el-button type="primary" @click="SaveTableDescription">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -115,17 +115,15 @@
 </template>
 <style>
   .el-table .warning-row {
-  
     background: oldlace;
   }
 
   .el-table .success-row {
- 
     background: #f0f9eb;
   }
-  .el-table--medium th, .el-table--medium td {
 
-    padding : 5px 0;
+  .el-table--medium th, .el-table--medium td {
+    padding: 5px 0;
   }
 
   .custom-tree-node {
@@ -143,33 +141,31 @@
     , datadictionariesgetcolumns, datadictionariessetextendedproperty
     , settabledescription
   } from '@/api/datadictionaries'
-import { debounce } from '@/utils';
-export default {
-  name: 'HelloWorld',
+  import { debounce } from '@/utils';
+  export default {
+    name: 'HelloWorld',
 
-  data() {
-    return {
-      goableurl: 'http://localhost:5000',
-      // goableurl: 'http://localhost:5000',
-      tableData: [],
-      filterText: '',
-      createdialog:false,
-      tablename: 'TableName',
-      tablemodel: {
+    data() {
+      return { 
+        tableData: [],
+        filterText: '',
+        createdialog: false,
+        tablename: 'TableName',
+        tablemodel: {
 
-      },
-      defaultProps: {
-        children: 'children',
-        label: 'label',
-        id: 'id'
+        },
+        defaultProps: {
+          children: 'children',
+          label: 'label',
+          id: 'id'
+        }
       }
-    }
-  },
-  watch: {
-    filterText(val) {
-      this.$refs.tree.filter(val)
-    }
-  },
+    },
+    watch: {
+      filterText(val) {
+        this.$refs.tree.filter(val)
+      }
+    },
 
     methods: {
 
@@ -184,118 +180,115 @@ export default {
       SaveTableDescription: function () {
         var data = this.tablemodel;
         var requestdata = '' + data.parentId + ',' + data.label + ',' + data.description;
- 
-        settabledescription(requestdata)  
+
+        settabledescription(requestdata)
           .then(response => {
             this.createdialog = false;
           })
-          .catch(function (error) {  
+          .catch(function (error) {
             console.log(error)
           })
       },
 
-    filterNode(value, data) {
-      if (!value) return true
-      return data.label.toLowerCase().indexOf(value.toLowerCase()) !== -1
-    },
-    pwdChange(row, index, cg) {
-      var owner = this
-      // 点击修改 判断是否已经保存所有操作
-      if (row.isSet) {
-        var description = row.columnDescription
-        var tablename = row.tableName
-        var columnname = row.columnName
-        var id = row.id
-        owner.setextendedproperty(id, tablename, columnname, description)
+      filterNode(value, data) {
+        if (!value) return true
+        return data.label.toLowerCase().indexOf(value.toLowerCase()) !== -1
+      },
+      pwdChange(row, index, cg) {
+        var owner = this
+        // 点击修改 判断是否已经保存所有操作
+        if (row.isSet) {
+          var description = row.columnDescription
+          var tablename = row.tableName
+          var columnname = row.columnName
+          var id = row.id
+          owner.setextendedproperty(id, tablename, columnname, description)
 
-        row.isSet = false
-      } else {
-        row.isSet = null
-        row.isSet = true
-      }
-    },
-    formatterisRequire(row, column) {
-      return row.isRequire ? '是' : '否'
-    },
-    formatterisIdentity(row, column) {
-      return row.isIdentity ? '是' : '否'
-    },
-    formatterisPrimarykey(row, column) {
-      return row.isPrimarykey ? '是' : '否'
-    },
-    handleNodeClick(data) {
-      var owner = this
-      if (data.parentId) {
-        var params = '' + data.parentId + ',' + data.label;
-        owner.tablename = '表名:' + data.label;
-       
-        owner.getcolumns(params)
-      }
-    },
+          row.isSet = false
+        } else {
+          row.isSet = null
+          row.isSet = true
+        }
+      },
+      formatterisRequire(row, column) {
+        return row.isRequire ? '是' : '否'
+      },
+      formatterisIdentity(row, column) {
+        return row.isIdentity ? '是' : '否'
+      },
+      formatterisPrimarykey(row, column) {
+        return row.isPrimarykey ? '是' : '否'
+      },
+      handleNodeClick(data) {
+        var owner = this
+        if (data.parentId) {
+          var params = '' + data.parentId + ',' + data.label;
+          owner.tablename = '表名:' + data.label;
 
-    getdatabase(node, resolve) {
-      const owner = this
-      datadictionariesgetdatabase()
-        .then(response => {
-          if (node.level == 0) {
+          owner.getcolumns(params)
+        }
+      },
+
+      getdatabase(node, resolve) {
+        const owner = this
+        datadictionariesgetdatabase()
+          .then(response => {
+            if (node.level == 0) {
+              return resolve(response.data)
+            } else if (node.level == 1) {
+              owner.gettables(node, resolve)
+            } else {
+              resolve([])
+            }
+          })
+          .catch(function (error) { // 请求失败处理
+            console.log(error)
+          })
+      },
+      gettables(node, resolve) {
+        datadictionariesgettables(node.key) 
+          .then(response => {
             return resolve(response.data)
-          } else if (node.level == 1) {
-            owner.gettables(node, resolve)
-          } else {
-            resolve([])
-          }
-        })
-        .catch(function(error) { // 请求失败处理
-          console.log(error)
-        })
-    },
-    gettables(node, resolve) {
-      datadictionariesgettables(node.key)
-      // .get(owner.goableurl + '/api/DataBaseConnection/GetDataBaseTableList/' + id)
-        .then(response => {
-          return resolve(response.data)
-        })
-        .catch(function(error) { // 请求失败处理
-          console.log(error)
-        })
-    },
+          })
+          .catch(function (error) { // 请求失败处理
+            console.log(error)
+          })
+      },
 
-    getcolumns(table) {
-      const owner = this
-      datadictionariesgetcolumns(table)
-      // .get(owner.goableurl + '/api/DataBaseConnection/GetTableColumnList/' + table)
-        .then(response => {
-          owner.tableData = response.data
-        })
-        .catch(function(error) { // 请求失败处理
-          console.log(error)
-        })
-    },
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex % 2 == 0) {
-        return 'warning-row'
-      } else {
-        return 'success-row'
+      getcolumns(table) {
+        const owner = this
+        datadictionariesgetcolumns(table) 
+          .then(response => {
+            owner.tableData = response.data
+          })
+          .catch(function (error) { // 请求失败处理
+            console.log(error)
+          })
+      },
+      tableRowClassName({ row, rowIndex }) {
+        if (rowIndex % 2 == 0) {
+          return 'warning-row'
+        } else {
+          return 'success-row'
+        }
+      },
+
+      setextendedproperty(id, table, column, description) {
+        var owner = this
+        var tables = '' + id + ',' + table + ',' + column + ',' + description
+        const getcolumn = '' + id + ',' + table
+        datadictionariessetextendedproperty(tables) 
+          .then(response => {
+            owner.getcolumns(getcolumn)
+          })
+          .catch(function (error) { // 请求失败处理
+            console.log(error)
+          })
       }
-    },
 
-    setextendedproperty(id, table, column, description) {
-      var owner = this
-      var tables = '' + id + ',' + table + ',' + column + ',' + description
-      const getcolumn = '' + id + ',' + table
-      datadictionariessetextendedproperty(tables)
-      // .get(owner.goableurl + '/api/DataBaseConnection/SetExtendedproperty/' + tables)
-        .then(response => {
-          owner.getcolumns(getcolumn)
-        })
-        .catch(function(error) { // 请求失败处理
-          console.log(error)
-        })
     }
 
-  }
-
-}</script>
+  }</script>
 
 <style scoped>
 
@@ -332,7 +325,6 @@ export default {
   }
 
   .el-tree-node {
-
-      height:62px;
+    height: 62px;
   }
 </style>

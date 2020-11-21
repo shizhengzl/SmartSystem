@@ -101,19 +101,7 @@ const actions = {
           title: '资料库',
           icon: '404'
         },
-        children: [
-          {
-            path: 'datadictionaries',
-            component: '/datadictionaries/index',
-            name: '数据字典',
-            meta: { title: '数据字典', noCache: true }
-          },
-          {
-            path: 'Intellisence',
-            component:'/tools/Intellisence',
-            name: '代码片段',
-            meta: { title: '代码片段', noCache: true }
-          }
+        children: [ 
         ]
         }] 
 

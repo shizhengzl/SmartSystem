@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Core.UsuallyCommon;
 using Microsoft.AspNetCore.Mvc;
+using Core.Repository;
 
 namespace WebAppServices
 {
@@ -15,9 +16,29 @@ namespace WebAppServices
         public PermissionAuthorizationHandler()
         {
             
-        } 
+        }
 
-          
+
+
+        public override Task HandleAsync(AuthorizationHandlerContext context)
+        {
+            Microsoft.AspNetCore.Http.HttpContext httpContext = ((Microsoft.AspNetCore.Http.DefaultHttpContext)((Microsoft.AspNetCore.Mvc.ActionContext)context.Resource).HttpContext);
+            var token = httpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            var user = MemoryCacheManager.GetCache<UserDto>(token);
+            if (user == null)
+            {
+                var authorizationFilterContext = context.Resource as Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext;
+                authorizationFilterContext.Result = new JsonResult(new ResponseDto<String>() { Code = CommonEnum.ToLoginCode }) {  };
+            }
+            foreach (var requemet in context.Requirements)
+            {
+                context.Succeed(requemet);
+            }
+            return Task.CompletedTask;
+        }
+
+
 
         /// <summary>
         /// 判断是否授权
