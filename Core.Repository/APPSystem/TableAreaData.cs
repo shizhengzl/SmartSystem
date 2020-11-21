@@ -19,6 +19,21 @@ namespace Core.Repository.APPSystem
 
 
         /// <summary>
+        /// 连接字符串ID
+        /// </summary>
+        [Description("连接字符串ID")]
+        public Int32 DabaBaseId { get; set; }
+
+
+        /// <summary>
+        /// 数据库
+        /// </summary>
+        [Description("数据库")]
+        [Column(StringLength = 200)]
+        public String DataBaseName { get; set; }
+
+
+        /// <summary>
         /// 表名
         /// </summary>
         [Description("表名")]

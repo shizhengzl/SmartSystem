@@ -12,13 +12,6 @@ namespace Core.Repository
     public class TableArea : SysBaseEntity
     {
         /// <summary>
-        /// 连接字符串ID
-        /// </summary>
-        [Description("连接字符串ID")]
-        public Int32 DabaBaseId { get; set; }
-
-
-        /// <summary>
         /// 归类名称
         /// </summary>
         [Description("归类名称")]
