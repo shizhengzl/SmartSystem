@@ -1,10 +1,8 @@
 import { login, logout, getInfo, getUserInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
-import { debounce } from '@/utils';
+import { debounce } from '@/utils'
 
-
- 
 const state = {
   token: getToken(),
   name: '',
@@ -36,10 +34,9 @@ const actions = {
   login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
-     
       login({ username: username.trim(), password: password }).then(response => {
         const { data } = response
-       
+
         commit('SET_TOKEN', response.data)
         setToken(response.data)
         resolve()
@@ -50,11 +47,10 @@ const actions = {
   },
 
   // get user info
-  getInfo({ commit, state }) { 
-    return new Promise((resolve, reject) => { 
-      getUserInfo().then(response => { 
-        const  data  = response
-        
+  getInfo({ commit, state }) {
+    return new Promise((resolve, reject) => {
+      getUserInfo().then(response => {
+        const data = response
         if (!data) {
           reject('Verification failed, please Login again.')
         }
@@ -70,7 +66,7 @@ const actions = {
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         commit('SET_INTRODUCTION', introduction)
-      
+
         resolve(data)
       }).catch(error => {
         reject(error)

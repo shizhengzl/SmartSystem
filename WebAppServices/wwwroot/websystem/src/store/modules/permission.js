@@ -2,30 +2,25 @@ import { asyncRoutes, constantRoutes } from '@/router'
 import router from '@/router'
 import Layout from '@/layout'
 export function resolveRoutes(routes) {
- 
   return routes.map(route => {
- 
     if (!route.component || route.component === 'Layout') {
-      route.redirec ='noRedirect'
-      route.component = Layout 
-    }
-    else {
-
+      route.redirec = 'noRedirect'
+      route.component = Layout
+    } else {
       delete route.children
       delete route.redirect
       delete route.id
       delete route.alwaysShow
-      //前面+''解决编译警告：Critical dependency: the request of a dependency is an expression
-      //route.component = () => import(`${route.component}`)
-      const path = route.component  
-      
+      // 前面+''解决编译警告：Critical dependency: the request of a dependency is an expression
+      // route.component = () => import(`${route.component}`)
+      const path = route.component
+
       route.component = (resolve) => require([`@/views${path}.vue`], resolve)
- 
     }
     //
     if (route.children && route.children.length > 0) {
-       route.children = resolveRoutes(route.children)
-    } 
+      route.children = resolveRoutes(route.children)
+    }
     return route
   })
 }
@@ -78,38 +73,22 @@ const mutations = {
 const actions = {
   generateRoutes({ commit }, roles) {
     return new Promise(resolve => {
-      //let accessedRoutes
+      // let accessedRoutes
+      // accessedRoutes = asyncRoutes || []
 
-
-      //accessedRoutes = asyncRoutes || []
-
-
-      //if (roles.includes('admin')) {
+      // if (roles.includes('admin')) {
       //  accessedRoutes = asyncRoutes || []
-      //} else { 
+      // } else {
       //  accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
-      //}
-     
+      // }
+
       let accessedRoutes = roles.router
-      let lo =
-        [{
-        path: '/tools',
-        component: 'Layout',
-        redirect: 'noRedirect',
-        name: '研发工具',
-        meta: {
-          title: '资料库',
-          icon: '404'
-        },
-        children: [ 
-        ]
-        }] 
 
       accessedRoutes = resolveRoutes(accessedRoutes)
 
-      //accessedRoutes.push({ path: '*', redirect: '/404', hidden: true })
-      let s = router;
-      router.addRoutes(accessedRoutes) 
+      // accessedRoutes.push({ path: '*', redirect: '/404', hidden: true })
+
+      // router.addRoutes(accessedRoutes)
       commit('SET_ROUTES', accessedRoutes)
       resolve(accessedRoutes)
     })

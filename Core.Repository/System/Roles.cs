@@ -6,6 +6,7 @@ using System.Text;
 
 namespace Core.Repository
 {
+    [Description("角色表")]
     public class Roles : SysBaseEntity
     {
         /// <summary>

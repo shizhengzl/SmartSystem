@@ -42,5 +42,10 @@ namespace Core.UsuallyCommon
         /// 升序
         /// </summary>
         public Boolean Asc { get; set; }
+
+        /// <summary>
+        /// 类型
+        /// </summary>
+        public String ClassType { get; set; }
     }
 }

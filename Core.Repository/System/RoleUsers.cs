@@ -14,12 +14,12 @@ namespace Core.Repository
         /// 角色ID
         /// </summary>
         [Description("角色ID")]
-        public Int32 RoleId { get; set; }
+        public Int64 RoleId { get; set; }
 
         /// <summary>
         /// 用户ID
         /// </summary>
         [Description("用户ID")]
-        public Int32 UserId { get; set; }
+        public Int64 UserId { get; set; }
     }
 }

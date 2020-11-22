@@ -8,34 +8,194 @@ namespace Core.Repository
 {
     public class InitDatabase
     {
-        public InitDatabase(Boolean isClean = false) {
+        public InitDatabase(Boolean isClean = false)
+        {
 
 
             if (isClean)
             {
                 FreeSqlFactory._Freesql.Delete<SQLConfig>().Where("1=1").ExecuteAffrows();
                 FreeSqlFactory._Freesql.Delete<Roles>().Where("1=1").ExecuteAffrows();
+                FreeSqlFactory._Freesql.Delete<Menus>().Where("1=1").ExecuteAffrows();
+                FreeSqlFactory._Freesql.Delete<RoleMenus>().Where("1=1").ExecuteAffrows();
+                FreeSqlFactory._Freesql.Delete<RoleUsers>().Where("1=1").ExecuteAffrows();
+                FreeSqlFactory._Freesql.Delete<Users>().Where("1=1").ExecuteAffrows();
+                FreeSqlFactory._Freesql.Delete<DataBaseConnection>().Where("1=1").ExecuteAffrows();
             }
+
+
+            Int64 adminrole = 0;
+            Int64 touristrole = 0;
 
             // 初始化角色
-            if(!FreeSqlFactory._Freesql.Select<Roles>().Where(x=>x.RoleName == CommonEnum.SupperAdmin).Any())
+            if (!FreeSqlFactory._Freesql.Select<Roles>().Where(x => x.RoleName == CommonEnum.SupperAdmin).Any())
             {
-                Roles supperadmin = new Roles() {  RoleName = CommonEnum.SupperAdmin,RoleDescription = CommonEnum.SupperAdmin};
-
+                Roles supperadmin = new Roles() { RoleName = CommonEnum.SupperAdmin, RoleDescription = CommonEnum.SupperAdmin };
                 Roles tourist = new Roles() { RoleName = CommonEnum.Tourist, RoleDescription = CommonEnum.Tourist };
-
-                FreeSqlFactory._Freesql.Insert<Roles>(supperadmin).ExecuteAffrows();
-                FreeSqlFactory._Freesql.Insert<Roles>(tourist).ExecuteAffrows();
+                adminrole = FreeSqlFactory._Freesql.Insert<Roles>(supperadmin).ExecuteIdentity();
+                touristrole = FreeSqlFactory._Freesql.Insert<Roles>(tourist).ExecuteIdentity();
             }
+
+            Int64 adminid = 0;
+            Int64 shizhengid = 0;
+            Int64 youkeid = 0;
 
             // 初始化用户 
             if (!FreeSqlFactory._Freesql.Select<Users>().Where(x => x.UserName == CommonEnum.SupperUser).Any())
             {
-                Users users = new Users() { UserName = CommonEnum.SupperUser, Password="123456".ToMD5() };
-                FreeSqlFactory._Freesql.Insert<Users>(users).ExecuteAffrows();
+                Users users = new Users() { UserName = CommonEnum.SupperUser, Password = "123456".ToMD5() };
+                Users shizheng = new Users() { UserName = "shizheng", Password = "123456".ToMD5() };
+                Users youke = new Users() { UserName = CommonEnum.Youke, Password = "123456".ToMD5() };
+                adminid = FreeSqlFactory._Freesql.Insert<Users>(users).ExecuteIdentity();
+                shizhengid = FreeSqlFactory._Freesql.Insert<Users>(shizheng).ExecuteIdentity();
+                youkeid = FreeSqlFactory._Freesql.Insert<Users>(youke).ExecuteIdentity();
+            }
+
+            // 初始化角色用户
+            if (!FreeSqlFactory._Freesql.Select<RoleUsers>().Where("1=1").Any())
+            {
+                RoleUsers r1 = new RoleUsers() { RoleId = adminrole, UserId = adminid };
+                RoleUsers r2 = new RoleUsers() { RoleId = adminrole, UserId = shizhengid };
+                RoleUsers r3 = new RoleUsers() { RoleId = touristrole, UserId = youkeid };
+                FreeSqlFactory._Freesql.Insert<RoleUsers>(r1).ExecuteAffrows();
+                FreeSqlFactory._Freesql.Insert<RoleUsers>(r2).ExecuteAffrows();
+                FreeSqlFactory._Freesql.Insert<RoleUsers>(r3).ExecuteAffrows();
+            }
+
+            // 初始化菜单
+            if (!FreeSqlFactory._Freesql.Select<Menus>().Where("1=1").Any())
+            {
+                Menus m1 = new Menus() { MenuName = "系统管理", MenuIcon = "404", MenuPath = "/system", Url = "Layout", IsAlwaysShow = true, IsAvailable = true };
+                var m1id = FreeSqlFactory._Freesql.Insert<Menus>(m1).ExecuteIdentity();
+                Menus m2 = new Menus()
+                {
+                    MenuName = "菜单管理",
+                    MenuIcon = "404",
+                    MenuPath = "/menus",
+                    Url = "/system/menus",
+                    IsAlwaysShow = true,
+                    IsAvailable = true
+                    ,
+                    ParentMenuID = m1id
+                };
+                Menus m3 = new Menus()
+                {
+                    MenuName = "请求日志",
+                    MenuIcon = "404",
+                    MenuPath = "/requestresponselog",
+                    Url = "/system/requestresponselog",
+                    IsAlwaysShow = true,
+                    IsAvailable = true
+                   ,
+                    ParentMenuID = m1id
+                };
+                Menus m4 = new Menus()
+                {
+                    MenuName = "角色管理",
+                    MenuIcon = "404",
+                    MenuPath = "/roles",
+                    Url = "/system/roles",
+                    IsAlwaysShow = true,
+                    IsAvailable = true
+                 ,
+                    ParentMenuID = m1id
+                };
+                Menus m5 = new Menus()
+                {
+                    MenuName = "用户管理",
+                    MenuIcon = "404",
+                    MenuPath = "/users",
+                    Url = "/system/users",
+                    IsAlwaysShow = true,
+                    IsAvailable = true
+                ,
+                    ParentMenuID = m1id
+                };
+                FreeSqlFactory._Freesql.Insert<Menus>(m2).ExecuteAffrows();
+                FreeSqlFactory._Freesql.Insert<Menus>(m3).ExecuteAffrows();
+                FreeSqlFactory._Freesql.Insert<Menus>(m4).ExecuteAffrows();
+                FreeSqlFactory._Freesql.Insert<Menus>(m5).ExecuteAffrows();
+
+
+
+                Menus t1 = new Menus() { MenuName = "工具管理", MenuIcon = "404", MenuPath = "/tools", Url = "Layout", IsAlwaysShow = true, IsAvailable = true };
+                var t1id = FreeSqlFactory._Freesql.Insert<Menus>(t1).ExecuteIdentity();
+
+                Menus t2 = new Menus()
+                {
+                    MenuName = "数据字典",
+                    MenuIcon = "404",
+                    MenuPath = "/dictionarie",
+                    Url = "/tools/dictionarie",
+                    IsAlwaysShow = true,
+                    IsAvailable = true,
+                    ParentMenuID = t1id
+                };
+
+                Menus t3 = new Menus()
+                {
+                    MenuName = "代码片段",
+                    MenuIcon = "404",
+                    MenuPath = "/intellisence",
+                    Url = "/tools/intellisence",
+                    IsAlwaysShow = true,
+                    IsAvailable = true,
+                    ParentMenuID = t1id
+                };
+                Menus t4 = new Menus()
+                {
+                    MenuName = "表归类",
+                    MenuIcon = "404",
+                    MenuPath = "/tablearea",
+                    Url = "/tools/tablearea",
+                    IsAlwaysShow = true,
+                    IsAvailable = true,
+                    ParentMenuID = t1id
+                };
+                Menus t5 = new Menus()
+                {
+                    MenuName = "表归类数据",
+                    MenuIcon = "404",
+                    MenuPath = "/tableareadata",
+                    Url = "/tools/tableareadata",
+                    IsAlwaysShow = true,
+                    IsAvailable = true,
+                    ParentMenuID = t1id
+                };
+                Menus t6 = new Menus()
+                {
+                    MenuName = "连接字符串管理",
+                    MenuIcon = "404",
+                    MenuPath = "/databaseconnection",
+                    Url = "/tools/databaseconnection",
+                    IsAlwaysShow = true,
+                    IsAvailable = true,
+                    ParentMenuID = t1id
+                };
+                FreeSqlFactory._Freesql.Insert<Menus>(t2).ExecuteAffrows();
+                FreeSqlFactory._Freesql.Insert<Menus>(t3).ExecuteAffrows();
+                FreeSqlFactory._Freesql.Insert<Menus>(t4).ExecuteAffrows();
+                FreeSqlFactory._Freesql.Insert<Menus>(t5).ExecuteAffrows();
+                FreeSqlFactory._Freesql.Insert<Menus>(t6).ExecuteAffrows();
             }
 
 
+            // 初始化游客菜单
+
+
+            // 初始化连接字符串
+            if (!FreeSqlFactory._Freesql.Select<DataBaseConnection>().Where("1=1").Any())
+            {
+                DataBaseConnection dataBaseConnection = new DataBaseConnection() {
+                     ConnectinString= "server=.;uid=sa;pwd=sasa;database=SmartDb;"
+                     , DataBaseName= "SmartDb"
+                     , DataBaseType= FreeSql.DataType.SqlServer
+                };
+                FreeSqlFactory._Freesql.Insert<DataBaseConnection>(dataBaseConnection).ExecuteAffrows();
+            }
+
+
+            // 初始化数据库设置
             if (!FreeSqlFactory._Freesql.Select<SQLConfig>().Any())
             {
                 SQLConfig configSqlserver = new SQLConfig()
@@ -76,9 +236,12 @@ namespace Core.Repository
                                 and ep.name='MS_Description'
                                 where obj.name= '{0}' order by col.is_ansi_padded desc",
                     AddExtendedproperty = @"EXECUTE sp_addextendedproperty N'MS_Description', '{2}', N'user', N'dbo', N'table', N'{0}', N'column', N'{1}'"
-                   , ModifyExtendedproperty = @"EXECUTE sp_updateextendedproperty 'MS_Description', '{2}', 'user', dbo, 'table', '{0}', 'column', {1}"
-                   , AddTableExtendedproperty = @"EXECUTE sp_addextendedproperty   N'MS_Description','{1}',N'user',N'dbo',N'table',N'{0}',NULL,NULL"
-                   , ModifyTableExtendedproperty = @"EXECUTE sp_updateextendedproperty   N'MS_Description','{1}',N'user',N'dbo',N'table',N'{0}',NULL,NULL"
+                   ,
+                    ModifyExtendedproperty = @"EXECUTE sp_updateextendedproperty 'MS_Description', '{2}', 'user', dbo, 'table', '{0}', 'column', {1}"
+                   ,
+                    AddTableExtendedproperty = @"EXECUTE sp_addextendedproperty   N'MS_Description','{1}',N'user',N'dbo',N'table',N'{0}',NULL,NULL"
+                   ,
+                    ModifyTableExtendedproperty = @"EXECUTE sp_updateextendedproperty   N'MS_Description','{1}',N'user',N'dbo',N'table',N'{0}',NULL,NULL"
                 };
                 SQLConfig configMySql = new SQLConfig()
                 {

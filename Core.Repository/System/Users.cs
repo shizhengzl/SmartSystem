@@ -6,7 +6,8 @@ using System.Text;
 
 namespace Core.Repository
 {
-    public class Users: SysBaseEntity
+    [Description("用户表")]
+    public class Users : SysBaseEntity
     {
        
         /// <summary>
@@ -15,7 +16,15 @@ namespace Core.Repository
         [Column(StringLength = 100)]
         [Description("用户名")]
         public string UserName { get; set; }
-        
+
+
+        /// <summary>
+        /// 姓名
+        /// </summary>
+        [Column(StringLength = 100)]
+        [Description("姓名")]
+        public string Name { get; set; }
+
         /// <summary>
         /// 昵称
         /// </summary>

@@ -7,6 +7,7 @@ using System.ComponentModel;
 
 namespace Core.Repository
 {
+    [Description("请求日志表")]
     public class RequestResponseLog : SysBaseCreateTime
     {
         /// <summary>

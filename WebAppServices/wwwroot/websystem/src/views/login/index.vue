@@ -76,9 +76,9 @@
 import { validUsername } from '@/utils/validate'
 import SocialSign from './components/SocialSignin'
 import { debounce } from '@/utils'
-import { setToken ,getToken} from '@/utils/auth' // get token from cookie
+import { setToken, getToken } from '@/utils/auth' // get token from cookie
 
-  import {login } from '@/api/user'
+import { login } from '@/api/user'
 export default {
   name: 'Login',
   components: { SocialSign },
@@ -100,7 +100,7 @@ export default {
     return {
       loginForm: {
         username: 'shizheng',
-        password: 'shizi120'
+        password: '123456'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -139,11 +139,10 @@ export default {
   destroyed() {
     // window.removeEventListener('storage', this.afterQRScan)
   },
-    methods: {
-      toRegister: function () {
-      
-        this.$router.push({ path: '/register', query: {}})
-      },
+  methods: {
+    toRegister: function() {
+      this.$router.push({ path: '/register', query: {}})
+    },
     checkCapslock(e) {
       const { key } = e
       this.capsTooltip = key && key.length === 1 && (key >= 'A' && key <= 'Z')
@@ -158,26 +157,26 @@ export default {
         this.$refs.password.focus()
       })
     },
-      handleLogin() {
-      let owner = this;
+    handleLogin() {
+      const owner = this
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           owner.loading = true
 
-          login( this.loginForm) 
-            .then(response => { 
-              setToken(response.data);
+          login(this.loginForm)
+            .then(response => {
+              setToken(response.data)
               owner.$router.push({ path: owner.redirect || '/', query: owner.otherQuery })
               owner.loading = false
             })
-            .catch(function (error) { // 请求失败处理
+            .catch(function(error) { // 请求失败处理
               console.log(error)
               owner.loading = false
             })
 
-          //this.$store.dispatch('user/login', this.loginForm)
+          // this.$store.dispatch('user/login', this.loginForm)
           //  .then(res => {
-  
+
           //    console.log(res);
           //    debugger;
           //    setToken(res)

@@ -104,6 +104,8 @@ namespace WebAppServices
             app.UseCors(MyAllowSpecificOrigins);
             app.UseRequestResponseLogging();
             app.UseMvc();
+
+            new InitDatabase(true);
         }
     }
 }

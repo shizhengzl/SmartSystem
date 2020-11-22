@@ -10,6 +10,7 @@ namespace Core.Repository
     /// <summary>
     /// 智能感知提示类
     /// </summary>
+    [Description("代码片段表")]
     public class Intellisence
     { 
         /// <summary>

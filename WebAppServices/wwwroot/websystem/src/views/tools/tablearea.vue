@@ -10,7 +10,16 @@
           </el-input>
 
 
-          <el-table style="margin-top:5px; width: 100%;" border :data="tableData" @sort-change="SortChange">
+          <el-table style="margin-top:5px; width: 100%;" ref="singleTable"
+                    highlight-current-row
+                    @current-change="CurrentChange"
+                    @row-click="selectrow" border
+                   
+                    :data="tableData"
+                    @sort-change="SortChange">
+            <el-table-column type="selection"
+                             width="55">
+            </el-table-column>
             <template v-for="(item,index) in tableHead">
               <el-table-column :prop="capitalize(item.columnName)"
                                :label="item.columnDescription || item.columnName"
@@ -87,11 +96,13 @@
 <script>
   import { getHeader, GetResult, Save, Remove } from '@/api/tablearea'
   import tableareadata from '@/views/tools/tableareadata'
+  import Cookies from 'js-cookie'
   import { debounce } from '@/utils';
   export default {
     name: 'tablearea',
     data() {
-      return {
+      return { 
+        currentRow: {},
         hiddenColumn: {
           Id: true
           , CreateUserId: true
@@ -103,7 +114,7 @@
         },
         tableData: [],
         tableHead: [],
-        model: { IsSql: false },
+        model: { IsSql: false ,flag: false},
         createLoading: false,
         createdialog: false,
         rules: {},
@@ -134,7 +145,17 @@
       this.getHeader();
       this.GetResult();
     },
-    methods: {
+    methods: { 
+      CurrentChange(val) {
+        this.currentRow = val;
+      },
+      selectrow: function (row, col, event) {
+        this.$refs.singleTable.clearSelection()
+        this.$refs.singleTable.setCurrentRow(row); 
+        row.flag = true;
+        Cookies.set("table",row)
+        this.$refs.singleTable.toggleRowSelection(row, row.flag);      
+      },
       SortChange: function (column) {
         this.paging.Sort = column.prop;
         this.paging.Asc = column.order == "ascending";
@@ -202,5 +223,6 @@
     }
   }</script>
 
-<style scoped>
+<style scoped>  
+
 </style>

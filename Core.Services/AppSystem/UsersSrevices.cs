@@ -19,12 +19,12 @@ namespace Core.Services.AppSystem
         }
 
 
-        public List<RoleUsers> GetUserRoles(Int32 UserId)
+        public List<RoleUsers> GetUserRoles(Int64 UserId)
         {
             return FreeSqlFactory._Freesql.Select<RoleUsers>().Where(x=>x.UserId == UserId).ToList();
         }
 
-        public List<Menus> GetUserMenus(Int32 UserId)
+        public List<Menus> GetUserMenus(Int64 UserId)
         {
             var roles = this.GetUserRoles(UserId).Select(x=>x.RoleId).ToList(); 
             var adminrole = FreeSqlFactory._Freesql.Select<Roles>().Where(x => x.RoleName == CommonEnum.SupperAdmin).First().Id;

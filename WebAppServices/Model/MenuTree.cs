@@ -7,7 +7,7 @@ namespace WebAppServices.Model
 {
     public class MenuTree
     {
-        public Int32 Id { get; set; }
+        public Int64 Id { get; set; }
         public string path { get; set; }
 
         public string component { get; set; }

@@ -19,7 +19,8 @@ namespace Core.Repository
             get
             {
                 //var connectionstring = "Data Source=cd-cdb-5dczq90q.sql.tencentcdb.com;port=62299;Initial Catalog=DefaultSqlite;uid=root;password=Shizi120;Charset=utf8";
-                var connectionstring = "Data Source=192.168.0.99;Initial Catalog=JZB_TEST;Persist Security Info=True;User ID=empsadmin;Password=BatSe686mpsadmin((sdf#%=iosxXYy;pooling=false;";
+                //var connectionstring = "Data Source=192.168.0.99;Initial Catalog=JZB_TEST;Persist Security Info=True;User ID=empsadmin;Password=BatSe686mpsadmin((sdf#%=iosxXYy;pooling=false;";
+                var connectionstring = "Data Source=.;Initial Catalog=SmartDb;Persist Security Info=True;User ID=sa;Password=sasa;";
                 var dc =System.Configuration.ConfigurationManager.ConnectionStrings["DefaultBaseConnection"].ToStringExtension();
                 if (!string.IsNullOrEmpty(dc))
                     connectionstring = dc;

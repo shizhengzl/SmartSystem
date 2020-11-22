@@ -84,7 +84,7 @@ namespace WebAppServices.Controllers
             // 获取用户角色
             var roles = new List<string>() { "admin"};
             // 获取用户菜单
-            return Ok(new { code =20000, roles , router = router, name = users.UserName, avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif" });
+            return Ok(new { Success=true, code =20000, roles , router = router, name = users.UserName, avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif" });
         }
 
 
@@ -105,7 +105,7 @@ namespace WebAppServices.Controllers
         }
 
 
-        public List<MenuTree> GetChilds(Int32 ParentID, List<Menus> menus)
+        public List<MenuTree> GetChilds(Int64 ParentID, List<Menus> menus)
         {
             List<MenuTree> result = new List<MenuTree>(); 
             menus.Where(x => x.ParentMenuID == ParentID).ToList().ForEach(p=> result.Add(GetMenuTree(p, menus))) ; 

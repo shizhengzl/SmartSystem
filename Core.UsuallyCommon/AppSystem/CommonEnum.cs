@@ -22,7 +22,10 @@ namespace Core.UsuallyCommon
         /// </summary>
         public static string SupperUser { get { return "admin"; } }
 
-
+        /// <summary>
+        /// 游客用户
+        /// </summary>
+        public static string Youke { get { return "youke"; } }
 
 
         public static readonly Int32 ToLoginCode = 50008;

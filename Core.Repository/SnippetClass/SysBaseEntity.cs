@@ -13,7 +13,7 @@ namespace Core.Repository
         /// </summary>
         [Column(IsIdentity = true, IsPrimary = true)]
         [Description("主键")]
-        public int Id { get; set; }
+        public Int64 Id { get; set; }
 
 
         /// <summary>

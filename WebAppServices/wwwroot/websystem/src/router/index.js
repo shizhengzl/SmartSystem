@@ -95,61 +95,6 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
-  {
-    path: '/tools',
-    component: Layout,
-    redirect: 'noRedirect',
-    name: '研发工具',
-    meta: {
-      title: '资料库',
-      icon: '404'
-    },
-    children: [ 
-      {
-        path: 'stringtools',
-        component: () => import('@/views/tools/index'),
-        name: '字符串工具',
-        meta: { title: '字符串工具', noCache: true }
-      }
-    ]
-  }
-  ,
-  {
-    path: '/system',
-    component: Layout,
-    redirect: 'noRedirect',
-    name: '系统管理',
-    meta: {
-      title: '系统管理',
-      icon: '404'
-    },
-    children: [
-      {
-        path: 'roles',
-        component: () => import('@/views/system/roles'),
-        name: '角色管理',
-        meta: { title: '角色管理', noCache: true }
-      },
-      {
-        path: 'users',
-        component: () => import('@/views/system/users'),
-        name: '用户管理',
-        meta: { title: '用户管理', noCache: true }
-      },
-      {
-        path: 'syslogs',
-        component: () => import('@/views/system/systemlogs'),
-        name: '系统日志',
-        meta: { title: '系统日志', noCache: true }
-      },
-      {
-        path: 'menus',
-        component: () => import('@/views/system/menus'),
-        name: '菜单管理',
-        meta: { title: '菜单管理', noCache: true }
-      }
-    ]
-  }
 ]
 
 const createRouter = () => new Router({
