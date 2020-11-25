@@ -105,7 +105,7 @@ namespace WebAppServices
             app.UseRequestResponseLogging();
             app.UseMvc();
 
-            new InitDatabase(true);
+            //new InitDatabase(true);
         }
     }
 }

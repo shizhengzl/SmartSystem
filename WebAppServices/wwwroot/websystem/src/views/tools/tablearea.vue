@@ -51,7 +51,7 @@
       <el-col :span="16">
         <div>
 
-          <tableareadata></tableareadata>
+          <tableareadata ref="apptable"></tableareadata>
         </div>
       </el-col>
     </el-row>
@@ -98,11 +98,13 @@
   import tableareadata from '@/views/tools/tableareadata'
   import Cookies from 'js-cookie'
   import { debounce } from '@/utils';
+   
   export default {
     name: 'tablearea',
     data() {
-      return { 
-        currentRow: {},
+      return {
+        setname: tableareadata.currentRow,
+        currentRow : {},
         hiddenColumn: {
           Id: true
           , CreateUserId: true
@@ -150,11 +152,18 @@
         this.currentRow = val;
       },
       selectrow: function (row, col, event) {
+        const owner = this
         this.$refs.singleTable.clearSelection()
         this.$refs.singleTable.setCurrentRow(row); 
         row.flag = true;
-        Cookies.set("table",row)
-        this.$refs.singleTable.toggleRowSelection(row, row.flag);      
+        Cookies.set("table", row)
+
+       
+        tableareadata.currentRow.tablearea = row; 
+        this.$refs.singleTable.toggleRowSelection(row, row.flag);
+
+        this.$refs.apptable.GetResult(row.id);
+         
       },
       SortChange: function (column) {
         this.paging.Sort = column.prop;

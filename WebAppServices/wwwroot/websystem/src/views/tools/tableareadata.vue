@@ -43,16 +43,16 @@
                     placeholder="输入关键字进行过滤" />
 
           <div style="overflow:scroll;height:350px;">
-            <el-tree ref="tree"
-                     class="filter-tree"
+            <el-tree  ref="tree"
+                      class="filter-tree"
                      :load="getdatabase"
-                     node-key="id"
+                      node-key="label"
                       show-checkbox
-                     lazy
+                      lazy
                      :props="defaultProps"
                      :filter-node-method="filterNode"
                      @node-click="handleNodeClick">
-              <span class="custom-tree-node" slot-scope="{ node, data }">
+                <span class="custom-tree-node" slot-scope="{ node, data }">
                 <span style="color:orangered;font-weight:600;">{{ node.label }}</span>
                 <span>
                   <el-link type="warning" round
@@ -111,12 +111,15 @@
     , settabledescription
   } from '@/api/datadictionaries'
   import Cookies from 'js-cookie'
-  import { getHeader, GetResult, Save, Remove } from '@/api/tableareadata'
+  import { getHeader, GetResult, Save, Remove, SaveList } from '@/api/tableareadata'
   import { debounce } from '@/utils';
+   
   export default {
     name: 'tableareadata',
+    currentRow: {
+      tablearea: {}   },
     data() {
-      return {
+      return { 
         tableareaname :'',
         defaultProps: {
           children: 'children',
@@ -166,14 +169,30 @@
       this.GetResult();
     },
     methods: {
-      gettables(node, resolve) {
-        datadictionariesgettables(node.key)
+      gettables(node, resolve) { 
+        datadictionariesgettables(node.data.id)
           .then(response => {
+            var owner = this;
             let datas = response.data
             datas.forEach(function (item, index) { 
               item.DataBaseName = node.label
             });
-            return resolve(datas)
+
+
+
+
+            let res = resolve(datas)
+
+            var ids = [];
+            owner.tableData.forEach(function (item, index) { 
+              ids.push(item.tableName)
+            }) 
+            if (owner.$refs.tree) { 
+              owner.$refs.tree.setCheckedKeys([]);
+              owner.$refs.tree.setCheckedKeys(ids);
+            }
+
+            return res;
           })
           .catch(function (error) { // 请求失败处理
             console.log(error)
@@ -200,6 +219,9 @@
               return resolve(response.data)
             } else if (node.level == 1) {
               owner.gettables(node, resolve)
+
+
+           
             } else {
               resolve([])
             }
@@ -247,11 +269,18 @@
           owner.tableHead = response.data
         })
       },
-      GetResult: function () {
-        const owner = this
-        GetResult(owner.paging).then(response => {
+      GetResult: function (TableAreaId) {
+        const owner = this 
+        if (TableAreaId) { 
+          owner.paging.Model.TableAreaId = TableAreaId 
+        }
+         
+     
+        GetResult(owner.paging).then(response => { 
           owner.tableData = response.data;
+        
           owner.paging.TotalCount = response.total;
+        
         })
       },
 
@@ -259,37 +288,45 @@
         const owner = this;
        
         var selectnode = this.$refs.tree.getCheckedNodes()
-
-        var table = Cookies.get("table")
-        table = JSON.parse(table);
+        let table = this.$options.currentRow.tablearea;
+       
+        var savedata = [];
         
         selectnode.forEach(function (item, index) {
           if (item.parentId) {
-            owner.model.TableAreaId = table.id
-            owner.model.DabaBaseId = item.parentId
-            owner.model.DataBaseName = item.DataBaseName
-            owner.model.TableName = item.label; 
-         
-            Save(owner.model).then(response => {
-              owner.createdialog = false;
-              owner.reset();
-              owner.GetResult();
-            })
+            var pdata = {
+              TableAreaId : table.id,
+              DabaBaseId: item.parentId,
+              DataBaseName: item.DataBaseName,
+              TableName : item.label
+            }
+            savedata.push(pdata)
           }
           });
 
-      
+
+        SaveList(savedata).then(response => {
+          owner.createdialog = false;
+          owner.reset();
+          owner.GetResult();
+        })
       
       },
 
       create: function () {
+        var owner = this
         this.createdialog = true;
-        var table = Cookies.get("table")
-        if (!table) {
-          return;
-        }
-        table = JSON.parse(table);
+        let table = this.$options.currentRow.tablearea; 
         this.tableareaname = table.areaName
+
+        var ids = [];
+        owner.tableData.forEach(function (item, index) {
+          ids.push(item.tableName)
+        })
+        if (owner.$refs.tree) {
+          owner.$refs.tree.setCheckedKeys([]);
+          owner.$refs.tree.setCheckedKeys(ids);
+        }
       },
       // 重置表单
       reset() {

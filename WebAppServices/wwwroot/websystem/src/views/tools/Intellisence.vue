@@ -161,6 +161,7 @@ export default {
       const owner = this
       GetResult(owner.paging).then(response => {
         owner.tableData = response.data
+        
         owner.paging.TotalCount = response.total
       }).catch(function(error) {
         console.log(error)

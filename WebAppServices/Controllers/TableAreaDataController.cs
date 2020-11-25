@@ -66,9 +66,9 @@ namespace WebAppServices.Controllers
 
 
         [HttpPost("GetResult")]
-        public ResponseListDto<TableAreaData> GetResult([FromBody] BaseRequest<TableAreaData> request)
+        public ResponseListDto<TableAreaDataDto> GetResult([FromBody] BaseRequest<TableAreaDataDto> request)
         {
-            ResponseListDto<TableAreaData> response = new ResponseListDto<TableAreaData>();
+            ResponseListDto<TableAreaDataDto> response = new ResponseListDto<TableAreaDataDto>();
             try
             {
                 var data = _appSystemServices.GetEntitys<TableAreaData>();
@@ -79,6 +79,12 @@ namespace WebAppServices.Controllers
                     {
                         data = data.Where(x => x.TableName.Contains(request.Filter));
                     }
+
+                    if ((request.Model.TableAreaId.ToInt64() > 0))
+                    {
+                        data = data.Where(x => x.TableAreaId == request.Model.TableAreaId.ToInt64());
+                    }
+
 
                     if (!string.IsNullOrEmpty(request.Sort.ToStringExtension()))
                     {
@@ -91,7 +97,18 @@ namespace WebAppServices.Controllers
                 }
 
                 response.Total = data.Count();
-                response.Data = data.Page(request.PageIndex, request.PageSize).ToList<TableAreaData>();
+                var returndata = data.Page(request.PageIndex, request.PageSize).ToList<TableAreaDataDto>();
+                List<KeyValuePair<Int32, List<Table>>> ls = new List<KeyValuePair<Int32, List<Table>>>();
+                returndata.ForEach(x => {
+                    if (!ls.Any(p => p.Key == x.DabaBaseId))
+                    {
+                        var listtable = _dataBaseServices.GetTables(_dataBaseServices.GetConnectionString(x.DabaBaseId)).ToList();
+                        ls.Add(new KeyValuePair<int, List<Table>>(x.DabaBaseId,listtable  ));
+                    } 
+                    x.Description = ls.Where(o => o.Key == x.DabaBaseId).FirstOrDefault().Value.Where(z => z.TableName == x.TableName).FirstOrDefault().TableDescription;
+                   
+                });
+                response.Data = returndata;
 
             }
             catch (Exception ex)

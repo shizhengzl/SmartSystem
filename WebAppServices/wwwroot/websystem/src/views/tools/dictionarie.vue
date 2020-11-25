@@ -3,36 +3,71 @@
     <div class="header" />
     <div class="navbar" style="overflow-x: hidden; overflow-y: hidden;">
 
-      <el-input v-model="filterText"
-                placeholder="输入关键字进行过滤" />
+      <el-tabs v-model="activeName" @tab-click="tabhandleClick" style="margin-left:10px"  >
+        <el-tab-pane label="数据库字典" name="first" >
+          <el-input v-model="filterText"
+                    placeholder="输入关键字进行过滤" />
 
-      <div style="overflow:scroll;height:95%;">
-        <el-tree ref="tree"
-                 class="filter-tree"
-                 :load="getdatabase"
-                 node-key="id"
-                 lazy
-                 :props="defaultProps"
-                 :filter-node-method="filterNode"
-                 @node-click="handleNodeClick">
-          <span class="custom-tree-node" slot-scope="{ node, data }">
-            <span style="color:orangered;font-weight:600;">{{ node.label }}</span>
-            <span>
-              <el-link type="warning" round
-                       v-if="data.description"
-                       size="mini">
+          <div style="overflow:scroll;height:800px;">
+            <el-tree ref="tree"
+                     class="filter-tree"
+                     :load="getdatabase"
+                     node-key="id"
+                     lazy
+                     :props="defaultProps"
+                     :filter-node-method="filterNode"
+                     @node-click="handleNodeClick">
+              <span class="custom-tree-node" slot-scope="{ node, data }">
+                <span style="color:orangered;font-weight:600;">{{ node.label }}</span>
+                <span>
+                  <el-link type="warning" round
+                           v-if="data.description"
+                           size="mini">
 
-                {{data.description}}
-              </el-link> &nbsp; &nbsp;
-              <el-button type="text" v-if="data.parentId > 0"
-                         size="mini"
-                         @click="() => updatetabledescription(node, data)">
-                备注
-              </el-button>
-            </span>
-          </span>
-        </el-tree>
-      </div>
+                    {{data.description}}
+                  </el-link> &nbsp; &nbsp;
+                  <el-button type="text" v-if="data.parentId > 0"
+                             size="mini"
+                             @click="() => updatetabledescription(node, data)">
+                    备注
+                  </el-button>
+                </span>
+              </span>
+            </el-tree>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="分类字典" name="second">
+          <div style="overflow:scroll;height:800px;">
+            <el-tree ref="treetype"
+                     class="filter-tree"
+                     :load="getdataare"
+                     node-key="id"
+                     lazy
+                     :props="defaultProps"
+                     :filter-node-method="filterNode"
+                     @node-click="handleNodeClicktype">
+              <span class="custom-tree-node" slot-scope="{ node, data }">
+                <span style="color:orangered;font-weight:600;">{{ node.label }}</span>
+                <!--<span>  {{data.description}}</span>-->
+                <span>
+                  <el-link type="warning" round
+                           v-if="data.description"
+                           size="mini"> 
+                    {{data.description}}
+                  </el-link> &nbsp; &nbsp;
+                  <el-button type="text" v-if="data.level > 1"
+                             size="mini"
+                             @click="() => updatetabledescription(node, data)">
+                    备注
+                  </el-button>
+                </span>
+              </span>
+            </el-tree>
+          </div>
+        </el-tab-pane> 
+      </el-tabs>
+
+     
     </div>
     <div class="main">
       <el-tag>{{tablename}}</el-tag>
@@ -60,15 +95,30 @@
         <el-table-column prop="isRequire"
                          label="必须"
                          :formatter="formatterisRequire"
-                         width="80" />
+                         width="80">
+          <template slot-scope="scope">
+            <i v-if="scope.row.isRequire" class="el-icon-circle-check" style="color:blue;"></i>
+            <i v-if="!scope.row.isRequire" class="el-icon-close" style="color:red;"></i>
+          </template>
+        </el-table-column>
         <el-table-column prop="isPrimarykey"
                          label="主键"
                          :formatter="formatterisPrimarykey"
-                         width="80" />
+                         width="80">
+          <template slot-scope="scope">
+            <i v-if="scope.row.isPrimarykey" class="el-icon-circle-check" style="color:blue;"></i>
+            <i v-if="!scope.row.isPrimarykey" class="el-icon-close" style="color:red;"></i>
+          </template>
+        </el-table-column>
         <el-table-column prop="isIdentity"
                          label="自增"
                          :formatter="formatterisIdentity"
-                         width="80" />
+                         width="80">
+          <template slot-scope="scope">
+            <i v-if="scope.row.isIdentity" class="el-icon-circle-check" style="color:blue;"></i>
+            <i v-if="!scope.row.isIdentity" class="el-icon-close" style="color:red"></i>
+          </template>
+        </el-table-column>
         <el-table-column prop="sqlType"
                          label="数据库类型"
                          width="120" />
@@ -119,11 +169,11 @@
   }
 
   .el-table .success-row {
-    background: #f0f9eb;
+    background-color:white;
   }
 
   .el-table--medium th, .el-table--medium td {
-    padding: 5px 0;
+    padding: 3px 0;
   }
 
   .custom-tree-node {
@@ -141,12 +191,17 @@
     , datadictionariesgetcolumns, datadictionariessetextendedproperty
     , settabledescription
   } from '@/api/datadictionaries'
+  import { getHeader, GetResult, Save, Remove } from '@/api/tablearea'
+
+  import { GetResult as GetResultArea } from '@/api/tableareadata'
   import { debounce } from '@/utils';
+import { Level } from 'chalk';
   export default {
     name: 'HelloWorld',
 
     data() {
-      return { 
+      return {
+        activeName:'first',
         tableData: [],
         filterText: '',
         createdialog: false,
@@ -158,7 +213,7 @@
           children: 'children',
           label: 'label',
           id: 'id'
-        }
+        } 
       }
     },
     watch: {
@@ -168,7 +223,9 @@
     },
 
     methods: {
-
+      tabhandleClick: function (tab, event) {
+          
+      },
       // 重置表单
       reset() {
         this.$refs.create.resetFields();
@@ -179,7 +236,8 @@
       },
       SaveTableDescription: function () {
         var data = this.tablemodel;
-        var requestdata = '' + data.parentId + ',' + data.label + ',' + data.description;
+    
+        var requestdata = '' + (data.parentId || data.databaseid) + ',' + data.label + ',' + data.description;
 
         settabledescription(requestdata)
           .then(response => {
@@ -211,7 +269,7 @@
         }
       },
       formatterisRequire(row, column) {
-        return row.isRequire ? '是' : '否'
+        return row.isRequire ? '' : '否'
       },
       formatterisIdentity(row, column) {
         return row.isIdentity ? '是' : '否'
@@ -227,6 +285,56 @@
 
           owner.getcolumns(params)
         }
+      },
+
+      handleNodeClicktype(data) {
+        if (data.level == 2) {
+        var ps = data.databaseid + ',' + data.label
+         
+          this.getcolumns(ps)
+        }
+      },
+
+      getdataare(node, resolve) {
+        const owner = this
+        GetResult({
+          PageSize: 1000,
+          PageIndex: 1,
+          TotalCount: 0,
+          Sort: 'Id',
+          Asc: false,
+          Filter: '',
+          Model: {
+          }
+        })
+          .then(response => {
+            if (node.level == 0) {
+
+              let d = response.data
+              var rs = []
+              d.forEach(function (item, index) {
+                rs.push({ id: item.id, label: item.areaName,level:1})
+              })
+
+              return resolve(rs)
+            }
+            else if (node.level == 1) {
+              owner.gettablestype(node, resolve)
+              return resolve([])
+            }
+            else if (node.level == 2) {
+              var ps = node.data.databaseid +',' + node.label
+             
+              owner.getcolumns(ps)
+              return resolve([])
+            }
+            else {
+              resolve([])
+            }
+          })
+          .catch(function (error) { // 请求失败处理
+            console.log(error)
+          })
       },
 
       getdatabase(node, resolve) {
@@ -249,6 +357,35 @@
         datadictionariesgettables(node.key) 
           .then(response => {
             return resolve(response.data)
+          })
+          .catch(function (error) { // 请求失败处理
+            console.log(error)
+          })
+      },
+
+      gettablestype(node, resolve) {
+        var owner = this;
+        let p = {
+          PageSize: 20,
+          PageIndex: 1,
+          TotalCount: 0,
+          Sort: 'Id',
+          Asc: false,
+          Filter: '',
+          Model: {
+            TableAreaId:node.key
+          }
+        }
+        GetResultArea(p)
+          .then(response => { 
+
+            let d = response.data
+            var rs = [] 
+            d.forEach(function (item, index) {
+              rs.push({ id: item.id, label: item.tableName, level: 2, databaseid: item.dabaBaseId, description : item.description })
+            })  
+
+            return resolve(rs)
           })
           .catch(function (error) { // 请求失败处理
             console.log(error)
