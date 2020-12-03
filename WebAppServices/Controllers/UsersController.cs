@@ -105,7 +105,7 @@ namespace WebAppServices.Controllers
         }
 
 
-        public List<MenuTree> GetChilds(Int64 ParentID, List<Menus> menus)
+        private List<MenuTree> GetChilds(Int64 ParentID, List<Menus> menus)
         {
             List<MenuTree> result = new List<MenuTree>(); 
             menus.Where(x => x.ParentMenuID == ParentID).ToList().ForEach(p=> result.Add(GetMenuTree(p, menus))) ; 

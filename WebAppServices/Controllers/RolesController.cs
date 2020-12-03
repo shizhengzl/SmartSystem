@@ -42,8 +42,11 @@ namespace WebAppServices.Controllers
             _appSystemServices = appSystemServices;
         }
 
-
-        [HttpPost("GetHeader")]
+        /// <summary>
+        /// 获取列头
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("GetHeader")] 
         public ResponseListDto<Column> GetHeader()
         {
             ResponseListDto<Column> response = new ResponseListDto<Column>();

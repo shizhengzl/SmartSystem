@@ -9,6 +9,7 @@ using static AutoMapper.Internal.ExpressionFactory;
 
 namespace Core.Services
 {
+    [AppServiceAttribute]
     public class AppSystemServices : IServices
     {
         /// <summary>

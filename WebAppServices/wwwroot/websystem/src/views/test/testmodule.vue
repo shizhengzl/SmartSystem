@@ -10,14 +10,7 @@
 
     <el-table style="margin-top:5px; width: 100%" border :data="tableData" @sort-change="SortChange">
       <template v-for="(item,index) in tableHead">
-        <el-table-column
-          v-if="hiddenColumn[item.columnName] !== true"
-          :key="index"
-          :prop="capitalize(item.columnName)"
-          :label="item.columnDescription || item.columnName"
-          show-overflow-tooltip
-          sortable="custom"
-        />
+        <el-table-column :key="index" :prop="capitalize(item.columnName)" :label="item.columnDescription || item.columnName" show-overflow-tooltip sortable="custom" />
       </template>
 
       <el-table-column label="操作" width="200">
@@ -38,27 +31,35 @@
       @current-change="handleCurrentChange"
     />
 
-    <el-dialog title="连接字符串管理" :visible.sync="createdialog" :close-on-click-modal="false" :close-on-press-escape="false" @close="reset">
+    <el-dialog title="测试模块" :visible.sync="createdialog" :close-on-click-modal="false" :close-on-press-escape="false" @close="reset">
       <el-form id="#create" ref="create" :model="model" :rules="rules" label-width="130px">
         <template v-for="(item,index) in tableHead">
 
-          <el-form-item v-if="item.sqlType == 'nvarchar' && item.maxLength > 0"
-                        :visible.sync="item.columnName != 'Id'"
-                        :label="item.columnDescription || item.columnName"
-                        :prop="item.columnName">
-            <el-input v-model="model[capitalize(item.columnName)]"
-                      type="textarea"
-                      clearable />
+          <el-form-item
+            v-if="item.sqlType == 'nvarchar' && item.maxLength > 0"
+            :visible.sync="item.columnName != 'Id'"
+            :label="item.columnDescription || item.columnName"
+            :prop="item.columnName"
+          >
+            <el-input
+              v-model="model[capitalize(item.columnName)]"
+              type="textarea"
+              clearable
+            />
           </el-form-item>
 
-          <el-form-item v-else-if="item.sqlType == 'nvarchar' && item.maxLength < 0"
-                        :visible.sync="item.columnName != 'Id'"
-                        :label="item.columnDescription || item.columnName"
-                        :prop="item.columnName">
-            <el-input v-model="model[capitalize(item.columnName)]"
-                      :autosize="{ minRows: 2, maxRows: 4}"
-                      type="textarea"
-                      clearable />
+          <el-form-item
+            v-else-if="item.sqlType == 'nvarchar' && item.maxLength < 0"
+            :visible.sync="item.columnName != 'Id'"
+            :label="item.columnDescription || item.columnName"
+            :prop="item.columnName"
+          >
+            <el-input
+              v-model="model[capitalize(item.columnName)]"
+              :autosize="{ minRows: 2, maxRows: 4}"
+              type="textarea"
+              clearable
+            />
           </el-form-item>
 
           <el-form-item v-else-if="item.sqlType == 'bit'" :label="item.columnDescription || item.columnName">
@@ -66,21 +67,6 @@
               <el-radio :label="true">是</el-radio>
               <el-radio :label="false">否</el-radio>
             </el-radio-group>
-          </el-form-item>
-
-          <el-form-item v-if="(item.sqlType == 'int'|| item.sqlType == 'bigint') && item.columnName != 'Id'"
-                        :label="item.columnDescription || item.columnName"
-                        :prop="item.columnName">
-          
-
-            <el-select v-model="model.dataBaseType" placeholder="请选择">
-              <el-option v-for="item in datatypes"
-                         :key="item.keys"
-                         :label="item.name"
-                         :value="item.keys">
-              </el-option>
-            </el-select>
-
           </el-form-item>
 
         </template>
@@ -93,23 +79,12 @@
   </div>
 </template>
 <script>
-import { getHeader, GetResult, Save, Remove } from '@/api/datadictionaries'
-import { GetDataType } from '@/api/enum'
+import { getHeader, GetResult, Save, Remove } from '@/api/testmodule'
 import { debounce } from '@/utils'
 export default {
-  name: 'Roles',
+  name: 'testmodule',
   data() {
     return {
-      datatypes:[],
-      hiddenColumn: {
-        Id: true,
-        CreateUserId: true,
-        CreateUserName: true,
-        CreateTime: false,
-        ModifyUserId: true,
-        ModifyUserName: true,
-        ModifyTime: true
-      },
       tableData: [],
       tableHead: [],
       model: { IsSql: false },
@@ -135,19 +110,11 @@ export default {
       this.GetResult()
     }
   },
-    mounted() {
-    this.GetDataType()
+  mounted() {
     this.getHeader()
     this.GetResult()
-    
   },
-    methods: {
-      GetDataType: function () {
-        const owner = this
-        GetDataType().then(response => {
-          owner.datatypes = response.data
-        })
-      },
+  methods: {
     SortChange: function(column) {
       this.paging.Sort = column.prop
       this.paging.Asc = column.order == 'ascending'
@@ -171,6 +138,8 @@ export default {
       const owner = this
       Remove(row).then(response => {
         owner.GetResult()
+      }).catch(function(error) {
+        console.log(error)
       })
     },
 
@@ -184,24 +153,18 @@ export default {
       const owner = this
       getHeader().then(response => {
         owner.tableHead = response.data
+      }).catch(function(error) {
+        console.log(error)
       })
     },
     GetResult: function() {
       const owner = this
       GetResult(owner.paging).then(response => {
-        response.data.forEach(function (item, index) {
-
-          if (owner.datatypes)
-             owner.GetDataType()
-          let keys = item["dataBaseType"];
-          let search = owner.datatypes.filter(item => { return item.keys == keys });
-        
-          item["dataBaseType"] = search[0].name; 
-
-         
-        });
         owner.tableData = response.data
+        
         owner.paging.TotalCount = response.total
+      }).catch(function(error) {
+        console.log(error)
       })
     },
 
@@ -209,18 +172,19 @@ export default {
       const owner = this
       Save(owner.model).then(response => {
         owner.createdialog = false
-        owner.reset()
         owner.GetResult()
+      }).catch(function(error) {
+        console.log(error)
       })
     },
 
     create: function() {
       this.createdialog = true
     },
+
     // 重置表单
     reset() {
       this.$refs.create.resetFields()
-      this.model = {}
     }
   }
 }</script>

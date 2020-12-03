@@ -7,7 +7,8 @@ using Core.Repository;
 
 namespace Core.Services
 {
-    public class DataBaseServices
+    [AppServiceAttribute]
+    public class DataBaseServices : IServices
     {
         SQLConfigServices services = new SQLConfigServices();
 

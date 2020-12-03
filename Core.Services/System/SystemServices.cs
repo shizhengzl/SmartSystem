@@ -6,6 +6,7 @@ using System.Text;
 
 namespace Core.Services
 {
+    [AppServiceAttribute]
     public class SystemServices : IServices
     {
         /// <summary>

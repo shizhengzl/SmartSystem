@@ -9,7 +9,7 @@ namespace WebAppServices.Controllers
 {
     public class BaseController : ControllerBase
     {
-        public UserDto GetUsers()
+        private UserDto GetUsers()
         {
             var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
@@ -18,7 +18,7 @@ namespace WebAppServices.Controllers
             return users;
         }
 
-        public String GetToken()
+        private String GetToken()
         {
             return HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
         }

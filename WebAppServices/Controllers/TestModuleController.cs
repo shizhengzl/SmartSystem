@@ -16,11 +16,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using WebAppServices.Model;
 using static AutoMapper.Internal.ExpressionFactory;
+
 namespace WebAppServices.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MenusController : BaseController
+    public class TestModuleController : BaseController
     {
         private IMapper _mapper { get; set; }
         private UsersSrevices _userServices { get; set; }
@@ -28,7 +29,7 @@ namespace WebAppServices.Controllers
 
         private AppSystemServices _appSystemServices { get; set; }
         private SystemServices _sysservices { get; set; }
-        public MenusController(IMapper mapper
+        public TestModuleController(IMapper mapper
             , UsersSrevices usersSrevices
             , SystemServices sysservices
             , DataBaseServices dataBaseServices
@@ -41,8 +42,11 @@ namespace WebAppServices.Controllers
             _appSystemServices = appSystemServices;
         }
 
-
-        [HttpPost("GetHeader")]
+        /// <summary>
+        /// 获取列头
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("GetHeader")] 
         public ResponseListDto<Column> GetHeader()
         {
             ResponseListDto<Column> response = new ResponseListDto<Column>();
@@ -50,7 +54,7 @@ namespace WebAppServices.Controllers
             {
                 var user = this.CurrentUser;
 
-                response.Data = _dataBaseServices.GetColumns(typeof(Menus).Name);
+                response.Data = _dataBaseServices.GetColumns(typeof(TestModule).Name);
             }
             catch (Exception ex)
             {
@@ -64,18 +68,18 @@ namespace WebAppServices.Controllers
 
 
         [HttpPost("GetResult")]
-        public ResponseListDto<MenuDto> GetResult([FromBody] BaseRequest<MenuDto> request)
+        public ResponseListDto<TestModule> GetResult([FromBody] BaseRequest<TestModule> request)
         {
-            ResponseListDto<MenuDto> response = new ResponseListDto<MenuDto>();
+            ResponseListDto<TestModule> response = new ResponseListDto<TestModule>();
             try
             {
-                var data = _appSystemServices.GetEntitys<Menus>();
+                var data = _appSystemServices.GetEntitys<TestModule>();
 
                 if (!request.IsNull())
                 {
                     if (!string.IsNullOrEmpty(request.Filter.ToStringExtension()))
                     {
-                        data = data.Where(x => x.MenuName.Contains(request.Filter));
+                        data = data.Where(x => x.ModuleName.Contains(request.Filter));
                     }
 
                     if (!string.IsNullOrEmpty(request.Sort.ToStringExtension()))
@@ -88,15 +92,8 @@ namespace WebAppServices.Controllers
                     }
                 }
 
-                var alldata = data.ToList<MenuDto>(); 
-                // 组织menus
-                var parent = alldata.Where(x => x.ParentMenuID == null).ToList();
-                parent.ForEach(p => {
-                    p.children = GetChilds(p,alldata);
-                });
-
                 response.Total = data.Count();
-                response.Data = parent;// data.Page(request.PageIndex, request.PageSize).ToList<Menus>();
+                response.Data = data.Page(request.PageIndex, request.PageSize).ToList<TestModule>();
 
             }
             catch (Exception ex)
@@ -109,30 +106,21 @@ namespace WebAppServices.Controllers
         }
 
 
-        private List<MenuDto> GetChilds(MenuDto menu, List<MenuDto> menus)
-        { 
-            var childs = menus.Where(x => x.ParentMenuID == menu.Id).ToList();
-            childs.ForEach(x => {
-                x.children = GetChilds(x,menus);
-            });
-
-            return childs.ToList();
-        }
 
         [HttpPost("Save")]
-        public ResponseDto<Menus> Save([FromBody] Menus request)
+        public ResponseDto<TestModule> Save([FromBody] TestModule request)
         {
-            ResponseDto<Menus> response = new ResponseDto<Menus>();
+            ResponseDto<TestModule> response = new ResponseDto<TestModule>();
             try
             {
-                var _entity = _appSystemServices.GetEntitys<Menus>();
+                var _entity = _appSystemServices.GetEntitys<TestModule>();
                 if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
                 {
-                    _appSystemServices.Create<Menus>(request);
+                    _appSystemServices.Create<TestModule>(request);
                 }
                 else
                 {
-                    _appSystemServices.Modify<Menus>(request);
+                    _appSystemServices.Modify<TestModule>(request);
                 }
             }
             catch (Exception ex)
@@ -146,7 +134,7 @@ namespace WebAppServices.Controllers
 
 
         [HttpPost("Remove")]
-        public ResponseDto<Boolean> Remove([FromBody] Menus request)
+        public ResponseDto<Boolean> Remove([FromBody] TestModule request)
         {
             ResponseDto<Boolean> response = new ResponseDto<Boolean>();
 
@@ -160,7 +148,7 @@ namespace WebAppServices.Controllers
                     return response;
                 }
 
-                var _entity = _appSystemServices.GetEntitys<Menus>();
+                var _entity = _appSystemServices.GetEntitys<TestModule>();
                 response.Data = _entity.Where(x => x.Id == request.Id).ToDelete().ExecuteAffrows() > 0;
             }
             catch (Exception ex)
@@ -173,4 +161,3 @@ namespace WebAppServices.Controllers
         }
     }
 }
-

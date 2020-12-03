@@ -8,14 +8,22 @@ using Core.UsuallyCommon;
 
 namespace Core.Services.AppSystem
 {
-    public class UsersSrevices : BaseServices
+
+    [AppServiceAttribute]
+    public class UsersSrevices : IServices
     {
         /// <summary>
         /// 构造器
         /// </summary>
         /// <param name="mapper"></param>
-        public UsersSrevices(IMapper mapper) : base(mapper) {
+  
+        /// <summary>
+        /// 注入接口
+        /// </summary>
+        public readonly IMapper _mapper;
 
+        public UsersSrevices(IMapper mapper)  {
+            _mapper = mapper;
         }
 
 
