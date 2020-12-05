@@ -24,6 +24,10 @@ import 'xe-utils'
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/style.css'
 
+
+import wl from 'wl-vue-select'
+import 'wl-vue-select/lib/wl-vue-select.css'
+Vue.use(wl)
 Vue.use(VXETable)
 
 /**

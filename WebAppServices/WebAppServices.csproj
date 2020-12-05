@@ -38,6 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Model\TestModule\" />
     <Folder Include="wwwroot\websystem\src\views\users\" />
     <Folder Include="wwwroot\jingdong\" />
   </ItemGroup>

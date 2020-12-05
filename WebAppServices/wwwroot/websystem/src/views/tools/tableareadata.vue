@@ -8,7 +8,7 @@
 
     <el-table style="margin-top:5px; width: 100%" border :data="tableData" @sort-change="SortChange">
       <template v-for="(item,index) in tableHead">
-        <el-table-column :prop="capitalize(item.columnName)"
+        <el-table-column :prop="item.columnName"
                          :label="item.columnDescription || item.columnName"
                          v-if="hiddenColumn[item.columnName] !== true"
                          :key="index"
@@ -72,30 +72,7 @@
           </div>
         </div>
 
-        <!--<template v-for="(item,index) in tableHead">
-
-    <el-form-item v-if="item.sqlType == 'nvarchar' && item.maxLength > 0"
-                  :visible.sync="item.columnName != 'Id'"
-                  :label="item.columnDescription || item.columnName" :prop="item.columnName">
-      <el-input v-model="model[capitalize(item.columnName)]"
-                type="textarea" clearable></el-input>
-    </el-form-item>
-
-    <el-form-item v-else-if="item.sqlType == 'nvarchar' && item.maxLength < 0"
-                  :visible.sync="item.columnName != 'Id'"
-                  :label="item.columnDescription || item.columnName" :prop="item.columnName">
-      <el-input v-model="model[capitalize(item.columnName)]" :autosize="{ minRows: 2, maxRows: 4}"
-                type="textarea" clearable></el-input>
-    </el-form-item>
-
-    <el-form-item v-else-if="item.sqlType == 'bit'" :label="item.columnDescription || item.columnName">
-      <el-radio-group v-model="model[item.columnName]">
-        <el-radio :label="true">是</el-radio>
-        <el-radio :label="false">否</el-radio>
-      </el-radio-group>
-    </el-form-item>
-
-  </template>-->
+       
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="createdialog=false">取 消</el-button>
@@ -128,13 +105,14 @@
         },
         filterText: '',
         hiddenColumn: {
-          Id: true
-          , CreateUserId: true
-          , CreateUserName: true
-          , CreateTime: false
-          , ModifyUserId: true
-          , ModifyUserName: true
-          , ModifyTime: true
+          id: true
+          , parentId: true
+          , createUserId: true
+          , createUserName: true
+          , createTime: false
+          , modifyUserId: true
+          , modifyUserName: true
+          , modifyTime: true
         },
         tableData: [],
         tableHead: [],
@@ -176,11 +154,7 @@
             let datas = response.data
             datas.forEach(function (item, index) { 
               item.DataBaseName = node.label
-            });
-
-
-
-
+            }); 
             let res = resolve(datas)
 
             var ids = [];
@@ -204,11 +178,7 @@
       },
       handleNodeClick(data) {
         var owner = this
-        if (data.parentId) {
-          //var params = '' + data.parentId + ',' + data.label;
-          //owner.tablename = '表名:' + data.label;
-
-          //owner.getcolumns(params)
+        if (data.parentId) { 
         }
       },
       getdatabase(node, resolve) {
@@ -218,10 +188,7 @@
             if (node.level == 0) {
               return resolve(response.data)
             } else if (node.level == 1) {
-              owner.gettables(node, resolve)
-
-
-           
+              owner.gettables(node, resolve) 
             } else {
               resolve([])
             }
@@ -254,14 +221,7 @@
         Remove(row).then(response => {
           owner.GetResult();
         })
-      },
-
-      capitalize: function (value) {
-        if (!value)
-          return value;
-        value = value.toString()
-        return value.charAt(0).toLowerCase() + value.slice(1)
-      },
+      }, 
 
       getHeader: function () {
         const owner = this

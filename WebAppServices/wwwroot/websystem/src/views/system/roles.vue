@@ -8,7 +8,7 @@
 
     <el-table style="margin-top:5px; width: 100%" border :data="tableData"  @sort-change="SortChange">
       <template v-for="(item,index) in tableHead">
-        <el-table-column :prop="capitalize(item.columnName)"
+        <el-table-column :prop="item.columnName"
                          :label="item.columnDescription || item.columnName"
                          v-if="hiddenColumn[item.columnName] !== true"
                          :key="index"
@@ -41,14 +41,14 @@
           <el-form-item v-if="item.sqlType == 'nvarchar' && item.maxLength > 0"
                         :visible.sync="item.columnName != 'Id'"
                         :label="item.columnDescription || item.columnName" :prop="item.columnName">
-            <el-input v-model="model[capitalize(item.columnName)]"
+            <el-input v-model="model[item.columnName]"
                       type="textarea" clearable></el-input>
           </el-form-item>
 
           <el-form-item v-else-if="item.sqlType == 'nvarchar' && item.maxLength < 0"
                         :visible.sync="item.columnName != 'Id'"
                         :label="item.columnDescription || item.columnName" :prop="item.columnName">
-            <el-input v-model="model[capitalize(item.columnName)]" :autosize="{ minRows: 2, maxRows: 4}"
+            <el-input v-model="model[item.columnName]" :autosize="{ minRows: 2, maxRows: 4}"
                       type="textarea" clearable></el-input>
           </el-form-item>
 
@@ -76,13 +76,14 @@
     data() {
       return {
         hiddenColumn: {
-          Id:true
-          , CreateUserId: true
-          , CreateUserName: true
-          , CreateTime: false
-          , ModifyUserId: true
-          , ModifyUserName: true
-          , ModifyTime: true
+          id: true
+          , parentId: true
+          , createUserId: true
+          , createUserName: true
+          , createTime: false
+          , modifyUserId: true
+          , modifyUserName: true
+          , modifyTime: true
         },
         tableData: [],
         tableHead: [],
@@ -138,15 +139,7 @@
         Remove(row).then(response => {
           owner.GetResult();
         })
-      },
-
-      capitalize: function (value) {
-        if (!value)
-          return value;
-        value = value.toString()
-        return value.charAt(0).toLowerCase() + value.slice(1)
-      },
-
+      },  
       getHeader: function () {
         const owner = this
         getHeader().then(response => {
@@ -159,8 +152,7 @@
           owner.tableData = response.data;
           owner.paging.TotalCount = response.total;
         })
-      },
-
+      }, 
       Save: function () {
         const owner = this; 
         Save(owner.model).then(response => {
@@ -168,8 +160,7 @@
           owner.reset();
           owner.GetResult();
         })
-      },
-
+      }, 
       create: function () {
         this.createdialog = true;  
       }, 

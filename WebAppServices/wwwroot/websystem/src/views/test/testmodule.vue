@@ -1,67 +1,93 @@
 <template>
   <div style="margin-left:12px;margin-top:5px;">
     <el-button type="primary" icon="el-icon-circle-plus-outline" @click="create()">添加</el-button>
-    <el-input
-      v-model="filter"
-      placeholder="请输入内容"
-      style="width:220px;margin-left:5px;"
-      prefix-icon="el-icon-search"
-    />
+    <el-input v-model="filter"
+              placeholder="请输入内容"
+              style="width:220px;margin-left:5px;"
+              prefix-icon="el-icon-search" />
 
-    <el-table style="margin-top:5px; width: 100%" border :data="tableData" @sort-change="SortChange">
+    <vxe-table resizable
+               row-id="id"
+               :tree-config="{children: 'children'}"
+               :data="treedata">
+
       <template v-for="(item,index) in tableHead">
-        <el-table-column :key="index" :prop="capitalize(item.columnName)" :label="item.columnDescription || item.columnName" show-overflow-tooltip sortable="custom" />
+        <vxe-table-column v-if="hiddenColumn[item.columnName] !== true"
+                          :key="index"
+                          :field="item.columnName"
+                          :title="item.columnDescription || item.columnName"
+                          :tree-node="item.columnName == 'moduleName'"
+                          show-overflow-tooltip />
       </template>
-
-      <el-table-column label="操作" width="200">
+      <vxe-table-column label="操作" width="200">
         <template slot-scope="scope">
           <el-button type="success" size="small" @click="Modify(scope.row)">编辑</el-button>
           <el-button type="danger" size="small" @click="Remove(scope.row)">删除</el-button>
         </template>
-      </el-table-column>
-    </el-table>
+      </vxe-table-column>
+    </vxe-table>
 
-    <el-pagination
-      :current-page="paging.PageIndex"
-      :page-sizes="[5, 10, 20, 40]"
-      :page-size="paging.PageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="paging.TotalCount"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    />
+    <el-pagination :current-page="paging.PageIndex"
+                   :page-sizes="[5, 10, 20, 40]"
+                   :page-size="paging.PageSize"
+                   layout="total, sizes, prev, pager, next, jumper"
+                   :total="paging.TotalCount"
+                   @size-change="handleSizeChange"
+                   @current-change="handleCurrentChange" />
 
     <el-dialog title="测试模块" :visible.sync="createdialog" :close-on-click-modal="false" :close-on-press-escape="false" @close="reset">
       <el-form id="#create" ref="create" :model="model" :rules="rules" label-width="130px">
         <template v-for="(item,index) in tableHead">
 
-          <el-form-item
-            v-if="item.sqlType == 'nvarchar' && item.maxLength > 0"
-            :visible.sync="item.columnName != 'Id'"
-            :label="item.columnDescription || item.columnName"
-            :prop="item.columnName"
-          >
-            <el-input
-              v-model="model[capitalize(item.columnName)]"
-              type="textarea"
-              clearable
-            />
+
+
+          <!-- 数字类型 -->
+          <el-form-item v-if="(item.sqlType == 'int' || item.sqlType == 'bigint') && hiddenColumn[item.columnName] !== true
+                        && item.columnName !== 'parentId'"
+                        :label="item.columnDescription || item.columnName"
+                        :prop="item.columnName">
+            <el-input v-model="model[item.columnName]"
+                      clearable />
           </el-form-item>
 
-          <el-form-item
-            v-else-if="item.sqlType == 'nvarchar' && item.maxLength < 0"
-            :visible.sync="item.columnName != 'Id'"
-            :label="item.columnDescription || item.columnName"
-            :prop="item.columnName"
-          >
-            <el-input
-              v-model="model[capitalize(item.columnName)]"
-              :autosize="{ minRows: 2, maxRows: 4}"
-              type="textarea"
-              clearable
-            />
+          <!--树-->
+          <el-form-item v-else-if="item.columnName == 'parentId'"
+                        :label="item.columnDescription || item.columnName"
+                        :prop="item.columnName">
+
+            <wlTreeSelect leaf
+                          width="240" 
+                          check-strictly="false"
+                          multiple="true"
+                          :props="props"
+                          :data="treedata"
+                          @change="hindleChanged"
+                          v-model="selected"></wlTreeSelect>
+
           </el-form-item>
 
+          <!--字符串 （不长）-->
+          <el-form-item v-else-if="item.sqlType == 'nvarchar' && item.maxLength > 0"
+                        :visible.sync="item.columnName != 'Id'"
+                        :label="item.columnDescription || item.columnName"
+                        :prop="item.columnName">
+            <el-input v-model="model[item.columnName]"
+                      type="textarea"
+                      clearable />
+          </el-form-item>
+
+          <!--字符串 （非常长）-->
+          <el-form-item v-else-if="item.sqlType == 'nvarchar' && item.maxLength < 0"
+                        :visible.sync="item.columnName != 'Id'"
+                        :label="item.columnDescription || item.columnName"
+                        :prop="item.columnName">
+            <el-input v-model="model[item.columnName]"
+                      :autosize="{ minRows: 2, maxRows: 4}"
+                      type="textarea"
+                      clearable />
+          </el-form-item>
+
+          <!--boolean 类型-->
           <el-form-item v-else-if="item.sqlType == 'bit'" :label="item.columnDescription || item.columnName">
             <el-radio-group v-model="model[item.columnName]">
               <el-radio :label="true">是</el-radio>
@@ -79,12 +105,29 @@
   </div>
 </template>
 <script>
-import { getHeader, GetResult, Save, Remove } from '@/api/testmodule'
+import { getHeader, GetResult, Save, Remove ,GetTree} from '@/api/testmodule'
 import { debounce } from '@/utils'
+import { MessageBox, Message } from 'element-ui'
 export default {
-  name: 'testmodule',
+  name: 'testmodule', 
   data() {
     return {
+      treedata: [],
+      selected: [],
+      props: {
+        label: "moduleName",
+        value: "id"
+      }, // 配置
+      hiddenColumn: {
+        id: true
+        , parentId:true
+        , createUserId: true
+        , createUserName: true
+        , createTime: false
+        , modifyUserId: true
+        , modifyUserName: true
+        , modifyTime: true
+      },
       tableData: [],
       tableHead: [],
       model: { IsSql: false },
@@ -113,8 +156,13 @@ export default {
   mounted() {
     this.getHeader()
     this.GetResult()
+    this.GetTree()
   },
-  methods: {
+    methods: {
+      hindleChanged(val) { 
+        this.model.parentId = val[0].id;
+        this.model.parentName = val[0].moduleName; 
+      },
     SortChange: function(column) {
       this.paging.Sort = column.prop
       this.paging.Asc = column.order == 'ascending'
@@ -133,52 +181,58 @@ export default {
     Modify: function(row) {
       this.createdialog = true
       this.model = row
+      this.selected = [row.parentId]; 
     },
     Remove: function(row) {
       const owner = this
       Remove(row).then(response => {
         owner.GetResult()
-      }).catch(function(error) {
-        console.log(error)
       })
-    },
-
-    capitalize: function(value) {
-      if (!value) { return value }
-      value = value.toString()
-      return value.charAt(0).toLowerCase() + value.slice(1)
-    },
-
+    }, 
+    GetTree: function() {
+      const owner = this
+      GetTree().then(response => {
+        owner.treedata = response.data
+      })
+    }, 
     getHeader: function() {
       const owner = this
       getHeader().then(response => {
         owner.tableHead = response.data
-      }).catch(function(error) {
-        console.log(error)
       })
     },
     GetResult: function() {
-      const owner = this
-      GetResult(owner.paging).then(response => {
-        owner.tableData = response.data
+      //const owner = this
+      //GetResult(owner.paging).then(response => {
+      //  owner.tableData = response.data
         
-        owner.paging.TotalCount = response.total
-      }).catch(function(error) {
-        console.log(error)
+      //  owner.paging.TotalCount = response.total
+      //})
+      const owner = this
+      GetTree().then(response => {
+        owner.treedata = response.data
       })
     },
 
     Save: function() {
-      const owner = this
+      const owner = this 
+      if (owner.model.id && owner.model.id == owner.model.parentId) {
+
+        Message({
+          message: '不能选择自己',
+          type: 'error',
+          duration: 5 * 1000
+        })
+        return;
+      }
       Save(owner.model).then(response => {
         owner.createdialog = false
-        owner.GetResult()
-      }).catch(function(error) {
-        console.log(error)
+        owner.GetTree()
       })
     },
 
-    create: function() {
+    create: function () {
+      this.model = {}
       this.createdialog = true
     },
 

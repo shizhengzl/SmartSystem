@@ -85,7 +85,9 @@ namespace Core.Services
         {
             var columnsql = services.GetColumns(FreeSqlFactory.GetDataType);
             columnsql = string.Format(columnsql, tableName);
-            return FreeSqlFactory.GetFreeSql().Ado.ExecuteDataTable(columnsql).ToList<Column>();
+            var list = FreeSqlFactory.GetFreeSql().Ado.ExecuteDataTable(columnsql).ToList<Column>();
+            list.ForEach(x => x.ColumnName = x.ColumnName.ToFirstCharToLower());
+            return list;
         }
 
 

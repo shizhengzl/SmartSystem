@@ -37,3 +37,12 @@ export function Remove(data) {
     data
   })
 }
+
+
+export function GetTree(data) {
+  return request({
+    url: '/api/TestModule/GetTree',
+    method: 'post',
+    data
+  })
+}

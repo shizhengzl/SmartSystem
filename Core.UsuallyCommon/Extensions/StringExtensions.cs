@@ -117,5 +117,17 @@ namespace Core.UsuallyCommon
             return password;
         }
 
+        /// <summary>
+        /// 首字母转小写
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static String ToFirstCharToLower(this String str)
+        {
+            if (str.ToStringExtension().Length > 0)
+                return str.Substring(0, 1).ToLower() + str.Substring(1);
+            return str;
+        }
+
     }
 }

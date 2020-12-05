@@ -67,6 +67,9 @@ namespace WebAppServices.Controllers
 
 
 
+
+
+
         [HttpPost("GetResult")]
         public ResponseListDto<TestModule> GetResult([FromBody] BaseRequest<TestModule> request)
         {
@@ -158,6 +161,43 @@ namespace WebAppServices.Controllers
                 _sysservices.AddExexptionLogs(ex, "Remove");
             }
             return response;
+        }
+
+
+
+
+
+        
+        [HttpPost("GetTree")]
+        public ResponseListDto<TestModule> GetTree()
+        {
+            ResponseListDto<TestModule> response = new ResponseListDto<TestModule>();
+            try
+            {
+                var data = _appSystemServices.GetEntitys<TestModule>().Where(x => x.ParentId == 0).ToList();
+
+                data.ForEach(x => {
+                    GetChildren(x);
+                });
+
+                response.Data = data.ToList<TestModule>();
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.Success = false;
+                _sysservices.AddExexptionLogs(ex, "GetHeader");
+            }
+            return response;
+        }
+
+        [HttpPost("GetChildren")]
+        private void GetChildren(TestModule tree)
+        {
+            tree.children = _appSystemServices.GetEntitys<TestModule>().Where(o => o.ParentId == tree.Id).ToList<TestModule>();
+            tree.children.ForEach(x=> {
+                GetChildren(x);
+            });
         }
     }
 }

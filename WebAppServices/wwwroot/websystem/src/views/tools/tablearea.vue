@@ -21,7 +21,7 @@
                              width="55">
             </el-table-column>
             <template v-for="(item,index) in tableHead">
-              <el-table-column :prop="capitalize(item.columnName)"
+              <el-table-column :prop="item.columnName"
                                :label="item.columnDescription || item.columnName"
                                v-if="hiddenColumn[item.columnName] !== true"
                                :key="index"
@@ -54,10 +54,7 @@
           <tableareadata ref="apptable"></tableareadata>
         </div>
       </el-col>
-    </el-row>
-   
-  
-
+    </el-row> 
 
     <el-dialog title="表归类" :visible.sync="createdialog" :close-on-click-modal="false" :close-on-press-escape="false" @close="reset">
       <el-form id="#create" :model="model" :rules="rules" ref="create" label-width="130px">
@@ -66,14 +63,14 @@
           <el-form-item v-if="item.sqlType == 'nvarchar' && item.maxLength > 0"
                         :visible.sync="item.columnName != 'Id'"
                         :label="item.columnDescription || item.columnName" :prop="item.columnName">
-            <el-input v-model="model[capitalize(item.columnName)]"
+            <el-input v-model="model[item.columnName]"
                       type="textarea" clearable></el-input>
           </el-form-item>
 
           <el-form-item v-else-if="item.sqlType == 'nvarchar' && item.maxLength < 0"
                         :visible.sync="item.columnName != 'Id'"
                         :label="item.columnDescription || item.columnName" :prop="item.columnName">
-            <el-input v-model="model[capitalize(item.columnName)]" :autosize="{ minRows: 2, maxRows: 4}"
+            <el-input v-model="model[item.columnName]" :autosize="{ minRows: 2, maxRows: 4}"
                       type="textarea" clearable></el-input>
           </el-form-item>
 
@@ -106,13 +103,14 @@
         setname: tableareadata.currentRow,
         currentRow : {},
         hiddenColumn: {
-          Id: true
-          , CreateUserId: true
-          , CreateUserName: true
-          , CreateTime: false
-          , ModifyUserId: true
-          , ModifyUserName: true
-          , ModifyTime: true
+          id: true
+          , parentId: true
+          , createUserId: true
+          , createUserName: true
+          , createTime: false
+          , modifyUserId: true
+          , modifyUserName: true
+          , modifyTime: true
         },
         tableData: [],
         tableHead: [],
@@ -135,8 +133,7 @@
     },
     components: {
       'tableareadata': tableareadata   
-    },
-
+    }, 
     watch: {
       filter: function (searchvalue) {
         this.paging.Filter = searchvalue;
@@ -156,12 +153,9 @@
         this.$refs.singleTable.clearSelection()
         this.$refs.singleTable.setCurrentRow(row); 
         row.flag = true;
-        Cookies.set("table", row)
-
-       
+        Cookies.set("table", row)  
         tableareadata.currentRow.tablearea = row; 
-        this.$refs.singleTable.toggleRowSelection(row, row.flag);
-
+        this.$refs.singleTable.toggleRowSelection(row, row.flag); 
         this.$refs.apptable.GetResult(row.id);
          
       },
@@ -189,15 +183,7 @@
         Remove(row).then(response => {
           owner.GetResult();
         })
-      },
-
-      capitalize: function (value) {
-        if (!value)
-          return value;
-        value = value.toString()
-        return value.charAt(0).toLowerCase() + value.slice(1)
-      },
-
+      },  
       getHeader: function () {
         const owner = this
         getHeader().then(response => {
