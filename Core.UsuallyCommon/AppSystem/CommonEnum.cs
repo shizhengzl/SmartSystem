@@ -6,6 +6,13 @@ namespace Core.UsuallyCommon
 {
     public class CommonEnum
     {
+
+
+        /// <summary>
+        /// 系统超级单位
+        /// </summary>
+        public static string SupperCompany { get { return "知科云科技信息有限公司"; } }
+
         /// <summary>
         /// 系统超级管理员
         /// </summary>

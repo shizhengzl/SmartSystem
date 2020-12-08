@@ -16,7 +16,7 @@ namespace Core.Repository
         /// 排序
         /// </summary>
         [Description("排序")] 
-        public Int64 Description { get; set; }
+        public Int64 Sort { get; set; }
 
         /// <summary>
         /// 模块名称
@@ -31,7 +31,7 @@ namespace Core.Repository
         /// </summary>
         [Description("模块描述")]
         [Column(StringLength = 200)]
-        public String Node { get; set; }
+        public String Note { get; set; }
 
 
         /// <summary>
@@ -53,5 +53,14 @@ namespace Core.Repository
         [Column(StringLength = 100)]
         [Description("父级名称")]
         public String ParentName { get; set; }
+
+
+
+        /// <summary>
+        /// URL地址
+        /// </summary>
+        [Column(StringLength = 2000)]
+        [Description("URL地址")]
+        public String Url { get; set; }
     }
 }

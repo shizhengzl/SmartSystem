@@ -76,7 +76,7 @@ namespace WebAppServices.Controllers
 
             List<MenuTree> router = new List<MenuTree>();
             // 组织menus
-            var parent = menus.Where(x => x.ParentMenuID.ToInt32() == 0).ToList();
+            var parent = menus.Where(x => x.ParentId.ToInt32() == 0).ToList();
             parent.ForEach(p => {
                 router.Add(GetMenuTree(p,menus)); 
             });
@@ -108,7 +108,7 @@ namespace WebAppServices.Controllers
         private List<MenuTree> GetChilds(Int64 ParentID, List<Menus> menus)
         {
             List<MenuTree> result = new List<MenuTree>(); 
-            menus.Where(x => x.ParentMenuID == ParentID).ToList().ForEach(p=> result.Add(GetMenuTree(p, menus))) ; 
+            menus.Where(x => x.ParentId == ParentID).ToList().ForEach(p=> result.Add(GetMenuTree(p, menus))) ; 
             return   result;
         }
 

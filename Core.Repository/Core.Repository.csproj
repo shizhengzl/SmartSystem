@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Generator\" />
+    <Folder Include="Tools\Generator\" />
   </ItemGroup>
 
 </Project>

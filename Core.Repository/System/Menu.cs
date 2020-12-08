@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FreeSql.DataAnnotations;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
@@ -18,11 +19,7 @@ namespace Core.Repository
         [Description("菜单名称")]
         public String MenuName { get; set; }
 
-        ///  <summary>
-        /// 父级菜单ID
-        /// </summary>
-        [Description("父级菜单ID")]
-        public Int64? ParentMenuID { get; set; }
+        
 
         ///  <summary>
         /// 菜单层级
@@ -64,6 +61,27 @@ namespace Core.Repository
         /// </summary>
         [Description("是否总是显示")]
         public Boolean? IsAlwaysShow { get; set; }
+
+
+        /// <summary>
+        /// 子节点
+        /// </summary> 
+        [Description("子节点")]
+        [Column(IsIgnore = true)]
+        public List<Menus> children { get; set; }
+
+        /// <summary>
+        /// 父级ID
+        /// </summary>
+        [Description("父级ID")]
+        public Int64 ParentId { get; set; }
+
+        /// <summary>
+        /// 父级名称
+        /// </summary>
+        [Column(StringLength = 100)]
+        [Description("父级名称")]
+        public String ParentName { get; set; }
 
     }
 }

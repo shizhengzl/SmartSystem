@@ -21,11 +21,26 @@ namespace Core.Repository
                 FreeSqlFactory._Freesql.Delete<RoleUsers>().Where("1=1").ExecuteAffrows();
                 FreeSqlFactory._Freesql.Delete<Users>().Where("1=1").ExecuteAffrows();
                 FreeSqlFactory._Freesql.Delete<DataBaseConnection>().Where("1=1").ExecuteAffrows();
+                FreeSqlFactory._Freesql.Delete<Company>().Where("1=1").ExecuteAffrows();
+
+                FreeSqlFactory._Freesql.Delete<TableArea>().Where("1=1").ExecuteAffrows();
+
+                FreeSqlFactory._Freesql.Delete<TableAreaData>().Where("1=1").ExecuteAffrows();
+            }
+
+            Int64 companyid = 0;
+            // 初始话单位
+            if (!FreeSqlFactory._Freesql.Select<Company>().Where(x => x.CompanyName == CommonEnum.SupperCompany).Any())
+            {
+                Company company = new Company() {
+                     CompanyName = CommonEnum.SupperCompany 
+                };
+                companyid = FreeSqlFactory._Freesql.Insert<Company>(company).ExecuteIdentity(); 
             }
 
 
             Int64 adminrole = 0;
-            Int64 touristrole = 0;
+            Int64 touristrole = 0; 
 
             // 初始化角色
             if (!FreeSqlFactory._Freesql.Select<Roles>().Where(x => x.RoleName == CommonEnum.SupperAdmin).Any())
@@ -65,8 +80,13 @@ namespace Core.Repository
             // 初始化菜单
             if (!FreeSqlFactory._Freesql.Select<Menus>().Where("1=1").Any())
             {
-                Menus m1 = new Menus() { MenuName = "系统管理", MenuIcon = "404", MenuPath = "/system", Url = "Layout", IsAlwaysShow = true, IsAvailable = true };
+                Menus m1 = new Menus() { MenuName = "超级系统管理", MenuIcon = "404", MenuPath = "/sppersystem", Url = "Layout", IsAlwaysShow = true, IsAvailable = true };
                 var m1id = FreeSqlFactory._Freesql.Insert<Menus>(m1).ExecuteIdentity();
+
+
+                Menus s1 = new Menus() { MenuName = "系统管理", MenuIcon = "404", MenuPath = "/system", Url = "Layout", IsAlwaysShow = true, IsAvailable = true };
+                var s1id = FreeSqlFactory._Freesql.Insert<Menus>(s1).ExecuteIdentity();
+
                 Menus m2 = new Menus()
                 {
                     MenuName = "菜单管理",
@@ -74,9 +94,8 @@ namespace Core.Repository
                     MenuPath = "/menus",
                     Url = "/system/menus",
                     IsAlwaysShow = true,
-                    IsAvailable = true
-                    ,
-                    ParentMenuID = m1id
+                    IsAvailable = true,
+                    ParentId = m1id
                 };
                 Menus m3 = new Menus()
                 {
@@ -85,10 +104,22 @@ namespace Core.Repository
                     MenuPath = "/requestresponselog",
                     Url = "/system/requestresponselog",
                     IsAlwaysShow = true,
-                    IsAvailable = true
-                   ,
-                    ParentMenuID = m1id
+                    IsAvailable = true,
+                    ParentId = m1id
                 };
+
+                Menus m6 = new Menus()
+                {
+                    MenuName = "系统日志",
+                    MenuIcon = "404",
+                    MenuPath = "/systemlog",
+                    Url = "/system/systemlogs",
+                    IsAlwaysShow = true,
+                    IsAvailable = true,
+                    ParentId = m1id
+                };
+                 
+
                 Menus m4 = new Menus()
                 {
                     MenuName = "角色管理",
@@ -96,9 +127,8 @@ namespace Core.Repository
                     MenuPath = "/roles",
                     Url = "/system/roles",
                     IsAlwaysShow = true,
-                    IsAvailable = true
-                 ,
-                    ParentMenuID = m1id
+                    IsAvailable = true,
+                    ParentId = s1id
                 };
                 Menus m5 = new Menus()
                 {
@@ -107,15 +137,16 @@ namespace Core.Repository
                     MenuPath = "/users",
                     Url = "/system/users",
                     IsAlwaysShow = true,
-                    IsAvailable = true
-                ,
-                    ParentMenuID = m1id
+                    IsAvailable = true,
+                    ParentId = s1id
                 };
+
+               
                 FreeSqlFactory._Freesql.Insert<Menus>(m2).ExecuteAffrows();
                 FreeSqlFactory._Freesql.Insert<Menus>(m3).ExecuteAffrows();
                 FreeSqlFactory._Freesql.Insert<Menus>(m4).ExecuteAffrows();
                 FreeSqlFactory._Freesql.Insert<Menus>(m5).ExecuteAffrows();
-
+                FreeSqlFactory._Freesql.Insert<Menus>(m6).ExecuteAffrows();
 
 
                 Menus t1 = new Menus() { MenuName = "工具管理", MenuIcon = "404", MenuPath = "/tools", Url = "Layout", IsAlwaysShow = true, IsAvailable = true };
@@ -129,9 +160,8 @@ namespace Core.Repository
                     Url = "/tools/dictionarie",
                     IsAlwaysShow = true,
                     IsAvailable = true,
-                    ParentMenuID = t1id
-                };
-
+                    ParentId = t1id
+                }; 
                 Menus t3 = new Menus()
                 {
                     MenuName = "代码片段",
@@ -140,7 +170,7 @@ namespace Core.Repository
                     Url = "/tools/intellisence",
                     IsAlwaysShow = true,
                     IsAvailable = true,
-                    ParentMenuID = t1id
+                    ParentId = t1id
                 };
                 Menus t4 = new Menus()
                 {
@@ -150,7 +180,7 @@ namespace Core.Repository
                     Url = "/tools/tablearea",
                     IsAlwaysShow = true,
                     IsAvailable = true,
-                    ParentMenuID = t1id
+                    ParentId = t1id
                 };
                 Menus t5 = new Menus()
                 {
@@ -160,7 +190,7 @@ namespace Core.Repository
                     Url = "/tools/tableareadata",
                     IsAlwaysShow = true,
                     IsAvailable = true,
-                    ParentMenuID = t1id
+                    ParentId = t1id
                 };
                 Menus t6 = new Menus()
                 {
@@ -170,13 +200,40 @@ namespace Core.Repository
                     Url = "/tools/databaseconnection",
                     IsAlwaysShow = true,
                     IsAvailable = true,
-                    ParentMenuID = t1id
+                    ParentId = t1id
                 };
                 FreeSqlFactory._Freesql.Insert<Menus>(t2).ExecuteAffrows();
                 FreeSqlFactory._Freesql.Insert<Menus>(t3).ExecuteAffrows();
                 FreeSqlFactory._Freesql.Insert<Menus>(t4).ExecuteAffrows();
                 FreeSqlFactory._Freesql.Insert<Menus>(t5).ExecuteAffrows();
                 FreeSqlFactory._Freesql.Insert<Menus>(t6).ExecuteAffrows();
+
+                Menus c1 = new Menus() { MenuName = "自动化测试", MenuIcon = "404", MenuPath = "/autotest", Url = "Layout", IsAlwaysShow = true, IsAvailable = true };
+                var c1id = FreeSqlFactory._Freesql.Insert<Menus>(c1).ExecuteIdentity();
+
+                Menus c2 = new Menus()
+                {
+                    MenuName = "模块管理",
+                    MenuIcon = "404",
+                    MenuPath = "/testmodule",
+                    Url = "/autotest/testmodule",
+                    IsAlwaysShow = true,
+                    IsAvailable = true,
+                    ParentId = c1id
+                };
+                FreeSqlFactory._Freesql.Insert<Menus>(c2).ExecuteAffrows();
+
+                Menus c3 = new Menus()
+                {
+                    MenuName = "页面元素管理",
+                    MenuIcon = "404",
+                    MenuPath = "/element",
+                    Url = "/autotest/element",
+                    IsAlwaysShow = true,
+                    IsAvailable = true,
+                    ParentId = c1id
+                };
+                FreeSqlFactory._Freesql.Insert<Menus>(c3).ExecuteAffrows();
             }
 
 

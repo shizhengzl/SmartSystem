@@ -16,11 +16,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using WebAppServices.Model;
 using static AutoMapper.Internal.ExpressionFactory;
+
 namespace WebAppServices.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MenusController : BaseController
+    public class ElementController : BaseController
     {
         private IMapper _mapper { get; set; }
         private UsersSrevices _userServices { get; set; }
@@ -28,7 +29,7 @@ namespace WebAppServices.Controllers
 
         private AppSystemServices _appSystemServices { get; set; }
         private SystemServices _sysservices { get; set; }
-        public MenusController(IMapper mapper
+        public ElementController(IMapper mapper
             , UsersSrevices usersSrevices
             , SystemServices sysservices
             , DataBaseServices dataBaseServices
@@ -41,7 +42,10 @@ namespace WebAppServices.Controllers
             _appSystemServices = appSystemServices;
         }
 
-
+        /// <summary>
+        /// 获取列头
+        /// </summary>
+        /// <returns></returns>
         [HttpPost("GetHeader")]
         public ResponseListDto<Column> GetHeader()
         {
@@ -50,7 +54,7 @@ namespace WebAppServices.Controllers
             {
                 var user = this.CurrentUser;
 
-                response.Data = _dataBaseServices.GetColumns(typeof(Menus).Name);
+                response.Data = _dataBaseServices.GetColumns(typeof(Element).Name);
             }
             catch (Exception ex)
             {
@@ -62,20 +66,42 @@ namespace WebAppServices.Controllers
         }
 
 
+        [HttpPost("GetChildren")]
+        private void GetChildren(TestModule tree, List<Int64> list)
+        {
+            tree.children = _appSystemServices.GetEntitys<TestModule>().Where(o => o.ParentId == tree.Id).ToList<TestModule>();
+            list.AddRange(tree.children.Select(o => o.Id));
+            tree.children.ForEach(x =>
+            {
+                GetChildren(x, list);
+            });
+        }
+
 
         [HttpPost("GetResult")]
-        public ResponseListDto<MenuDto> GetResult([FromBody] BaseRequest<MenuDto> request)
+        public ResponseListDto<Element> GetResult([FromBody] BaseRequest<Element> request)
         {
-            ResponseListDto<MenuDto> response = new ResponseListDto<MenuDto>();
+            ResponseListDto<Element> response = new ResponseListDto<Element>();
             try
             {
-                var data = _appSystemServices.GetEntitys<Menus>();
+                var data = _appSystemServices.GetEntitys<Element>();
 
                 if (!request.IsNull())
                 {
                     if (!string.IsNullOrEmpty(request.Filter.ToStringExtension()))
                     {
-                        data = data.Where(x => x.MenuName.Contains(request.Filter));
+                        data = data.Where(x => x.Name.Contains(request.Filter));
+                    }
+
+                    if (request.Model.ParentId.ToInt32() > 0)
+                    {
+                        List<Int64> rlist = new List<long>();
+                        var testmodule = _appSystemServices.GetEntitys<TestModule>().Where(p => p.Id == request.Model.ParentId).ToList().FirstOrDefault();
+
+                        rlist.Add(testmodule.Id);
+                        GetChildren(testmodule, rlist);
+                        data = data.Where(x => rlist.Contains(x.ParentId));
+
                     }
 
                     if (!string.IsNullOrEmpty(request.Sort.ToStringExtension()))
@@ -88,15 +114,8 @@ namespace WebAppServices.Controllers
                     }
                 }
 
-                var alldata = data.ToList<MenuDto>(); 
-                // 组织menus
-                var parent = alldata.Where(x => x.ParentId.ToInt64() == 0).ToList();
-                parent.ForEach(p => {
-                    p.children = GetChilds(p,alldata);
-                });
-
                 response.Total = data.Count();
-                response.Data = parent;// data.Page(request.PageIndex, request.PageSize).ToList<Menus>();
+                response.Data = data.Page(request.PageIndex, request.PageSize).ToList<Element>();
 
             }
             catch (Exception ex)
@@ -109,30 +128,21 @@ namespace WebAppServices.Controllers
         }
 
 
-        private List<MenuDto> GetChilds(MenuDto menu, List<MenuDto> menus)
-        { 
-            var childs = menus.Where(x => x.ParentId == menu.Id).ToList();
-            childs.ForEach(x => {
-                x.children = GetChilds(x,menus);
-            });
-
-            return childs.ToList();
-        }
 
         [HttpPost("Save")]
-        public ResponseDto<Menus> Save([FromBody] Menus request)
+        public ResponseDto<Element> Save([FromBody] Element request)
         {
-            ResponseDto<Menus> response = new ResponseDto<Menus>();
+            ResponseDto<Element> response = new ResponseDto<Element>();
             try
             {
-                var _entity = _appSystemServices.GetEntitys<Menus>();
+                var _entity = _appSystemServices.GetEntitys<Element>();
                 if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
                 {
-                    _appSystemServices.Create<Menus>(request);
+                    _appSystemServices.Create<Element>(request);
                 }
                 else
                 {
-                    _appSystemServices.Modify<Menus>(request);
+                    _appSystemServices.Modify<Element>(request);
                 }
             }
             catch (Exception ex)
@@ -146,7 +156,7 @@ namespace WebAppServices.Controllers
 
 
         [HttpPost("Remove")]
-        public ResponseDto<Boolean> Remove([FromBody] Menus request)
+        public ResponseDto<Boolean> Remove([FromBody] Element request)
         {
             ResponseDto<Boolean> response = new ResponseDto<Boolean>();
 
@@ -160,7 +170,7 @@ namespace WebAppServices.Controllers
                     return response;
                 }
 
-                var _entity = _appSystemServices.GetEntitys<Menus>();
+                var _entity = _appSystemServices.GetEntitys<Element>();
                 response.Data = _entity.Where(x => x.Id == request.Id).ToDelete().ExecuteAffrows() > 0;
             }
             catch (Exception ex)
@@ -171,40 +181,5 @@ namespace WebAppServices.Controllers
             }
             return response;
         }
-
-
-
-        [HttpPost("GetTree")]
-        public ResponseListDto<Menus> GetTree()
-        {
-            ResponseListDto<Menus> response = new ResponseListDto<Menus>();
-            try
-            {
-                var data = _appSystemServices.GetEntitys<Menus>().Where(x => x.ParentId == 0).ToList();
-
-                data.ForEach(x => {
-                    GetChildren(x);
-                });
-
-                response.Data = data.ToList<Menus>();
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "GetHeader");
-            }
-            return response;
-        }
-
-        [HttpPost("GetChildren")]
-        private void GetChildren(Menus tree)
-        {
-            tree.children = _appSystemServices.GetEntitys<Menus>().Where(o => o.ParentId == tree.Id).ToList<Menus>();
-            tree.children.ForEach(x => {
-                GetChildren(x);
-            });
-        }
     }
 }
-

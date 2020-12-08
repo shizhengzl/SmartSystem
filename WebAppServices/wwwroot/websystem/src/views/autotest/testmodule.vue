@@ -55,7 +55,7 @@
                         :label="item.columnDescription || item.columnName"
                         :prop="item.columnName">
 
-            <wlTreeSelect leaf
+            <wlTreeSelect  
                           width="240" 
                           check-strictly="false"
                           multiple="true"
@@ -127,6 +127,7 @@ export default {
         , modifyUserId: true
         , modifyUserName: true
         , modifyTime: true
+        , parentName: true
       },
       tableData: [],
       tableHead: [],
@@ -181,7 +182,7 @@ export default {
     Modify: function(row) {
       this.createdialog = true
       this.model = row
-      this.selected = [row.parentId]; 
+      this.selected = !!row.parentId ? [row.parentId] : []; 
     },
     Remove: function(row) {
       const owner = this

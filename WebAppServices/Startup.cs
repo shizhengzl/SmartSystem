@@ -65,9 +65,12 @@ namespace WebAppServices
            
 
          
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(options =>
+            services.AddMvc(option => {
+                option.Filters.Add(typeof(GlobalExceptionFilter));
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(options =>
             {
                 options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
+
             });
 
             //services.AddCors(options =>
@@ -85,9 +88,7 @@ namespace WebAppServices
             //services.AddScoped(typeof(AppSystemServices));
             //services.AddScoped(typeof(DataBaseServices));
             //services.AddScoped(typeof(SystemServices));
-            //services.AddScoped(typeof(UsersSrevices));
-
-
+            //services.AddScoped(typeof(UsersSrevices)); 
 
             //services.AddScoped<UsersSrevices>();
             //services.AddScoped<SystemServices>();
@@ -134,12 +135,10 @@ namespace WebAppServices
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Smart Api");
 
-            });
-
-
+            }); 
             //app.UseCors(MyAllowSpecificOrigins);
             app.UseMvc();
-            //new InitDatabase(true);
+            new InitDatabase(true);
         }
     }
 }

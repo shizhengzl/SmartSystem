@@ -68,7 +68,7 @@
             </el-radio-group>
           </el-form-item>
 
-          <el-form-item v-if="(item.sqlType == 'int'|| item.sqlType == 'bigint') && item.columnName != 'Id'"
+          <el-form-item v-if="(item.sqlType == 'int'|| item.sqlType == 'bigint') && item.columnName != 'id'"
                         :label="item.columnDescription || item.columnName"
                         :prop="item.columnName">
           
@@ -102,13 +102,14 @@ export default {
     return {
       datatypes:[],
       hiddenColumn: {
-        Id: true,
-        CreateUserId: true,
-        CreateUserName: true,
-        CreateTime: false,
-        ModifyUserId: true,
-        ModifyUserName: true,
-        ModifyTime: true
+        id: true
+        , parentId: true
+        , createUserId: true
+        , createUserName: true
+        , createTime: false
+        , modifyUserId: true
+        , modifyUserName: true
+        , modifyTime: true
       },
       tableData: [],
       tableHead: [],

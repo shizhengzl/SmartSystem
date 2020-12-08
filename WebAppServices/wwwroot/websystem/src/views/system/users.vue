@@ -76,13 +76,15 @@
     data() {
       return {
         hiddenColumn: {
-          Id:true
-          , CreateUserId: true
-          , CreateUserName: true
-          , CreateTime: false
-          , ModifyUserId: true
-          , ModifyUserName: true
-          , ModifyTime: true
+          id: true
+          , parentId: true
+          , createUserId: true
+          , createUserName: true
+          , createTime: false
+          , modifyUserId: true
+          , modifyUserName: true
+          , modifyTime: true
+          , parentName: true
         },
         tableData: [],
         tableHead: [],

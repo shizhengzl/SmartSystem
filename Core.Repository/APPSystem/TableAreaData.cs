@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
-namespace Core.Repository.APPSystem
+namespace Core.Repository
 {
     /// <summary>
     /// 归类数据表

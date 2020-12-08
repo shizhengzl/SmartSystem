@@ -85,6 +85,16 @@ export default {
   name: 'Intellisence',
   data() {
     return {
+      hiddenColumn: {
+        id: true
+        , parentId: true
+        , createUserId: true
+        , createUserName: true
+        , createTime: false
+        , modifyUserId: true
+        , modifyUserName: true
+        , modifyTime: true
+      },
       tableData: [],
       tableHead: [],
       model: { IsSql: false },
