@@ -1,6 +1,7 @@
 <template>
   <div style="margin-left:12px;margin-top:5px;">
     <el-button type="primary" icon="el-icon-circle-plus-outline" @click="create()">添加</el-button>
+    <el-button type="primary" icon="el-icon-circle-plus-outline" @click="GetYml({Id:0,moduleName:'所有YML'})">导出所有YML</el-button>
     <el-input v-model="filter"
               placeholder="请输入内容"
               style="width:220px;margin-left:5px;"
@@ -19,8 +20,9 @@
                           :tree-node="item.columnName == 'moduleName'"
                           show-overflow-tooltip />
       </template>
-      <vxe-table-column label="操作" width="200">
+      <vxe-table-column label="操作" width="300">
         <template slot-scope="scope">
+          <el-button type="success" size="small" @click="GetYml(scope.row)">导出Yml</el-button>
           <el-button type="success" size="small" @click="Modify(scope.row)">编辑</el-button>
           <el-button type="danger" size="small" @click="Remove(scope.row)">删除</el-button>
         </template>
@@ -55,8 +57,7 @@
                         :label="item.columnDescription || item.columnName"
                         :prop="item.columnName">
 
-            <wlTreeSelect  
-                          width="240" 
+            <wlTreeSelect width="240"
                           check-strictly="false"
                           multiple="true"
                           :props="props"
@@ -105,7 +106,7 @@
   </div>
 </template>
 <script>
-import { getHeader, GetResult, Save, Remove ,GetTree} from '@/api/testmodule'
+  import { getHeader, GetResult, Save, Remove, GetTree, GetYml} from '@/api/testmodule'
 import { debounce } from '@/utils'
 import { MessageBox, Message } from 'element-ui'
 export default {
@@ -160,6 +161,27 @@ export default {
     this.GetTree()
   },
     methods: {
+      fakeClick(obj) {
+        var ev = document.createEvent("MouseEvents");
+        ev.initMouseEvent(
+          "click",
+          true,
+          false,
+          window,
+          0,
+          0,
+          0,
+          0,
+          0,
+          false,
+          false,
+          false,
+          false,
+          0,
+          null
+        );
+        obj.dispatchEvent(ev);
+      },
       hindleChanged(val) { 
         this.model.parentId = val[0].id;
         this.model.parentName = val[0].moduleName; 
@@ -201,14 +223,20 @@ export default {
       getHeader().then(response => {
         owner.tableHead = response.data
       })
-    },
-    GetResult: function() {
-      //const owner = this
-      //GetResult(owner.paging).then(response => {
-      //  owner.tableData = response.data
-        
-      //  owner.paging.TotalCount = response.total
-      //})
+      },
+    GetYml: function (row) {
+      const owner = this
+      owner.paging.Model = row;
+      GetYml(owner.paging).then(response => {
+        var yml= response.data
+        var export_blob = new Blob([yml]);
+        var save_link = document.createElement("a");
+        save_link.href = window.URL.createObjectURL(export_blob);
+        save_link.download = row.moduleName + '.yml';
+        this.fakeClick(save_link);
+      })
+     },
+    GetResult: function() { 
       const owner = this
       GetTree().then(response => {
         owner.treedata = response.data

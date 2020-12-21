@@ -5,21 +5,28 @@ using System.Text;
 namespace Core.Repository
 {
     /// <summary>
-    /// 角色菜单表
+    /// 用户菜单表
     /// </summary>
-    [Description("角色菜单表")]
-    public class RoleMenus : SysBaseEntity
+    [Description("用户菜单表")]
+    public class UserMenus : SysBaseEntity
     {
         /// <summary>
-        /// 角色ID
+        /// 用户ID
         /// </summary>
-        [Description("角色ID")]
-        public Int64 RoleId { get; set; }
+        [Description("用户ID")]
+        public Int64 UserId { get; set; }
 
         /// <summary>
         /// 菜单ID
         /// </summary>
         [Description("菜单ID")]
         public Int64 MenuId { get; set; }
+
+
+        /// <summary>
+        /// 单位ID
+        /// </summary>
+        [Description("单位ID")]
+        public Int64 CompanyId { get; set; }
     }
 }

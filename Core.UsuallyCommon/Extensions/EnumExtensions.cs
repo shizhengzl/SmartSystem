@@ -187,5 +187,21 @@ namespace Core.UsuallyCommon
             }
             return list;
         }
+
+
+
+
+
+        /// <summary>
+        /// 值转枚举
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <param name="ignoreCase"></param>
+        /// <returns></returns>
+        public static T ToEnum<T>(this Int64 value) where T : struct
+        {
+            return (T)Enum.ToObject(typeof(T), value);
+        }
     }
 }

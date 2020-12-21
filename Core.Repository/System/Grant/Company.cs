@@ -31,8 +31,7 @@ namespace Core.Repository
         [Column(StringLength = 200)]
         [Description("单位地址")]
         public string CompanyAddress { get; set; }
-
-
+         
         /// <summary>
         /// 单位区域
         /// </summary>
@@ -48,10 +47,10 @@ namespace Core.Repository
         public string CompanyLegal { get; set; }
 
         /// <summary>
-        /// 单位联系人手机号
+        /// 手机号
         /// </summary>
         [Column(StringLength = 200)]
-        [Description("单位联系人手机号")]
+        [Description("手机号")]
         public string CompanyPhone { get; set; }
 
         /// <summary>
@@ -60,9 +59,7 @@ namespace Core.Repository
         [Column(StringLength = 200)]
         [Description("单位电话")]
         public string CompanyTel { get; set; }
-
-
-
+         
         /// <summary>
         /// 子单位
         /// </summary> 
@@ -82,7 +79,12 @@ namespace Core.Repository
         [Column(StringLength = 100)]
         [Description("父单位名称")]
         public String ParentName { get; set; }
-
+          
+        /// <summary>
+        /// 授权模式
+        /// </summary> 
+        [Description("授权模式")]
+        public GrantMode GrantMode { get; set; }
 
     }
 }

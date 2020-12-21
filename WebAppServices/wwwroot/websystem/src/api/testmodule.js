@@ -46,3 +46,13 @@ export function GetTree(data) {
     data
   })
 }
+
+
+
+export function GetYml(data) {
+  return request({
+    url: '/api/TestModule/GetYml',
+    method: 'post',
+    data
+  })
+}

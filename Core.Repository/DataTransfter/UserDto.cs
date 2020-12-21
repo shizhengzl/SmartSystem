@@ -48,5 +48,19 @@ namespace Core.Repository
         [Column(StringLength = 50)]
         [Description("密码")]
         public string Password { get; set; }
+
+        /// <summary>
+        /// 单位ID
+        /// </summary> 
+        [Description("单位ID")]
+        public Int64 CompanyId { get; set; }
+
+
+        /// <summary>
+        /// 姓名
+        /// </summary>
+        [Column(StringLength = 100)]
+        [Description("姓名")]
+        public string Name { get; set; }
     }
 }

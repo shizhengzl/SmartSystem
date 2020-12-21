@@ -67,7 +67,47 @@ namespace WebAppServices.Controllers
 
 
 
+        [HttpPost("GetYml")]
+        public ResponseDto<String> GetYml([FromBody] BaseRequest<TestModule> request)
+        {
+            ResponseDto<String> response = new ResponseDto<string>();
 
+            var data = _appSystemServices.GetEntitys<TestModule>().Where(x => x.ParentId == request.Model.Id || request.Model.Id.ToInt64()  ==0).ToList();
+
+            data.ForEach(x => {
+                GetChildren(x);
+            });
+            StringBuilder sb = new StringBuilder();
+            sb.AppendFormat("pages:");
+            sb.AppendLine();
+            data.ForEach(x => {
+
+                if (x.Url.ToStringExtension().Length > 0)
+                {
+                    sb.AppendFormat("   - page:");
+                    sb.AppendLine();
+                    sb.AppendFormat("      pageName: {0}", x.ModuleName);
+                    sb.AppendLine();
+                    sb.AppendFormat("      value: \"{0}\"", x.Url);
+                    sb.AppendLine();
+                    sb.AppendFormat("      desc: \"{0}\"", x.Note);
+                    sb.AppendLine();
+                    sb.AppendFormat("      locators:");
+                    sb.AppendLine();
+
+                    var elements = _appSystemServices.GetEntitys<Element>().Where(p => p.ParentId == x.Id);
+                    elements.ToList().ForEach(o => { 
+                        sb.AppendFormat("         - {{type: \"{0}\",timeout: \"{1}\",value: \"{2}\",desc: \"{3}\",name: \"{4}\"}}" , o.Type,o.Timeout,o.Value,o.Desc,o.Name);
+                        sb.AppendLine();
+                    });
+                }
+              
+            });
+
+            response.Data = sb.ToString();
+
+            return response;
+        }
 
 
         [HttpPost("GetResult")]

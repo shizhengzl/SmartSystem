@@ -57,10 +57,10 @@ namespace Core.Repository
         [Description("菜单路径")]
         public String MenuPath { get; set; } 
         ///  <summary>
-        /// 是否总是显示
+        /// 默认单位菜单
         /// </summary>
-        [Description("是否总是显示")]
-        public Boolean? IsAlwaysShow { get; set; }
+        [Description("默认单位菜单")]
+        public Boolean? IsDeafult { get; set; }
 
 
         /// <summary>

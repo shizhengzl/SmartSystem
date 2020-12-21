@@ -7,3 +7,10 @@ export function GetDataType(data) {
     data
   }) 
 }
+export function GetGrantMode(data) {
+  return request({
+    url: '/api/Enum/GetGrantMode',
+    method: 'post',
+    data
+  })
+}

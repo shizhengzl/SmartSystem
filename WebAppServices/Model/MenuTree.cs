@@ -14,10 +14,7 @@ namespace WebAppServices.Model
 
         public string redirect { get; set; }
 
-        public string name { get; set; }
-
-        public bool alwaysShow { get; set; }
-
+        public string name { get; set; } 
         public MenuMeta meta { get; set; }
 
         public List<MenuTree> children { get; set; }

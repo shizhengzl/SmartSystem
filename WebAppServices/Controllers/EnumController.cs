@@ -45,7 +45,10 @@ namespace WebAppServices.Controllers
 
       
 
-
+        /// <summary>
+        /// 获取数据库类型
+        /// </summary>
+        /// <returns></returns>
         [HttpPost("GetDataType")]
         public ResponseListDto<EnumClass> GetDataType()
         {
@@ -54,8 +57,7 @@ namespace WebAppServices.Controllers
             {
                 var data = EnumExtensions.GetListEnumClass<DataType>(); 
                 response.Total = data.Count();
-                response.Data = data;
-
+                response.Data = data; 
             }
             catch (Exception ex)
             {
@@ -64,7 +66,28 @@ namespace WebAppServices.Controllers
                 _sysservices.AddExexptionLogs(ex, "GetDataType");
             }
             return response;
-        } 
-         
+        }
+        /// <summary>
+        /// 获取授权模式
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("GetGrantMode")]
+        public ResponseListDto<EnumClass> GetGrantMode()
+        {
+            ResponseListDto<EnumClass> response = new ResponseListDto<EnumClass>();
+            try
+            {
+                var data = EnumExtensions.GetListEnumClass<GrantMode>();
+                response.Total = data.Count();
+                response.Data = data;
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.Success = false;
+                _sysservices.AddExexptionLogs(ex, "GetGrantMode");
+            }
+            return response;
+        }
     }
 }

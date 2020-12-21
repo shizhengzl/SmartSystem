@@ -19,12 +19,10 @@ namespace Core.Repository
                 FreeSqlFactory._Freesql.Delete<Menus>().Where("1=1").ExecuteAffrows();
                 FreeSqlFactory._Freesql.Delete<RoleMenus>().Where("1=1").ExecuteAffrows();
                 FreeSqlFactory._Freesql.Delete<RoleUsers>().Where("1=1").ExecuteAffrows();
-                FreeSqlFactory._Freesql.Delete<Users>().Where("1=1").ExecuteAffrows();
+                //FreeSqlFactory._Freesql.Delete<Users>().Where("1=1").ExecuteAffrows();
                 FreeSqlFactory._Freesql.Delete<DataBaseConnection>().Where("1=1").ExecuteAffrows();
-                FreeSqlFactory._Freesql.Delete<Company>().Where("1=1").ExecuteAffrows();
-
-                FreeSqlFactory._Freesql.Delete<TableArea>().Where("1=1").ExecuteAffrows();
-
+                //FreeSqlFactory._Freesql.Delete<Company>().Where("1=1").ExecuteAffrows(); 
+                FreeSqlFactory._Freesql.Delete<TableArea>().Where("1=1").ExecuteAffrows(); 
                 FreeSqlFactory._Freesql.Delete<TableAreaData>().Where("1=1").ExecuteAffrows();
             }
 
@@ -33,7 +31,7 @@ namespace Core.Repository
             if (!FreeSqlFactory._Freesql.Select<Company>().Where(x => x.CompanyName == CommonEnum.SupperCompany).Any())
             {
                 Company company = new Company() {
-                     CompanyName = CommonEnum.SupperCompany 
+                     CompanyName = CommonEnum.SupperCompany ,CompanyPhone = "13701859214"
                 };
                 companyid = FreeSqlFactory._Freesql.Insert<Company>(company).ExecuteIdentity(); 
             }
@@ -45,8 +43,8 @@ namespace Core.Repository
             // 初始化角色
             if (!FreeSqlFactory._Freesql.Select<Roles>().Where(x => x.RoleName == CommonEnum.SupperAdmin).Any())
             {
-                Roles supperadmin = new Roles() { RoleName = CommonEnum.SupperAdmin, RoleDescription = CommonEnum.SupperAdmin };
-                Roles tourist = new Roles() { RoleName = CommonEnum.Tourist, RoleDescription = CommonEnum.Tourist };
+                Roles supperadmin = new Roles() { RoleName = CommonEnum.SupperAdmin, RoleDescription = CommonEnum.SupperAdmin, CompanyId = companyid };
+                Roles tourist = new Roles() { RoleName = CommonEnum.Tourist, RoleDescription = CommonEnum.Tourist, CompanyId = companyid };
                 adminrole = FreeSqlFactory._Freesql.Insert<Roles>(supperadmin).ExecuteIdentity();
                 touristrole = FreeSqlFactory._Freesql.Insert<Roles>(tourist).ExecuteIdentity();
             }
@@ -58,12 +56,12 @@ namespace Core.Repository
             // 初始化用户 
             if (!FreeSqlFactory._Freesql.Select<Users>().Where(x => x.UserName == CommonEnum.SupperUser).Any())
             {
-                Users users = new Users() { UserName = CommonEnum.SupperUser, Password = "123456".ToMD5() };
-                Users shizheng = new Users() { UserName = "shizheng", Password = "123456".ToMD5() };
-                Users youke = new Users() { UserName = CommonEnum.Youke, Password = "123456".ToMD5() };
+                Users users = new Users() { UserName = CommonEnum.SupperUser, Password = "123456".ToMD5()  , CompanyId= companyid };
+                Users shizheng = new Users() { UserName = "shizheng",Phone= "13701859214", Password = "123456".ToMD5(),  CompanyId = companyid };
+                //Users youke = new Users() { UserName = CommonEnum.Youke, Password = "123456".ToMD5() };
                 adminid = FreeSqlFactory._Freesql.Insert<Users>(users).ExecuteIdentity();
                 shizhengid = FreeSqlFactory._Freesql.Insert<Users>(shizheng).ExecuteIdentity();
-                youkeid = FreeSqlFactory._Freesql.Insert<Users>(youke).ExecuteIdentity();
+                //youkeid = FreeSqlFactory._Freesql.Insert<Users>(youke).ExecuteIdentity();
             }
 
             // 初始化角色用户
@@ -80,11 +78,11 @@ namespace Core.Repository
             // 初始化菜单
             if (!FreeSqlFactory._Freesql.Select<Menus>().Where("1=1").Any())
             {
-                Menus m1 = new Menus() { MenuName = "超级系统管理", MenuIcon = "404", MenuPath = "/sppersystem", Url = "Layout", IsAlwaysShow = true, IsAvailable = true };
+                Menus m1 = new Menus() { MenuName = "超级系统管理", MenuIcon = "404", MenuPath = "/sppersystem", Url = "Layout", IsAvailable = true };
                 var m1id = FreeSqlFactory._Freesql.Insert<Menus>(m1).ExecuteIdentity();
 
 
-                Menus s1 = new Menus() { MenuName = "系统管理", MenuIcon = "404", MenuPath = "/system", Url = "Layout", IsAlwaysShow = true, IsAvailable = true };
+                Menus s1 = new Menus() { MenuName = "系统管理", MenuIcon = "404", MenuPath = "/system", Url = "Layout", IsDeafult = true, IsAvailable = true };
                 var s1id = FreeSqlFactory._Freesql.Insert<Menus>(s1).ExecuteIdentity();
 
                 Menus m2 = new Menus()
@@ -92,8 +90,7 @@ namespace Core.Repository
                     MenuName = "菜单管理",
                     MenuIcon = "404",
                     MenuPath = "/menus",
-                    Url = "/system/menus",
-                    IsAlwaysShow = true,
+                    Url = "/system/menus", 
                     IsAvailable = true,
                     ParentId = m1id
                 };
@@ -102,8 +99,7 @@ namespace Core.Repository
                     MenuName = "请求日志",
                     MenuIcon = "404",
                     MenuPath = "/requestresponselog",
-                    Url = "/system/requestresponselog",
-                    IsAlwaysShow = true,
+                    Url = "/system/requestresponselog", 
                     IsAvailable = true,
                     ParentId = m1id
                 };
@@ -113,8 +109,7 @@ namespace Core.Repository
                     MenuName = "系统日志",
                     MenuIcon = "404",
                     MenuPath = "/systemlog",
-                    Url = "/system/systemlogs",
-                    IsAlwaysShow = true,
+                    Url = "/system/systemlogs", 
                     IsAvailable = true,
                     ParentId = m1id
                 };
@@ -126,7 +121,7 @@ namespace Core.Repository
                     MenuIcon = "404",
                     MenuPath = "/roles",
                     Url = "/system/roles",
-                    IsAlwaysShow = true,
+                    IsDeafult = true,
                     IsAvailable = true,
                     ParentId = s1id
                 };
@@ -136,20 +131,31 @@ namespace Core.Repository
                     MenuIcon = "404",
                     MenuPath = "/users",
                     Url = "/system/users",
-                    IsAlwaysShow = true,
+                    IsDeafult = true,
                     IsAvailable = true,
                     ParentId = s1id
                 };
 
-               
+                Menus m7 = new Menus()
+                {
+                    MenuName = "单位管理",
+                    MenuIcon = "404",
+                    MenuPath = "/company",
+                    Url = "/system/company", 
+                    IsAvailable = true,
+                    ParentId = m1id
+                };
+
+
                 FreeSqlFactory._Freesql.Insert<Menus>(m2).ExecuteAffrows();
                 FreeSqlFactory._Freesql.Insert<Menus>(m3).ExecuteAffrows();
                 FreeSqlFactory._Freesql.Insert<Menus>(m4).ExecuteAffrows();
                 FreeSqlFactory._Freesql.Insert<Menus>(m5).ExecuteAffrows();
                 FreeSqlFactory._Freesql.Insert<Menus>(m6).ExecuteAffrows();
+                FreeSqlFactory._Freesql.Insert<Menus>(m7).ExecuteAffrows();
 
 
-                Menus t1 = new Menus() { MenuName = "工具管理", MenuIcon = "404", MenuPath = "/tools", Url = "Layout", IsAlwaysShow = true, IsAvailable = true };
+                Menus t1 = new Menus() { MenuName = "工具管理", MenuIcon = "404", MenuPath = "/tools", Url = "Layout", IsDeafult = true, IsAvailable = true };
                 var t1id = FreeSqlFactory._Freesql.Insert<Menus>(t1).ExecuteIdentity();
 
                 Menus t2 = new Menus()
@@ -158,7 +164,7 @@ namespace Core.Repository
                     MenuIcon = "404",
                     MenuPath = "/dictionarie",
                     Url = "/tools/dictionarie",
-                    IsAlwaysShow = true,
+                    IsDeafult = true,
                     IsAvailable = true,
                     ParentId = t1id
                 }; 
@@ -168,7 +174,7 @@ namespace Core.Repository
                     MenuIcon = "404",
                     MenuPath = "/intellisence",
                     Url = "/tools/intellisence",
-                    IsAlwaysShow = true,
+                    IsDeafult = true,
                     IsAvailable = true,
                     ParentId = t1id
                 };
@@ -178,7 +184,7 @@ namespace Core.Repository
                     MenuIcon = "404",
                     MenuPath = "/tablearea",
                     Url = "/tools/tablearea",
-                    IsAlwaysShow = true,
+                    IsDeafult = true,
                     IsAvailable = true,
                     ParentId = t1id
                 };
@@ -188,7 +194,7 @@ namespace Core.Repository
                     MenuIcon = "404",
                     MenuPath = "/tableareadata",
                     Url = "/tools/tableareadata",
-                    IsAlwaysShow = true,
+                    IsDeafult = true,
                     IsAvailable = true,
                     ParentId = t1id
                 };
@@ -198,7 +204,7 @@ namespace Core.Repository
                     MenuIcon = "404",
                     MenuPath = "/databaseconnection",
                     Url = "/tools/databaseconnection",
-                    IsAlwaysShow = true,
+                    IsDeafult = true,
                     IsAvailable = true,
                     ParentId = t1id
                 };
@@ -208,7 +214,7 @@ namespace Core.Repository
                 FreeSqlFactory._Freesql.Insert<Menus>(t5).ExecuteAffrows();
                 FreeSqlFactory._Freesql.Insert<Menus>(t6).ExecuteAffrows();
 
-                Menus c1 = new Menus() { MenuName = "自动化测试", MenuIcon = "404", MenuPath = "/autotest", Url = "Layout", IsAlwaysShow = true, IsAvailable = true };
+                Menus c1 = new Menus() { MenuName = "自动化测试", MenuIcon = "404", MenuPath = "/autotest", Url = "Layout", IsDeafult = true, IsAvailable = true };
                 var c1id = FreeSqlFactory._Freesql.Insert<Menus>(c1).ExecuteIdentity();
 
                 Menus c2 = new Menus()
@@ -217,7 +223,7 @@ namespace Core.Repository
                     MenuIcon = "404",
                     MenuPath = "/testmodule",
                     Url = "/autotest/testmodule",
-                    IsAlwaysShow = true,
+                    IsDeafult = true,
                     IsAvailable = true,
                     ParentId = c1id
                 };
@@ -229,7 +235,7 @@ namespace Core.Repository
                     MenuIcon = "404",
                     MenuPath = "/element",
                     Url = "/autotest/element",
-                    IsAlwaysShow = true,
+                    IsDeafult = true,
                     IsAvailable = true,
                     ParentId = c1id
                 };
@@ -248,7 +254,18 @@ namespace Core.Repository
                      , DataBaseName= "SmartDb"
                      , DataBaseType= FreeSql.DataType.SqlServer
                 };
+
+                DataBaseConnection JZB_CRM = new DataBaseConnection()
+                {
+                    ConnectinString = "Data Source=192.168.0.100;Initial Catalog=JZB_CRM;Persist Security Info=True;User ID=u_admin;Password=t%lZIJcZvqmiL2F!8JgU;pooling=false;"
+                     ,
+                    DataBaseName = "JZB_CRM"
+                     ,
+                    DataBaseType = FreeSql.DataType.SqlServer
+                };
+
                 FreeSqlFactory._Freesql.Insert<DataBaseConnection>(dataBaseConnection).ExecuteAffrows();
+                FreeSqlFactory._Freesql.Insert<DataBaseConnection>(JZB_CRM).ExecuteAffrows();
             }
 
 

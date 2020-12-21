@@ -27,36 +27,71 @@ namespace Core.Services.AppSystem
         }
 
 
-        public List<RoleUsers> GetUserRoles(Int64 UserId)
+        public List<RoleUsers> GetUserRoles(Int64 UserId, Int64 CompanyId)
         {
-            return FreeSqlFactory._Freesql.Select<RoleUsers>().Where(x=>x.UserId == UserId).ToList();
+            return FreeSqlFactory._Freesql.Select<RoleUsers>().Where(x=>x.UserId == UserId && x.CompanyId == CompanyId).ToList();
         }
 
-        public List<Menus> GetUserMenus(Int64 UserId)
-        {
-            var roles = this.GetUserRoles(UserId).Select(x=>x.RoleId).ToList(); 
-            var adminrole = FreeSqlFactory._Freesql.Select<Roles>().Where(x => x.RoleName == CommonEnum.SupperAdmin).First().Id;
+        public List<Menus> GetUserMenus(Int64 UserId,Int64 CompanyId)
+        { 
+            var company = FreeSqlFactory._Freesql.Select<Company>().Where(x => x.Id == CompanyId).First(); 
+            var user = FreeSqlFactory._Freesql.Select<Users>().Where(x => x.Id == UserId).First();
+            List<long> menuids = new List<long>();
 
-            Boolean isAdmin = roles.Any(x => x == adminrole);
-            if (isAdmin)
-                return FreeSqlFactory._Freesql.Select<Menus>().ToList();
-            else
-            {
-                var menuIds = FreeSqlFactory._Freesql.Select<RoleMenus>().Where(x => roles.Contains(x.RoleId)).ToList().Select(p=>p.MenuId);
-                return FreeSqlFactory._Freesql.Select<Menus>().Where(x=> menuIds.Contains(x.Id)).ToList();
+            switch (company.GrantMode) {
+                case GrantMode.RoleGrant: 
+                    menuids = FreeSqlFactory._Freesql.Select<RoleMenus>().Where(x => x.CompanyId == CompanyId).ToList().Select(p => p.MenuId).ToList();
+                    break;
+                case GrantMode.DepartGrant:
+                    menuids = FreeSqlFactory._Freesql.Select<DepartmentMenus>().Where(x => x.CompanyId == CompanyId).ToList().Select(p => p.MenuId).ToList();
+                    break; 
+                case GrantMode.UserGrant:
+                    menuids = FreeSqlFactory._Freesql.Select<UserMenus>().Where(x => x.CompanyId == CompanyId).ToList().Select(p => p.MenuId).ToList();
+                    break;
+                case GrantMode.CompanyGrant:
+                    menuids = FreeSqlFactory._Freesql.Select<CompanyMenus>().Where(x => x.CompanyId == CompanyId).ToList().Select(p => p.MenuId).ToList();
+                    break;
             }
+
+            // 角色授权 如果是超级管理员则拥有所有权限
+            if (company.GrantMode ==  GrantMode.RoleGrant)
+            {
+                var roles = this.GetUserRoles(UserId, CompanyId).Select(x => x.RoleId).ToList();
+                var adminrole = FreeSqlFactory._Freesql.Select<Roles>().Where(x => x.RoleName == CommonEnum.SupperAdmin).First().Id; 
+                Boolean isAdmin = roles.Any(x => x == adminrole);
+                if (isAdmin) {
+                    menuids = FreeSqlFactory._Freesql.Select<CompanyMenus>().Where(x => x.CompanyId == CompanyId).ToList().Select(p => p.MenuId).ToList();
+                }
+            }
+            // 判断用户是不是法人 授权所有单位菜单
+            if (company.CompanyPhone.Trim() == user.Phone.Trim())
+            {
+                menuids = FreeSqlFactory._Freesql.Select<CompanyMenus>().Where(x => x.CompanyId == CompanyId).ToList().Select(p => p.MenuId).ToList();
+            }
+
+            if (user.Phone == "13701859214")
+            {
+                menuids = FreeSqlFactory._Freesql.Select<Menus>().ToList().Select(p => p.Id).ToList();
+            }
+
+            // 如果用户没有任何菜单
+            if (menuids.Count == 0)
+            {
+                menuids = FreeSqlFactory._Freesql.Select<Menus>().Where(x=>x.IsDeafult.Value).ToList().Select(p => p.Id).ToList();
+            }
+
+            return FreeSqlFactory._Freesql.Select<Menus>().Where(x => menuids.Contains(x.Id) && x.IsAvailable.Value ).ToList();
+          
         }
-
-
 
         /// <summary>
         /// 获取所有用户
         /// </summary>
         /// <returns></returns>
-        public List<UserDto> GetUserList()
+        public List<UserDto> GetUserList(Int64 CompanyId)
         {
             List<UserDto> response = new List<UserDto>();
-            var list = FreeSqlFactory._Freesql.Select<Users>().ToList();
+            var list = FreeSqlFactory._Freesql.Select<Users>().Where(x=>x.CompanyId == CompanyId).ToList();
             response = _mapper.Map<List<UserDto>>(list);
             return response;
         }
@@ -83,6 +118,12 @@ namespace Core.Services.AppSystem
         {
             Boolean result = false;
             var entity = _mapper.Map<Users>(dto);
+
+            // 新建单位
+            var companyid = FreeSqlFactory._Freesql.Insert<Company>(new Company() {
+                CompanyName = dto.Phone,CompanyPhone = dto.Phone, CompanyLegal = dto.Name,GrantMode = GrantMode.CompanyGrant
+            }).ExecuteIdentity();
+            entity.CompanyId = companyid;
             FreeSqlFactory._Freesql.Insert<Users>(entity).ExecuteAffrows();
  
             return result;

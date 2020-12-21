@@ -69,9 +69,8 @@ namespace WebAppServices.Controllers
 
             // 获取用请求携带token
             var users = this.CurrentUser;
-
-            // 判断是否是管理员
-            var menus = _userServices.GetUserMenus(this.CurrentUser.Id);
+             
+            var menus = _userServices.GetUserMenus(this.CurrentUser.Id,CurrentUser.CompanyId);
 
 
             List<MenuTree> router = new List<MenuTree>();
@@ -95,8 +94,7 @@ namespace WebAppServices.Controllers
             {
                 Id = menu.Id,
                 path = menu.MenuPath,
-                component = menu.Url,
-                alwaysShow = menu.IsAlwaysShow.ToBoolean(), 
+                component = menu.Url, 
                 name = menu.MenuName,
                 meta = new MenuMeta() { icon = menu.MenuIcon, title = menu.MenuName , noCache  = true},
                 children =   child,
@@ -119,7 +117,7 @@ namespace WebAppServices.Controllers
             ResponseListDto<Users> response = new ResponseListDto<Users>();
             try
             {
-                var data = _appSystemServices.GetEntitys<Users>();
+                var data = _appSystemServices.GetEntitys<Users>().Where(x => x.CompanyId == CurrentUser.CompanyId);
 
                 if (!request.IsNull())
                 {
@@ -160,6 +158,7 @@ namespace WebAppServices.Controllers
             try
             {
                 var _entity = _appSystemServices.GetEntitys<Users>();
+                request.CompanyId = CurrentUser.CompanyId;
                 if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
                 {
                     _appSystemServices.Create<Users>(request);
@@ -214,7 +213,7 @@ namespace WebAppServices.Controllers
             ResponseListDto<UserDto> response = new ResponseListDto<UserDto>();
             try
             {
-                response.Data = _userServices.GetUserList();
+                response.Data = _userServices.GetUserList(CurrentUser.CompanyId);
             }
             catch (Exception ex)
             {
@@ -318,13 +317,14 @@ namespace WebAppServices.Controllers
                 }
 
                 var searchuser = _userServices.GetUser(user.Phone);
-                if (searchuser != null)
-                {
+                if (searchuser != null){
                     response.Message = "手机号码已经注册";
                     response.Success = false;
                 }
-                user.Password = user.Password.ToMD5();
-                response.Data = _userServices.RegisterUser(user);
+                else { 
+                    user.Password = user.Password.ToMD5();
+                    response.Data = _userServices.RegisterUser(user);
+                }
             }
             catch (Exception ex)
             {

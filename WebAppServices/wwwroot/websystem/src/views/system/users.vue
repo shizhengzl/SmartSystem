@@ -10,7 +10,7 @@
       <template v-for="(item,index) in tableHead">
         <el-table-column :prop="capitalize(item.columnName)"
                          :label="item.columnDescription || item.columnName"
-                         v-if="hiddenColumn[item.columnName] !== true"
+                         v-if="hiddenColumn[item.columnName] !== true && item.columnName!='password'"
                          :key="index"
                          show-overflow-tooltip
                          sortable="custom" ></el-table-column>
@@ -85,6 +85,7 @@
           , modifyUserName: true
           , modifyTime: true
           , parentName: true
+          , companyId: true
         },
         tableData: [],
         tableHead: [],

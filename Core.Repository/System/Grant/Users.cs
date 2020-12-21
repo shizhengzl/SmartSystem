@@ -62,6 +62,12 @@ namespace Core.Repository
         [Description("启用")]
         public Boolean IsEnabled { get; set; } = true;
 
-        
+
+        /// <summary>
+        /// 单位ID
+        /// </summary> 
+        [Description("单位ID")]
+        public Int64 CompanyId { get; set; }
+
     }
 }

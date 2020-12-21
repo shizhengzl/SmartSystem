@@ -30,9 +30,9 @@ namespace Core.Repository
         public Int64 CreateUserName { get; set; }
 
         /// <summary>
-        /// 创建用户时间
+        /// 创建时间
         /// </summary>
-        [Description("创建用户时间")]
+        [Description("创建时间")]
         public DateTime CreateTime { get; set; } = DateTime.UtcNow;
 
 
@@ -50,9 +50,9 @@ namespace Core.Repository
         public Int64? ModifyUserName { get; set; }
 
         /// <summary>
-        /// 修改用户时间
+        /// 修改时间
         /// </summary>
-        [Description("修改用户时间")]
+        [Description("修改时间")]
         public DateTime? ModifyTime { get; set; }
     }
 }

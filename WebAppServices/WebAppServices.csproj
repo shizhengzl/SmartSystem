@@ -38,9 +38,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Controllers\System\" />
+    <Folder Include="Controllers\AppSystem\" />
     <Folder Include="Model\TestModule\" />
     <Folder Include="wwwroot\websystem\src\views\users\" />
     <Folder Include="wwwroot\jingdong\" />
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties wwwroot_4websystem_4package_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>

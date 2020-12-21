@@ -21,7 +21,7 @@ namespace WebAppServices.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RolesController : BaseController
+    public class CompanyController : ControllerBase
     {
         private IMapper _mapper { get; set; }
         private UsersSrevices _userServices { get; set; }
@@ -29,7 +29,7 @@ namespace WebAppServices.Controllers
 
         private AppSystemServices _appSystemServices { get; set; }
         private SystemServices _sysservices { get; set; }
-        public RolesController(IMapper mapper
+        public CompanyController(IMapper mapper
             , UsersSrevices usersSrevices
             , SystemServices sysservices
             , DataBaseServices dataBaseServices
@@ -42,19 +42,14 @@ namespace WebAppServices.Controllers
             _appSystemServices = appSystemServices;
         }
 
-        /// <summary>
-        /// 获取列头
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost("GetHeader")] 
+
+        [HttpPost("GetHeader")]
         public ResponseListDto<Column> GetHeader()
         {
             ResponseListDto<Column> response = new ResponseListDto<Column>();
             try
             {
-                var user = this.CurrentUser;
-
-                response.Data = _dataBaseServices.GetColumns(typeof(Roles).Name);
+                response.Data = _dataBaseServices.GetColumns(typeof(Company).Name);
             }
             catch (Exception ex)
             {
@@ -68,18 +63,18 @@ namespace WebAppServices.Controllers
 
 
         [HttpPost("GetResult")]
-        public ResponseListDto<Roles> GetResult([FromBody] BaseRequest<Roles> request)
+        public ResponseListDto<Company> GetResult([FromBody] BaseRequest<Company> request)
         {
-            ResponseListDto<Roles> response = new ResponseListDto<Roles>();
+            ResponseListDto<Company> response = new ResponseListDto<Company>();
             try
             {
-                var data = _appSystemServices.GetEntitys<Roles>().Where(x=>x.CompanyId == CurrentUser.CompanyId);
+                var data = _appSystemServices.GetEntitys<Company>();
 
                 if (!request.IsNull())
                 {
                     if (!string.IsNullOrEmpty(request.Filter.ToStringExtension()))
                     {
-                        data = data.Where(x => x.RoleName.Contains(request.Filter));
+                        data = data.Where(x => x.CompanyName.Contains(request.Filter));
                     }
 
                     if (!string.IsNullOrEmpty(request.Sort.ToStringExtension()))
@@ -93,7 +88,7 @@ namespace WebAppServices.Controllers
                 }
 
                 response.Total = data.Count();
-                response.Data = data.Page(request.PageIndex, request.PageSize).ToList<Roles>();
+                response.Data = data.Page(request.PageIndex, request.PageSize).ToList<Company>();
 
             }
             catch (Exception ex)
@@ -108,20 +103,19 @@ namespace WebAppServices.Controllers
 
 
         [HttpPost("Save")]
-        public ResponseDto<Roles> Save([FromBody] Roles request)
+        public ResponseDto<Company> Save([FromBody] Company request)
         {
-            ResponseDto<Roles> response = new ResponseDto<Roles>();
+            ResponseDto<Company> response = new ResponseDto<Company>();
             try
             {
-                var _entity = _appSystemServices.GetEntitys<Roles>();
-                request.CompanyId = CurrentUser.CompanyId;
+                var _entity = _appSystemServices.GetEntitys<Company>();
                 if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
                 {
-                    _appSystemServices.Create<Roles>(request);
+                    _appSystemServices.Create<Company>(request);
                 }
                 else
                 {
-                    _appSystemServices.Modify<Roles>(request);
+                    _appSystemServices.Modify<Company>(request);
                 }
             }
             catch (Exception ex)
@@ -135,7 +129,7 @@ namespace WebAppServices.Controllers
 
 
         [HttpPost("Remove")]
-        public ResponseDto<Boolean> Remove([FromBody] Roles request)
+        public ResponseDto<Boolean> Remove([FromBody] Company request)
         {
             ResponseDto<Boolean> response = new ResponseDto<Boolean>();
 
@@ -149,7 +143,7 @@ namespace WebAppServices.Controllers
                     return response;
                 }
 
-                var _entity = _appSystemServices.GetEntitys<Roles>();
+                var _entity = _appSystemServices.GetEntitys<Company>();
                 response.Data = _entity.Where(x => x.Id == request.Id).ToDelete().ExecuteAffrows() > 0;
             }
             catch (Exception ex)
