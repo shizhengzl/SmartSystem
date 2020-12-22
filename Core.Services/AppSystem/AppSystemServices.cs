@@ -66,6 +66,7 @@ namespace Core.Services
         public Boolean Create<T>(T t) where T : class
         {
             ResponseListDto<T> response = new ResponseListDto<T>();
+           
             return FreeSqlFactory._Freesql.Insert<T>(t).ExecuteAffrows() > 1;
         }
 

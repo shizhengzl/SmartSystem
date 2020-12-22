@@ -48,12 +48,12 @@ namespace Core.Repository
         /// </summary> 
         [Description("子节点")]
         [Column(IsIgnore = true)]
-        public List<Menus> children { get; set; }
+        public List<Department> children { get; set; }
 
         /// <summary>
-        /// 父级ID
+        /// 父级部门
         /// </summary>
-        [Description("父级ID")]
+        [Description("父级部门")]
         public Int64 ParentId { get; set; }
 
         /// <summary>

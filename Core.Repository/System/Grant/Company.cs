@@ -86,5 +86,12 @@ namespace Core.Repository
         [Description("授权模式")]
         public GrantMode GrantMode { get; set; }
 
+        /// <summary>
+        /// 我的单位
+        /// </summary> 
+        [Description("我的单位")]
+        [Column(IsIgnore = true)]
+        public Boolean IsMy { get; set; }
+
     }
 }

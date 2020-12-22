@@ -40,160 +40,148 @@ namespace WebAppServices.Controllers
             _dataBaseServices = dataBaseServices;
             _appSystemServices = appSystemServices;
         }
-
-
+        /// <summary>
+        /// 获取菜单头部
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
         [HttpPost("GetHeader")]
         public ResponseListDto<Column> GetHeader()
         {
             ResponseListDto<Column> response = new ResponseListDto<Column>();
-            try
-            {
-                var user = this.CurrentUser;
 
-                response.Data = _dataBaseServices.GetColumns(typeof(Menus).Name);
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "GetHeader");
-            }
+            var user = this.CurrentUser;
+
+            response.Data = _dataBaseServices.GetColumns(typeof(Menus).Name);
+
             return response;
         }
 
 
-
+        /// <summary>
+        /// 获取菜单
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
         [HttpPost("GetResult")]
         public ResponseListDto<MenuDto> GetResult([FromBody] BaseRequest<MenuDto> request)
         {
             ResponseListDto<MenuDto> response = new ResponseListDto<MenuDto>();
-            try
+
+            var data = _appSystemServices.GetEntitys<Menus>();
+
+            if (!request.IsNull())
             {
-                var data = _appSystemServices.GetEntitys<Menus>();
-
-                if (!request.IsNull())
+                if (!string.IsNullOrEmpty(request.Filter.ToStringExtension()))
                 {
-                    if (!string.IsNullOrEmpty(request.Filter.ToStringExtension()))
-                    {
-                        data = data.Where(x => x.MenuName.Contains(request.Filter));
-                    }
-
-                    if (!string.IsNullOrEmpty(request.Sort.ToStringExtension()))
-                    {
-                        data = data.OrderByPropertyName(request.Sort, request.Asc.ToBoolean());
-                    }
-                    else
-                    {
-                        data = data.OrderBy(x => x.Id);
-                    }
+                    data = data.Where(x => x.MenuName.Contains(request.Filter));
                 }
 
-                var alldata = data.ToList<MenuDto>(); 
-                // 组织menus
-                var parent = alldata.Where(x => x.ParentId.ToInt64() == 0).ToList();
-                parent.ForEach(p => {
-                    p.children = GetChilds(p,alldata);
-                });
-
-                response.Total = data.Count();
-                response.Data = parent;// data.Page(request.PageIndex, request.PageSize).ToList<Menus>();
-
+                if (!string.IsNullOrEmpty(request.Sort.ToStringExtension()))
+                {
+                    data = data.OrderByPropertyName(request.Sort, request.Asc.ToBoolean());
+                }
+                else
+                {
+                    data = data.OrderBy(x => x.Id);
+                }
             }
-            catch (Exception ex)
+
+            var alldata = data.ToList<MenuDto>();
+            // 组织menus
+            var parent = alldata.Where(x => x.ParentId.ToInt64() == 0).ToList();
+            parent.ForEach(p =>
             {
-                response.Message = ex.Message;
-                response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "GetResult");
-            }
+                p.children = GetChilds(p, alldata);
+            });
+
+            response.Total = data.Count();
+            response.Data = parent;// data.Page(request.PageIndex, request.PageSize).ToList<Menus>();
+
             return response;
         }
 
 
         private List<MenuDto> GetChilds(MenuDto menu, List<MenuDto> menus)
-        { 
+        {
             var childs = menus.Where(x => x.ParentId == menu.Id).ToList();
-            childs.ForEach(x => {
-                x.children = GetChilds(x,menus);
+            childs.ForEach(x =>
+            {
+                x.children = GetChilds(x, menus);
             });
 
             return childs.ToList();
         }
 
+
+        /// <summary>
+        /// 保存菜单
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("Save")]
+        [Authorize]
         public ResponseDto<Menus> Save([FromBody] Menus request)
         {
             ResponseDto<Menus> response = new ResponseDto<Menus>();
-            try
+
+            var _entity = _appSystemServices.GetEntitys<Menus>();
+            if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
             {
-                var _entity = _appSystemServices.GetEntitys<Menus>();
-                if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
-                {
-                    _appSystemServices.Create<Menus>(request);
-                }
-                else
-                {
-                    _appSystemServices.Modify<Menus>(request);
-                }
+                _appSystemServices.Create<Menus>(request);
             }
-            catch (Exception ex)
+            else
             {
-                response.Message = ex.Message;
-                response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "Save");
+                _appSystemServices.Modify<Menus>(request);
             }
+
             return response;
         }
 
-
+        /// <summary>
+        /// 删除菜单
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("Remove")]
+        [Authorize]
         public ResponseDto<Boolean> Remove([FromBody] Menus request)
         {
             ResponseDto<Boolean> response = new ResponseDto<Boolean>();
 
-            try
+            if (string.IsNullOrEmpty(request.Id.ToStringExtension()))
             {
-                if (string.IsNullOrEmpty(request.Id.ToStringExtension()))
-                {
 
-                    response.Message = "Key 不能为空";
-                    response.Success = false;
-                    return response;
-                }
-
-                var _entity = _appSystemServices.GetEntitys<Menus>();
-                response.Data = _entity.Where(x => x.Id == request.Id).ToDelete().ExecuteAffrows() > 0;
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
+                response.Message = "Key 不能为空";
                 response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "Remove");
+                return response;
             }
+
+            var _entity = _appSystemServices.GetEntitys<Menus>();
+            response.Data = _entity.Where(x => x.Id == request.Id).ToDelete().ExecuteAffrows() > 0;
+
             return response;
         }
 
-
-
+        /// <summary>
+        /// 获取菜单树
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
         [HttpPost("GetTree")]
         public ResponseListDto<Menus> GetTree()
         {
             ResponseListDto<Menus> response = new ResponseListDto<Menus>();
-            try
-            {
-                var data = _appSystemServices.GetEntitys<Menus>().Where(x => x.ParentId == 0).ToList();
 
-                data.ForEach(x => {
-                    GetChildren(x);
-                });
+            var data = _appSystemServices.GetEntitys<Menus>().Where(x => x.ParentId == 0).ToList();
 
-                response.Data = data.ToList<Menus>();
-            }
-            catch (Exception ex)
+            data.ForEach(x =>
             {
-                response.Message = ex.Message;
-                response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "GetHeader");
-            }
+                GetChildren(x);
+            });
+
+            response.Data = data.ToList<Menus>();
+
             return response;
         }
 
@@ -201,7 +189,8 @@ namespace WebAppServices.Controllers
         private void GetChildren(Menus tree)
         {
             tree.children = _appSystemServices.GetEntitys<Menus>().Where(o => o.ParentId == tree.Id).ToList<Menus>();
-            tree.children.ForEach(x => {
+            tree.children.ForEach(x =>
+            {
                 GetChildren(x);
             });
         }

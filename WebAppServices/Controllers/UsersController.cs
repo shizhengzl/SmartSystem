@@ -47,16 +47,9 @@ namespace WebAppServices.Controllers
         public ResponseListDto<Column> GetHeader()
         {
             ResponseListDto<Column> response = new ResponseListDto<Column>();
-            try
-            {
-                response.Data = _dataBaseServices.GetColumns(typeof(Users).Name);
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "GetHeader");
-            }
+
+            response.Data = _dataBaseServices.GetColumns(typeof(Users).Name);
+
             return response;
         }
 
@@ -69,35 +62,36 @@ namespace WebAppServices.Controllers
 
             // 获取用请求携带token
             var users = this.CurrentUser;
-             
-            var menus = _userServices.GetUserMenus(this.CurrentUser.Id,CurrentUser.CompanyId);
+
+            var menus = _userServices.GetUserMenus(this.CurrentUser.Id, CurrentUser.CompanyId);
 
 
             List<MenuTree> router = new List<MenuTree>();
             // 组织menus
             var parent = menus.Where(x => x.ParentId.ToInt32() == 0).ToList();
-            parent.ForEach(p => {
-                router.Add(GetMenuTree(p,menus)); 
+            parent.ForEach(p =>
+            {
+                router.Add(GetMenuTree(p, menus));
             });
 
             // 获取用户角色
-            var roles = new List<string>() { "admin"};
+            var roles = new List<string>() { "admin" };
             // 获取用户菜单
-            return Ok(new { Success=true, code =20000, roles , router = router, name = users.UserName, avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif" });
+            return Ok(new { Success = true, code = 20000, roles, router = router, name = users.UserName, avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif" });
         }
 
 
-        private MenuTree GetMenuTree(Menus menu,List<Menus> menus)
+        private MenuTree GetMenuTree(Menus menu, List<Menus> menus)
         {
             var child = GetChilds(menu.Id, menus);
-            return  new MenuTree()
+            return new MenuTree()
             {
                 Id = menu.Id,
                 path = menu.MenuPath,
-                component = menu.Url, 
+                component = menu.Url,
                 name = menu.MenuName,
-                meta = new MenuMeta() { icon = menu.MenuIcon, title = menu.MenuName , noCache  = true},
-                children =   child,
+                meta = new MenuMeta() { icon = menu.MenuIcon, title = menu.MenuName, noCache = true },
+                children = child,
                 redirect = child.Count == 0 ? null : child.FirstOrDefault().path
             };
         }
@@ -105,109 +99,105 @@ namespace WebAppServices.Controllers
 
         private List<MenuTree> GetChilds(Int64 ParentID, List<Menus> menus)
         {
-            List<MenuTree> result = new List<MenuTree>(); 
-            menus.Where(x => x.ParentId == ParentID).ToList().ForEach(p=> result.Add(GetMenuTree(p, menus))) ; 
-            return   result;
+            List<MenuTree> result = new List<MenuTree>();
+            menus.Where(x => x.ParentId == ParentID).ToList().ForEach(p => result.Add(GetMenuTree(p, menus)));
+            return result;
         }
 
+        /// <summary>
+        /// 获取用户列表
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [Authorize]
 
         [HttpPost("GetResult")]
         public ResponseListDto<Users> GetResult([FromBody] BaseRequest<Users> request)
         {
             ResponseListDto<Users> response = new ResponseListDto<Users>();
-            try
+
+            var data = _appSystemServices.GetEntitys<Users>().Where(x => x.CompanyId == CurrentUser.CompanyId);
+
+            if (!request.IsNull())
             {
-                var data = _appSystemServices.GetEntitys<Users>().Where(x => x.CompanyId == CurrentUser.CompanyId);
-
-                if (!request.IsNull())
+                if (!string.IsNullOrEmpty(request.Filter.ToStringExtension()))
                 {
-                    if (!string.IsNullOrEmpty(request.Filter.ToStringExtension()))
-                    {
-                        data = data.Where(x => x.UserName.Contains(request.Filter) || x.Phone.Contains(request.Filter));
-                    }
-
-                    if (!string.IsNullOrEmpty(request.Sort.ToStringExtension()))
-                    {
-                        data = data.OrderByPropertyName(request.Sort, request.Asc.ToBoolean());
-                    }
-                    else
-                    {
-                        data = data.OrderBy(x => x.Id);
-                    }
+                    data = data.Where(x => x.UserName.Contains(request.Filter) || x.Phone.Contains(request.Filter));
                 }
 
-                response.Total = data.Count();
-                response.Data = data.Page(request.PageIndex, request.PageSize).ToList<Users>();
-
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "GetResult");
-            }
-            return response;
-        }
-
-
-
-        [HttpPost("Save")]
-        public ResponseDto<Users> Save([FromBody] Users request)
-        {
-            ResponseDto<Users> response = new ResponseDto<Users>();
-            try
-            {
-                var _entity = _appSystemServices.GetEntitys<Users>();
-                request.CompanyId = CurrentUser.CompanyId;
-                if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
+                if (!string.IsNullOrEmpty(request.Sort.ToStringExtension()))
                 {
-                    _appSystemServices.Create<Users>(request);
+                    data = data.OrderByPropertyName(request.Sort, request.Asc.ToBoolean());
                 }
                 else
                 {
-                    _appSystemServices.Modify<Users>(request);
+                    data = data.OrderBy(x => x.Id);
                 }
             }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "Save");
-            }
+            response.Total = data.Count();
+            response.Data = data.Page(request.PageIndex, request.PageSize).ToList<Users>();
+
             return response;
         }
 
 
+        /// <summary>
+        /// 保存用户
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("Save")]
+        [Authorize]
+        public ResponseDto<Users> Save([FromBody] Users request)
+        {
+            ResponseDto<Users> response = new ResponseDto<Users>();
+
+            var _entity = _appSystemServices.GetEntitys<Users>();
+            request.CompanyId = CurrentUser.CompanyId;
+            if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
+            {
+                _appSystemServices.Create<Users>(request);
+            }
+            else
+            {
+                _appSystemServices.Modify<Users>(request);
+            }
+            return response;
+        }
+
+        /// <summary>
+        /// 删除用户
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("Remove")]
+        [Authorize]
         public ResponseDto<Boolean> Remove([FromBody] Users request)
         {
             ResponseDto<Boolean> response = new ResponseDto<Boolean>();
 
-            try
-            {
-                if (string.IsNullOrEmpty(request.Id.ToStringExtension()))
-                {
 
-                    response.Message = "Key 不能为空";
-                    response.Success = false;
-                    return response;
-                }
-
-                var _entity = _appSystemServices.GetEntitys<Users>();
-                response.Data = _entity.Where(x => x.Id == request.Id).ToDelete().ExecuteAffrows() > 0;
-            }
-            catch (Exception ex)
+            if (string.IsNullOrEmpty(request.Id.ToStringExtension()))
             {
-                response.Message = ex.Message;
+
+                response.Message = "Key 不能为空";
                 response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "Remove");
+                return response;
             }
+
+            var _entity = _appSystemServices.GetEntitys<Users>();
+            response.Data = _entity.Where(x => x.Id == request.Id).ToDelete().ExecuteAffrows() > 0;
+
             return response;
         }
 
 
-
+        /// <summary>
+        /// 获取单位用户
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetUsersList")]
+        [Authorize]
         public ResponseListDto<UserDto> GetUsersList()
         {
             ResponseListDto<UserDto> response = new ResponseListDto<UserDto>();
@@ -302,8 +292,13 @@ namespace WebAppServices.Controllers
             return response;
         }
 
-
+        /// <summary>
+        /// 注册用户
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         [HttpPost("Register")]
+        [AllowAnonymous]
         public ResponseDto<bool> Register([FromBody] UserDto user)
         {
             ResponseDto<bool> response = new ResponseDto<bool>();
@@ -317,11 +312,13 @@ namespace WebAppServices.Controllers
                 }
 
                 var searchuser = _userServices.GetUser(user.Phone);
-                if (searchuser != null){
+                if (searchuser != null)
+                {
                     response.Message = "手机号码已经注册";
                     response.Success = false;
                 }
-                else { 
+                else
+                {
                     user.Password = user.Password.ToMD5();
                     response.Data = _userServices.RegisterUser(user);
                 }

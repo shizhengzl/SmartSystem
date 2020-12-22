@@ -4,7 +4,7 @@ import { debounce } from '@/utils';
 
 export function getHeader(data) {
   return request({
-    url: '/api/Company/GetHeader',
+    url: '/api/Department/GetHeader',
     method: 'post',
     data
   })
@@ -13,7 +13,7 @@ export function getHeader(data) {
 
   export function GetResult(data) {
     return request({
-      url: '/api/Company/GetResult',
+      url: '/api/Department/GetResult',
       method: 'post',
       data
     }) 
@@ -22,7 +22,7 @@ export function getHeader(data) {
 
 export function Save(data) {
   return request({
-    url: '/api/Company/Save',
+    url: '/api/Department/Save',
     method: 'post',
     data
   })
@@ -31,27 +31,16 @@ export function Save(data) {
 
 export function Remove(data) {
   return request({
-    url: '/api/Company/Remove',
+    url: '/api/Department/Remove',
     method: 'post',
     data
   })
 }
 
-export function SaveGrant(data) {
+export function GetTree(data) {
   return request({
-    url: '/api/Company/SaveGrant',
+    url: '/api/Department/GetTree',
     method: 'post',
     data
   })
 }
-
-export function GetCompanyMenus(data) {
-  return request({
-    url: '/api/Company/GetCompanyMenus',
-    method: 'post',
-    data
-  })
-}
-
-
-

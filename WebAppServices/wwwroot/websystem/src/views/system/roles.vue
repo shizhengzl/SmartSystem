@@ -6,18 +6,20 @@
     </el-input>
 
 
-    <el-table style="margin-top:5px; width: 100%" border :data="tableData"  @sort-change="SortChange">
+    <el-table style="margin-top:5px; width: 100%" border :data="tableData" @sort-change="SortChange">
       <template v-for="(item,index) in tableHead">
         <el-table-column :prop="item.columnName"
                          :label="item.columnDescription || item.columnName"
                          v-if="hiddenColumn[item.columnName] !== true"
                          :key="index"
                          show-overflow-tooltip
-                         sortable="custom" ></el-table-column>
+                         sortable="custom"></el-table-column>
       </template>
 
-      <el-table-column label="操作" width="200">
+      <el-table-column label="操作" width="400">
         <template slot-scope="scope">
+          <el-button type="success" size="small" @click="ShowRoleUser(scope.row)">用户管理</el-button>
+          <el-button type="success" size="small" @click="Modify(scope.row)">权限管理</el-button>
           <el-button type="success" size="small" @click="Modify(scope.row)">编辑</el-button>
           <el-button type="danger" size="small" @click="Remove(scope.row)">删除</el-button>
         </template>
@@ -31,7 +33,7 @@
                    :page-size="paging.PageSize"
                    layout="total, sizes, prev, pager, next, jumper"
                    :total="paging.TotalCount">
-    </el-pagination> 
+    </el-pagination>
 
 
     <el-dialog title="创建角色" :visible.sync="createdialog" :close-on-click-modal="false" :close-on-press-escape="false" @close="reset">
@@ -66,15 +68,64 @@
         <el-button type="primary" :loading="createLoading" @click="Save">确 定</el-button>
       </div>
     </el-dialog>
+
+
+
+    <el-dialog title="角色用户管理" :visible.sync="roleuserdialog" :close-on-click-modal="false" :close-on-press-escape="false" >
+      <div>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <div>
+              <el-table border :data="haveUserData">
+                <el-table-column prop="userName" label="用户名" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="name" label="姓名" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="phone" label="手机号码" show-overflow-tooltip></el-table-column>
+
+                <el-table-column label="操作" width="100">
+                  <template slot-scope="scope"> 
+                    <el-button type="danger" size="small" @click="RemoveRoleUser(scope.row)">删除</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+
+            </div>
+          </el-col>
+          <el-col :span="1"><div></div></el-col> 
+          <el-col :span="12">
+            <div>
+              <el-table border :data="ChoseUserData">
+                <el-table-column prop="userName" label="用户名" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="name" label="姓名" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="phone" label="手机号码" show-overflow-tooltip></el-table-column>
+
+                <el-table-column label="操作" width="100">
+                  <template slot-scope="scope">
+                    <el-button type="danger" size="small" @click="SaveRoleUser(scope.row)">添加</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+
+            </div>
+          </el-col>
+        </el-row>
+      </div> 
+    </el-dialog>
   </div>
 </template>
 <script>
-  import { getHeader, GetResult ,Save,Remove} from '@/api/role'
+  import {
+    getHeader, GetResult, Save, Remove
+    , GetRoleUser, GetRoleChoseUser, SaveRoleUser, RemoveRoleUser
+  } from '@/api/role'
   import { debounce } from '@/utils';
   export default {
     name: 'Roles',
     data() {
       return {
+        selectrole: {},
+        roleuserdialog: false,
+        ChoseUserData:[],
+        haveUserData: [],
         hiddenColumn: {
           id: true
           , parentId: true
@@ -116,6 +167,43 @@
       this.GetResult();
     },
     methods: {
+      SaveRoleUser: function (row) {
+        const owner = this; 
+        var roleuser = [{ userId: row.id, roleId: owner.selectrole.id}]
+        SaveRoleUser(roleuser).then(response => {  
+          owner.GetRoleUser()
+          owner.GetRoleChoseUser()
+        })
+      },
+      RemoveRoleUser: function (row) {
+        const owner = this;
+        var roleuser = [{ userId: row.id, roleId: owner.selectrole.id }]
+        RemoveRoleUser(roleuser).then(response => { 
+          owner.GetRoleUser()
+          owner.GetRoleChoseUser()
+        })
+      }, 
+      GetRoleUser: function () {
+        const owner = this
+        owner.paging.Model.Id = owner.selectrole.id
+        GetRoleUser(owner.paging).then(response => {
+          owner.haveUserData = response.data; 
+        })
+      },
+      GetRoleChoseUser: function () {
+        const owner = this
+        owner.paging.Model.Id = owner.selectrole.id
+        GetRoleChoseUser(owner.paging).then(response => {
+          owner.ChoseUserData = response.data;
+          //owner.paging.TotalCount = response.total;
+        })
+      }, 
+      ShowRoleUser: function (row) {
+        this.selectrole = row
+        this.roleuserdialog = true;
+        this.GetRoleUser()
+        this.GetRoleChoseUser()
+      },
       SortChange: function (column) { 
         this.paging.Sort = column.prop;
         this.paging.Asc = column.order == "ascending";

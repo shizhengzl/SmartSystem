@@ -73,3 +73,36 @@ export function Remove(data) {
     data
   })
 }
+
+
+
+export function GetRoleUser(data) {
+  return request({
+    url: '/api/Roles/GetRoleUser',
+    method: 'post',
+    data
+  })
+}
+
+export function GetRoleChoseUser(data) {
+  return request({
+    url: '/api/Roles/GetRoleChoseUser',
+    method: 'post',
+    data
+  })
+}
+export function SaveRoleUser(data) {
+  return request({
+    url: '/api/Roles/SaveRoleUser',
+    method: 'post',
+    data
+  })
+}
+
+export function RemoveRoleUser(data) {
+  return request({
+    url: '/api/Roles/RemoveRoleUser',
+    method: 'post',
+    data
+  })
+}

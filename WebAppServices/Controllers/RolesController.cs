@@ -46,89 +46,75 @@ namespace WebAppServices.Controllers
         /// 获取列头
         /// </summary>
         /// <returns></returns>
-        [HttpPost("GetHeader")] 
+        [HttpPost("GetHeader")]
+        [Authorize]
         public ResponseListDto<Column> GetHeader()
         {
             ResponseListDto<Column> response = new ResponseListDto<Column>();
-            try
-            {
-                var user = this.CurrentUser;
 
-                response.Data = _dataBaseServices.GetColumns(typeof(Roles).Name);
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "GetHeader");
-            }
+            var user = this.CurrentUser;
+
+            response.Data = _dataBaseServices.GetColumns(typeof(Roles).Name);
+
             return response;
         }
 
 
-
+        /// <summary>
+        /// 获取角色
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("GetResult")]
+        [Authorize]
         public ResponseListDto<Roles> GetResult([FromBody] BaseRequest<Roles> request)
         {
             ResponseListDto<Roles> response = new ResponseListDto<Roles>();
-            try
+
+            var data = _appSystemServices.GetEntitys<Roles>().Where(x => x.CompanyId == CurrentUser.CompanyId);
+
+            if (!request.IsNull())
             {
-                var data = _appSystemServices.GetEntitys<Roles>().Where(x=>x.CompanyId == CurrentUser.CompanyId);
-
-                if (!request.IsNull())
+                if (!string.IsNullOrEmpty(request.Filter.ToStringExtension()))
                 {
-                    if (!string.IsNullOrEmpty(request.Filter.ToStringExtension()))
-                    {
-                        data = data.Where(x => x.RoleName.Contains(request.Filter));
-                    }
-
-                    if (!string.IsNullOrEmpty(request.Sort.ToStringExtension()))
-                    {
-                        data = data.OrderByPropertyName(request.Sort, request.Asc.ToBoolean());
-                    }
-                    else
-                    {
-                        data = data.OrderBy(x => x.Id);
-                    }
+                    data = data.Where(x => x.RoleName.Contains(request.Filter));
                 }
 
-                response.Total = data.Count();
-                response.Data = data.Page(request.PageIndex, request.PageSize).ToList<Roles>();
+                if (!string.IsNullOrEmpty(request.Sort.ToStringExtension()))
+                {
+                    data = data.OrderByPropertyName(request.Sort, request.Asc.ToBoolean());
+                }
+                else
+                {
+                    data = data.OrderBy(x => x.Id);
+                }
+            }
 
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "GetResult");
-            }
+            response.Total = data.Count();
+            response.Data = data.Page(request.PageIndex, request.PageSize).ToList<Roles>();
             return response;
         }
 
-
-
+        /// <summary>
+        /// 保存角色
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [Authorize]
         [HttpPost("Save")]
         public ResponseDto<Roles> Save([FromBody] Roles request)
         {
             ResponseDto<Roles> response = new ResponseDto<Roles>();
-            try
+
+            var _entity = _appSystemServices.GetEntitys<Roles>();
+            request.CompanyId = CurrentUser.CompanyId;
+            if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
             {
-                var _entity = _appSystemServices.GetEntitys<Roles>();
-                request.CompanyId = CurrentUser.CompanyId;
-                if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
-                {
-                    _appSystemServices.Create<Roles>(request);
-                }
-                else
-                {
-                    _appSystemServices.Modify<Roles>(request);
-                }
+                _appSystemServices.Create<Roles>(request);
             }
-            catch (Exception ex)
+            else
             {
-                response.Message = ex.Message;
-                response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "Save");
+                _appSystemServices.Modify<Roles>(request);
             }
             return response;
         }
@@ -138,25 +124,157 @@ namespace WebAppServices.Controllers
         public ResponseDto<Boolean> Remove([FromBody] Roles request)
         {
             ResponseDto<Boolean> response = new ResponseDto<Boolean>();
-
-            try
+            if (string.IsNullOrEmpty(request.Id.ToStringExtension()))
             {
-                if (string.IsNullOrEmpty(request.Id.ToStringExtension()))
-                {
 
-                    response.Message = "Key 不能为空";
-                    response.Success = false;
-                    return response;
+                response.Message = "Key 不能为空";
+                response.Success = false;
+                return response;
+            }
+
+            var _entity = _appSystemServices.GetEntitys<Roles>();
+            response.Data = _entity.Where(x => x.Id == request.Id).ToDelete().ExecuteAffrows() > 0;
+
+            return response;
+        }
+
+
+        /// <summary>
+        /// 获取角色用户
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("GetRoleUser")]
+        public ResponseListDto<Users> GetRoleUser([FromBody] BaseRequest<Roles> request)
+        {
+            ResponseListDto<Users> response = new ResponseListDto<Users>();
+
+            var data = _appSystemServices.GetEntitys<Users>().Where(x => x.CompanyId == CurrentUser.CompanyId);
+
+            if (!request.IsNull())
+            {
+                if (!string.IsNullOrEmpty(request.Filter.ToStringExtension()))
+                {
+                    data = data.Where(x => x.UserName.Contains(request.Filter));
                 }
 
-                var _entity = _appSystemServices.GetEntitys<Roles>();
-                response.Data = _entity.Where(x => x.Id == request.Id).ToDelete().ExecuteAffrows() > 0;
+                if (!request.Model.IsNull() && !request.Model.Id.IsNull())
+                {
+                    var userids = _appSystemServices.GetEntitys<RoleUsers>().Where(x => x.RoleId == request.Model.Id).ToList().Select(p => p.UserId).ToList();
+                    if (userids.Count > 0)
+                        data = data.Where(x => userids.Contains(x.Id));
+                    else
+                        data = data.Where("1=2");
+                }
+                if (!string.IsNullOrEmpty(request.Sort.ToStringExtension()))
+                {
+                    data = data.OrderByPropertyName(request.Sort, request.Asc.ToBoolean());
+                }
+                else
+                {
+                    data = data.OrderBy(x => x.Id);
+                }
             }
-            catch (Exception ex)
+
+            response.Total = data.Count();
+            response.Data = data.Page(request.PageIndex, request.PageSize).ToList<Users>();
+
+            return response;
+        }
+
+
+
+        /// <summary>
+        /// 获取角色可以选择的用户
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("GetRoleChoseUser")]
+        public ResponseListDto<Users> GetRoleChoseUser([FromBody] BaseRequest<Roles> request)
+        {
+            ResponseListDto<Users> response = new ResponseListDto<Users>();
+
+            var data = _appSystemServices.GetEntitys<Users>().Where(x => x.CompanyId == CurrentUser.CompanyId);
+
+            if (!request.IsNull())
             {
-                response.Message = ex.Message;
-                response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "Remove");
+                if (!string.IsNullOrEmpty(request.Filter.ToStringExtension()))
+                {
+                    data = data.Where(x => x.UserName.Contains(request.Filter));
+                }
+
+                if (!request.Model.IsNull() && !request.Model.Id.IsNull())
+                {
+                    var userids = _appSystemServices.GetEntitys<RoleUsers>().Where(x => x.RoleId == request.Model.Id).ToList().Select(p => p.UserId).ToList();
+                    if (userids.Count > 0)
+                        data = data.Where(x => !userids.Contains(x.Id));
+                }
+                if (!string.IsNullOrEmpty(request.Sort.ToStringExtension()))
+                {
+                    data = data.OrderByPropertyName(request.Sort, request.Asc.ToBoolean());
+                }
+                else
+                {
+                    data = data.OrderBy(x => x.Id);
+                }
+            }
+            response.Total = data.Count();
+            response.Data = data.Page(request.PageIndex, request.PageSize).ToList<Users>();
+            return response;
+        }
+
+
+
+        /// <summary>
+        /// 保存角色用户
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("SaveRoleUser")]
+        [Authorize]
+        public ResponseListDto<RoleUsers> SaveRoleUser([FromBody] List<RoleUsers> request)
+        {
+            ResponseListDto<RoleUsers> response = new ResponseListDto<RoleUsers>();
+            var _entity = _appSystemServices.GetEntitys<RoleUsers>();
+            if (request.Count > 0)
+            {
+                request.ForEach(p =>
+                {
+                    if (!_entity.Any(x => x.UserId == p.UserId && x.RoleId == p.RoleId))
+                    {
+                        p.CompanyId = CurrentUser.CompanyId;
+                        _appSystemServices.Create<RoleUsers>(p);
+                    }
+                });
+            }
+            return response;
+        }
+
+
+        /// <summary>
+        /// 移除角色用户
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("RemoveRoleUser")]
+        [Authorize]
+        public ResponseListDto<RoleUsers> RemoveRoleUser([FromBody] List<RoleUsers> request)
+        {
+            ResponseListDto<RoleUsers> response = new ResponseListDto<RoleUsers>();
+            var _entity = _appSystemServices.GetEntitys<RoleUsers>();
+            if (request.Count > 0)
+            {
+                request.ForEach(p =>
+                {
+                    var roleuser = _entity.Where(x => x.UserId == p.UserId && x.RoleId == p.RoleId).First();
+                    if (!roleuser.IsNull())
+                    {
+                        _appSystemServices.Remove<RoleUsers>(roleuser);
+                    }
+                });
+
             }
             return response;
         }

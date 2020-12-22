@@ -21,7 +21,7 @@ namespace WebAppServices.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CompanyController : BaseController
+    public class DepartmentController : BaseController
     {
         private IMapper _mapper { get; set; }
         private UsersSrevices _userServices { get; set; }
@@ -29,7 +29,7 @@ namespace WebAppServices.Controllers
 
         private AppSystemServices _appSystemServices { get; set; }
         private SystemServices _sysservices { get; set; }
-        public CompanyController(IMapper mapper
+        public DepartmentController(IMapper mapper
             , UsersSrevices usersSrevices
             , SystemServices sysservices
             , DataBaseServices dataBaseServices
@@ -43,7 +43,7 @@ namespace WebAppServices.Controllers
         }
 
         /// <summary>
-        /// 获取单位列头
+        /// 获取列头
         /// </summary>
         /// <returns></returns>
         [HttpPost("GetHeader")]
@@ -51,35 +51,29 @@ namespace WebAppServices.Controllers
         public ResponseListDto<Column> GetHeader()
         {
             ResponseListDto<Column> response = new ResponseListDto<Column>();
-            response.Data = _dataBaseServices.GetColumns(typeof(Company).Name);
 
+            response.Data = _dataBaseServices.GetColumns(typeof(Department).Name);
             return response;
         }
 
-
         /// <summary>
-        /// 获取单位详情
+        /// 获取部门
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("GetResult")]
         [Authorize]
-        public ResponseListDto<Company> GetResult([FromBody] BaseRequest<Company> request)
+        public ResponseListDto<Department> GetResult([FromBody] BaseRequest<Department> request)
         {
-            ResponseListDto<Company> response = new ResponseListDto<Company>();
-            var data = _appSystemServices.GetEntitys<Company>();
+            ResponseListDto<Department> response = new ResponseListDto<Department>();
+
+            var data = _appSystemServices.GetEntitys<Department>();
 
             if (!request.IsNull())
             {
-
-                if (request.Model.IsMy)
-                {
-                    data = data.Where(x => x.Id == CurrentUser.CompanyId);
-                }
-
                 if (!string.IsNullOrEmpty(request.Filter.ToStringExtension()))
                 {
-                    data = data.Where(x => x.CompanyName.Contains(request.Filter));
+                    data = data.Where(x => x.DepartmentName.Contains(request.Filter));
                 }
 
                 if (!string.IsNullOrEmpty(request.Sort.ToStringExtension()))
@@ -90,103 +84,95 @@ namespace WebAppServices.Controllers
                 {
                     data = data.OrderBy(x => x.Id);
                 }
-            } 
+            }
+
             response.Total = data.Count();
-            response.Data = data.Page(request.PageIndex, request.PageSize).ToList<Company>(); 
+            response.Data = data.Page(request.PageIndex, request.PageSize).ToList<Department>();
+
             return response;
         }
 
 
         /// <summary>
-        /// 保存单位
+        /// 保存部门
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("Save")]
         [Authorize]
-        public ResponseDto<Company> Save([FromBody] Company request)
+        public ResponseDto<Department> Save([FromBody] Department request)
         {
-            ResponseDto<Company> response = new ResponseDto<Company>();
-            var _entity = _appSystemServices.GetEntitys<Company>();
+            ResponseDto<Department> response = new ResponseDto<Department>();
+            var _entity = _appSystemServices.GetEntitys<Department>();
+            request.CompanyId = CurrentUser.CompanyId;
             if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
             {
-                _appSystemServices.Create<Company>(request);
+                _appSystemServices.Create<Department>(request);
             }
             else
             {
-                _appSystemServices.Modify<Company>(request);
+                _appSystemServices.Modify<Department>(request);
             }
+
             return response;
         }
 
         /// <summary>
-        /// 删除单位
+        /// 删除部门
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("Remove")]
         [Authorize]
-        public ResponseDto<Boolean> Remove([FromBody] Company request)
+        public ResponseDto<Boolean> Remove([FromBody] Department request)
         {
             ResponseDto<Boolean> response = new ResponseDto<Boolean>();
 
             if (string.IsNullOrEmpty(request.Id.ToStringExtension()))
             {
+
                 response.Message = "Key 不能为空";
                 response.Success = false;
                 return response;
             }
 
-            var _entity = _appSystemServices.GetEntitys<Company>();
+            var _entity = _appSystemServices.GetEntitys<Department>();
             response.Data = _entity.Where(x => x.Id == request.Id).ToDelete().ExecuteAffrows() > 0;
 
             return response;
         }
 
-        /// <summary>
-        /// 保存授权
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [HttpPost("SaveGrant")]
-        [Authorize]
-        public ResponseDto<Company> SaveGrant([FromBody] List<CompanyMenus> request)
-        {
-            ResponseDto<Company> response = new ResponseDto<Company>();
 
-            var _entity = _appSystemServices.GetEntitys<CompanyMenus>();
-            _entity.Where(x => x.CompanyId == request.FirstOrDefault().CompanyId).ToDelete();
-            if (request.Count > 0)
-            { 
-                request.ForEach(x=> {
-                    _appSystemServices.Create<CompanyMenus>(new CompanyMenus() { CompanyId = x.CompanyId, MenuId = x.MenuId });
-                });
-            } 
+        /// <summary>
+        /// 获取部门树
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("GetTree")]
+        public ResponseListDto<Department> GetTree()
+        {
+            ResponseListDto<Department> response = new ResponseListDto<Department>();
+
+            var data = _appSystemServices.GetEntitys<Department>().Where(x => x.ParentId == 0).ToList();
+
+            data.ForEach(x =>
+            {
+                GetChildren(x);
+            });
+
+            response.Data = data.ToList<Department>();
+
             return response;
         }
 
-
-
-
-        /// <summary>
-        /// 获取单位菜单
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [HttpPost("GetCompanyMenus")]
-        [Authorize]
-        public ResponseListDto<CompanyMenus> GetCompanyMenus([FromBody] Company request)
+        [HttpPost("GetChildren")]
+        private void GetChildren(Department tree)
         {
-            ResponseListDto<CompanyMenus> response = new ResponseListDto<CompanyMenus>();
-            var data = _appSystemServices.GetEntitys<CompanyMenus>();
-
-            if (!request.IsNull())
+            tree.children = _appSystemServices.GetEntitys<Department>().Where(o => o.ParentId == tree.Id).ToList<Department>();
+            tree.children.ForEach(x =>
             {
-                data = data.Where(x => x.CompanyId == request.Id);
-            }
-            response.Total = data.Count();
-            response.Data = data.ToList();
-            return response;
+                GetChildren(x);
+            });
         }
     }
 }

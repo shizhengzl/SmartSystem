@@ -15,9 +15,8 @@
                          show-overflow-tooltip sortable="custom" />
       </template>
 
-      <el-table-column label="操作" width="300">
+      <el-table-column label="操作" width="200">
         <template slot-scope="scope">
-          <el-button type="success" size="small" @click="Grant(scope.row)">授权</el-button>
           <el-button type="success" size="small" @click="Modify(scope.row)">编辑</el-button>
           <el-button type="danger" size="small" @click="Remove(scope.row)">删除</el-button>
         </template>
@@ -65,7 +64,7 @@
 
           <el-form-item v-if="item.columnName=='grantMode'"
                         :label="item.columnDescription || item.columnName"
-                        :prop="item.columnName">
+                        :prop="item.columnName"> 
 
             <el-select v-model="model.grantMode" placeholder="请选择">
               <el-option v-for="item in grantModes"
@@ -84,43 +83,16 @@
         <el-button type="primary" :loading="createLoading" @click="Save">确 定</el-button>
       </div>
     </el-dialog>
-
-
-
-    <el-dialog title="单位授权" :visible.sync="grantdialog" :close-on-click-modal="false" :close-on-press-escape="false"  >
-      <div>
-        <el-tree :data="treedata"
-                 show-checkbox
-                  ref="tree"
-                 :default-checked-keys="companymenus"
-                 node-key="id" 
-                 :props="defaultProps">
-        </el-tree>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="grantdialog=false">取 消</el-button>
-        <el-button type="primary"   @click="SaveGrant">确 定</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 <script>
-  import { getHeader, GetResult, Save, Remove, SaveGrant, GetCompanyMenus} from '@/api/company'
+  import { getHeader, GetResult, Save, Remove } from '@/api/company'
   import { GetGrantMode } from '@/api/enum'
   import { debounce } from '@/utils'
-
-  import { GetTree } from '@/api/menus'
   export default {
     name: 'Company',
     data() {
       return {
-        defaultProps: {
-          children: 'children',
-          label: 'menuName'
-        },
-        treedata: [],
-        selectcompany: {},
-        companymenus:[],
         hiddenColumn: {
           id: true
           , parentId: true
@@ -131,10 +103,7 @@
           , modifyUserName: true
           , modifyTime: true
           , isMy: false
-          , companyRegionCode: true
-          , parentName: true
         },
-        grantdialog:false,
         grantModes: [],
         tableData: [],
         tableHead: [],
@@ -151,6 +120,7 @@
           Asc: true,
           Filter: '',
           Model: {
+            isMy:true
           }
         }
       }
@@ -164,49 +134,10 @@
     mounted() {
       this.GetGrantMode()
       this.getHeader()
-      this.GetResult() 
+      this.GetResult()
     },
     methods: {
-      GetCompanyMenus: function (row) { 
-        const owner = this
-        GetCompanyMenus({ id: row.id }).then(response => {
-          owner.companymenus= []
-          response.data.forEach(function (item, index) {
-            owner.companymenus.push(item.menuId); 
-          });
-
-          this.GetTree()
-
-        })
-      },
-      GetTree: function () {
-        const owner = this
-        GetTree().then(response => {
-          owner.treedata = response.data
-        })
-      }, 
-      SaveGrant: function () {
-        const owner = this
-         
-        let keys = owner.$refs.tree.getCheckedKeys()
-        let companyId = owner.selectcompany.id
-        let requestdata = []
-        keys.forEach(function (item, index) {
-          //item 就是当日按循环到的对象
-          //index是循环的索引，从0开始
-          requestdata.push({ companyId: companyId, menuId: item})
-        })
-        SaveGrant(requestdata).then(response => {
-          owner.grantdialog = false
-         
-        })
-      },
-      Grant: function (row) {
-        this.GetCompanyMenus(row)
-        this.grantdialog = true;
-        this.selectcompany = row
-      },
-      GetGrantMode: function () { 
+      GetGrantMode: function () {
         const owner = this
         GetGrantMode().then(response => {
           owner.grantModes = response.data
@@ -236,7 +167,8 @@
         Remove(row).then(response => {
           owner.GetResult()
         })
-      }, 
+      },
+
 
       getHeader: function () {
         const owner = this
