@@ -174,5 +174,193 @@ namespace WebAppServices.Controllers
                 GetChildren(x);
             });
         }
+
+
+        /// <summary>
+        /// 获取用户菜单
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("GetMenus")]
+        [Authorize]
+        public ResponseListDto<DepartmentMenus> GetMenus([FromBody] Department request)
+        {
+            ResponseListDto<DepartmentMenus> response = new ResponseListDto<DepartmentMenus>();
+            var data = _appSystemServices.GetEntitys<DepartmentMenus>();
+
+            if (!request.IsNull())
+            {
+                data = data.Where(x => x.DepartmentId == request.Id);
+            }
+            response.Total = data.Count();
+            response.Data = data.ToList();
+            return response;
+        }
+
+
+
+        /// <summary>
+        /// 保存授权
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("SaveGrant")]
+        [Authorize]
+        public ResponseDto<Department> SaveGrant([FromBody] List<DepartmentMenus> request)
+        {
+            ResponseDto<Department> response = new ResponseDto<Department>();
+
+            var _entity = _appSystemServices.GetEntitys<DepartmentMenus>();
+            _entity.Where(x => x.DepartmentId == request.FirstOrDefault().DepartmentId).ToDelete();
+            if (request.Count > 0)
+            {
+                request.ForEach(x => {
+                    _appSystemServices.Create<DepartmentMenus>(new DepartmentMenus() { DepartmentId = x.DepartmentId, MenuId = x.MenuId, CompanyId = CurrentUser.CompanyId });
+                });
+            }
+            return response;
+        }
+
+
+
+        /// <summary>
+        /// 获取部门用户
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("GetDepartmentUser")]
+        public ResponseListDto<Users> GetDepartmentUser([FromBody] BaseRequest<Department> request)
+        {
+            ResponseListDto<Users> response = new ResponseListDto<Users>();
+
+            var data = _appSystemServices.GetEntitys<Users>().Where(x => x.CompanyId == CurrentUser.CompanyId);
+
+            if (!request.IsNull())
+            {
+                if (!string.IsNullOrEmpty(request.Filter.ToStringExtension()))
+                {
+                    data = data.Where(x => x.UserName.Contains(request.Filter));
+                }
+
+                if (!request.Model.IsNull() && !request.Model.Id.IsNull())
+                {
+                    var userids = _appSystemServices.GetEntitys<DepartmentUsers>().Where(x => x.DepartmentId == request.Model.Id).ToList().Select(p => p.UserId).ToList();
+                    if (userids.Count > 0)
+                        data = data.Where(x => userids.Contains(x.Id));
+                    else
+                        data = data.Where("1=2");
+                }
+                if (!string.IsNullOrEmpty(request.Sort.ToStringExtension()))
+                {
+                    data = data.OrderByPropertyName(request.Sort, request.Asc.ToBoolean());
+                }
+                else
+                {
+                    data = data.OrderBy(x => x.Id);
+                }
+            }
+
+            response.Total = data.Count();
+            response.Data = data.Page(request.PageIndex, request.PageSize).ToList<Users>();
+
+            return response;
+        }
+
+
+
+        /// <summary>
+        /// 获取部门可以选择的用户
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("GetDepartmentChoseUser")]
+        public ResponseListDto<Users> GetDepartmentChoseUser([FromBody] BaseRequest<Department> request)
+        {
+            ResponseListDto<Users> response = new ResponseListDto<Users>();
+
+            var data = _appSystemServices.GetEntitys<Users>().Where(x => x.CompanyId == CurrentUser.CompanyId);
+
+            if (!request.IsNull())
+            {
+                if (!string.IsNullOrEmpty(request.Filter.ToStringExtension()))
+                {
+                    data = data.Where(x => x.UserName.Contains(request.Filter));
+                }
+
+                if (!request.Model.IsNull() && !request.Model.Id.IsNull())
+                {
+                    var userids = _appSystemServices.GetEntitys<DepartmentUsers>().Where(x => x.DepartmentId == request.Model.Id).ToList().Select(p => p.UserId).ToList();
+                    if (userids.Count > 0)
+                        data = data.Where(x => !userids.Contains(x.Id));
+                }
+                if (!string.IsNullOrEmpty(request.Sort.ToStringExtension()))
+                {
+                    data = data.OrderByPropertyName(request.Sort, request.Asc.ToBoolean());
+                }
+                else
+                {
+                    data = data.OrderBy(x => x.Id);
+                }
+            }
+            response.Total = data.Count();
+            response.Data = data.Page(request.PageIndex, request.PageSize).ToList<Users>();
+            return response;
+        }
+
+
+        /// <summary>
+        /// 保存部门用户
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("SaveDepartmentUser")]
+        [Authorize]
+        public ResponseListDto<DepartmentUsers> SaveDepartmentUser([FromBody] List<DepartmentUsers> request)
+        {
+            ResponseListDto<DepartmentUsers> response = new ResponseListDto<DepartmentUsers>();
+            var _entity = _appSystemServices.GetEntitys<DepartmentUsers>();
+            if (request.Count > 0)
+            {
+                request.ForEach(p =>
+                {
+                    if (!_entity.Any(x => x.UserId == p.UserId && x.DepartmentId == p.DepartmentId))
+                    {
+                        p.CompanyId = CurrentUser.CompanyId;
+                        _appSystemServices.Create<DepartmentUsers>(p);
+                    }
+                });
+            }
+            return response;
+        }
+
+
+        /// <summary>
+        /// 移除部门用户
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("RemoveDepartmentUser")]
+        [Authorize]
+        public ResponseListDto<DepartmentUsers> RemoveDepartmentUser([FromBody] List<DepartmentUsers> request)
+        {
+            ResponseListDto<DepartmentUsers> response = new ResponseListDto<DepartmentUsers>();
+            var _entity = _appSystemServices.GetEntitys<DepartmentUsers>();
+            if (request.Count > 0)
+            {
+                request.ForEach(p =>
+                {
+                    var departmentuser = _entity.Where(x => x.UserId == p.UserId && x.DepartmentId == p.DepartmentId).First();
+                    if (!departmentuser.IsNull())
+                    {
+                        _appSystemServices.Remove<DepartmentUsers>(departmentuser);
+                    }
+                });
+
+            }
+            return response;
+        }
+
     }
 }

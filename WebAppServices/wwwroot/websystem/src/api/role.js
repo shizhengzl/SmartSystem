@@ -106,3 +106,20 @@ export function RemoveRoleUser(data) {
     data
   })
 }
+
+ 
+export function SaveGrant(data) {
+  return request({
+    url: '/api/Roles/SaveGrant',
+    method: 'post',
+    data
+  })
+}
+
+export function GetRoleMenus(data) {
+  return request({
+    url: '/api/Roles/GetRoleMenus',
+    method: 'post',
+    data
+  })
+}

@@ -63,11 +63,11 @@ namespace Core.Services
         /// <param name="where"></param>
         /// <param name="orderby"></param>
         /// <returns></returns>
-        public Boolean Create<T>(T t) where T : class
+        public Int64 Create<T>(T t) where T : class
         {
             ResponseListDto<T> response = new ResponseListDto<T>();
            
-            return FreeSqlFactory._Freesql.Insert<T>(t).ExecuteAffrows() > 1;
+            return FreeSqlFactory._Freesql.Insert<T>(t).ExecuteIdentity();
         }
 
         /// <summary>

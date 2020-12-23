@@ -44,3 +44,56 @@ export function GetTree(data) {
     data
   })
 }
+
+
+export function SaveGrant(data) {
+  return request({
+    url: '/api/Department/SaveGrant',
+    method: 'post',
+    data
+  })
+}
+
+export function GetMenus(data) {
+  return request({
+    url: '/api/Department/GetMenus',
+    method: 'post',
+    data
+  })
+}
+
+
+export function GetDepartmentUser(data) {
+  return request({
+    url: '/api/Department/GetDepartmentUser',
+    method: 'post',
+    data
+  })
+}
+
+
+export function GetDepartmentChoseUser(data) {
+  return request({
+    url: '/api/Department/GetDepartmentChoseUser',
+    method: 'post',
+    data
+  })
+}
+
+
+export function SaveDepartmentUser(data) {
+  return request({
+    url: '/api/Department/SaveDepartmentUser',
+    method: 'post',
+    data
+  })
+}
+
+
+export function RemoveDepartmentUser(data) {
+  return request({
+    url: '/api/Department/RemoveDepartmentUser',
+    method: 'post',
+    data
+  })
+}

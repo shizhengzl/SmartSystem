@@ -83,3 +83,20 @@ export function Remove(data) {
     data
   })
 }
+
+
+export function SaveGrant(data) {
+  return request({
+    url: '/api/Users/SaveGrant',
+    method: 'post',
+    data
+  })
+}
+
+export function GetMenus(data) {
+  return request({
+    url: '/api/Users/GetMenus',
+    method: 'post',
+    data
+  })
+}

@@ -69,5 +69,21 @@ namespace Core.Repository
         [Description("单位ID")]
         public Int64 CompanyId { get; set; }
 
+
+
+        /// <summary>
+        /// 部门ID
+        /// </summary> 
+        [Description("部门ID")]
+        [Column(IsIgnore = true)]
+        public Int64 DepartmentId { get; set; }
+
+        /// <summary>
+        /// 角色ID
+        /// </summary> 
+        [Description("角色ID")]
+        [Column(IsIgnore = true)]
+        public List<Int64> RoleId { get; set; }
+
     }
 }

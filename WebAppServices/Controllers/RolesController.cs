@@ -278,5 +278,51 @@ namespace WebAppServices.Controllers
             }
             return response;
         }
+
+
+        /// <summary>
+        /// 获取角色菜单
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("GetRoleMenus")]
+        [Authorize]
+        public ResponseListDto<RoleMenus> GetRoleMenus([FromBody] Roles request)
+        {
+            ResponseListDto<RoleMenus> response = new ResponseListDto<RoleMenus>();
+            var data = _appSystemServices.GetEntitys<RoleMenus>();
+
+            if (!request.IsNull())
+            {
+                data = data.Where(x => x.RoleId == request.Id);
+            }
+            response.Total = data.Count();
+            response.Data = data.ToList();
+            return response;
+        }
+
+
+
+        /// <summary>
+        /// 保存授权
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("SaveGrant")]
+        [Authorize]
+        public ResponseDto<Roles> SaveGrant([FromBody] List<RoleMenus> request)
+        {
+            ResponseDto<Roles> response = new ResponseDto<Roles>();
+
+            var _entity = _appSystemServices.GetEntitys<RoleMenus>();
+            _entity.Where(x => x.RoleId == request.FirstOrDefault().RoleId).ToDelete();
+            if (request.Count > 0)
+            {
+                request.ForEach(x => {
+                    _appSystemServices.Create<RoleMenus>(new RoleMenus() { RoleId = x.RoleId, MenuId = x.MenuId,CompanyId = CurrentUser.CompanyId });
+                });
+            }
+            return response;
+        }
     }
 }

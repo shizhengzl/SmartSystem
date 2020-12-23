@@ -39,14 +39,21 @@ namespace Core.Services.AppSystem
             List<long> menuids = new List<long>();
 
             switch (company.GrantMode) {
-                case GrantMode.RoleGrant: 
-                    menuids = FreeSqlFactory._Freesql.Select<RoleMenus>().Where(x => x.CompanyId == CompanyId).ToList().Select(p => p.MenuId).ToList();
+                case GrantMode.RoleGrant:
+                    var roleIds = this.GetUserRoles(UserId, CompanyId).Select(x => x.RoleId).ToList();
+                    var adminrole = FreeSqlFactory._Freesql.Select<Roles>().Where(x => x.RoleName == CommonEnum.SupperAdmin).First().Id;
+                    Boolean isAdmin = roleIds.Any(x => x == adminrole);
+                    if (isAdmin)
+                        menuids = FreeSqlFactory._Freesql.Select<CompanyMenus>().Where(x => x.CompanyId == CompanyId).ToList().Select(p => p.MenuId).ToList();
+                    else
+                        menuids = FreeSqlFactory._Freesql.Select<RoleMenus>().Where(x => x.CompanyId == CompanyId && roleIds.Contains(x.RoleId)).ToList().Select(p => p.MenuId).ToList();
                     break;
                 case GrantMode.DepartGrant:
+                    // 获取用户所有部门 
                     menuids = FreeSqlFactory._Freesql.Select<DepartmentMenus>().Where(x => x.CompanyId == CompanyId).ToList().Select(p => p.MenuId).ToList();
                     break; 
                 case GrantMode.UserGrant:
-                    menuids = FreeSqlFactory._Freesql.Select<UserMenus>().Where(x => x.CompanyId == CompanyId).ToList().Select(p => p.MenuId).ToList();
+                    menuids = FreeSqlFactory._Freesql.Select<UserMenus>().Where(x => x.CompanyId == CompanyId && x.UserId == UserId).ToList().Select(p => p.MenuId).ToList();
                     break;
                 case GrantMode.CompanyGrant:
                     menuids = FreeSqlFactory._Freesql.Select<CompanyMenus>().Where(x => x.CompanyId == CompanyId).ToList().Select(p => p.MenuId).ToList();
@@ -56,12 +63,7 @@ namespace Core.Services.AppSystem
             // 角色授权 如果是超级管理员则拥有所有权限
             if (company.GrantMode ==  GrantMode.RoleGrant)
             {
-                var roles = this.GetUserRoles(UserId, CompanyId).Select(x => x.RoleId).ToList();
-                var adminrole = FreeSqlFactory._Freesql.Select<Roles>().Where(x => x.RoleName == CommonEnum.SupperAdmin).First().Id; 
-                Boolean isAdmin = roles.Any(x => x == adminrole);
-                if (isAdmin) {
-                    menuids = FreeSqlFactory._Freesql.Select<CompanyMenus>().Where(x => x.CompanyId == CompanyId).ToList().Select(p => p.MenuId).ToList();
-                }
+              
             }
             // 判断用户是不是法人 授权所有单位菜单
             if (company.CompanyPhone.Trim() == user.Phone.Trim())

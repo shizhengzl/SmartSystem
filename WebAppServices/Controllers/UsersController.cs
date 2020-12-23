@@ -156,11 +156,36 @@ namespace WebAppServices.Controllers
             request.CompanyId = CurrentUser.CompanyId;
             if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
             {
-                _appSystemServices.Create<Users>(request);
+                var userId = _appSystemServices.Create<Users>(request);
+
+                if (!request.DepartmentId.IsNull())
+                    _appSystemServices.Create<DepartmentUsers>(new DepartmentUsers() { CompanyId = CurrentUser.CompanyId, DepartmentId = request.DepartmentId, UserId = userId });
+
+                if (!request.RoleId.IsNull() && request.RoleId.Count > 0)
+                {
+                    request.RoleId.ForEach(p => {
+                        _appSystemServices.Create<RoleUsers>(new RoleUsers() { CompanyId = CurrentUser.CompanyId, RoleId = p, UserId = userId });
+                    });
+                } 
             }
             else
             {
                 _appSystemServices.Modify<Users>(request);
+
+                if (!request.DepartmentId.IsNull())
+                {
+                    _appSystemServices.GetEntitys<DepartmentUsers>().Where(x => x.UserId == request.Id && x.CompanyId == CurrentUser.CompanyId).ToDelete();
+                    _appSystemServices.Create<DepartmentUsers>(new DepartmentUsers() { CompanyId = CurrentUser.CompanyId, DepartmentId = request.DepartmentId, UserId = request.Id });
+
+                    if (!request.RoleId.IsNull() && request.RoleId.Count > 0)
+                    {
+                        _appSystemServices.GetEntitys<RoleUsers>().Where(x => x.UserId == request.Id && x.CompanyId == CurrentUser.CompanyId).ToDelete();
+                        request.RoleId.ForEach(p => {
+                            _appSystemServices.Create<RoleUsers>(new RoleUsers() { CompanyId = CurrentUser.CompanyId, RoleId = p, UserId = request.Id });
+                        });
+                    }
+                   
+                }
             }
             return response;
         }
@@ -331,5 +356,50 @@ namespace WebAppServices.Controllers
             }
             return response;
         }
-    }
+
+        /// <summary>
+        /// 获取用户菜单
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("GetMenus")]
+        [Authorize]
+        public ResponseListDto<UserMenus> GetMenus([FromBody] Users request)
+        {
+            ResponseListDto<UserMenus> response = new ResponseListDto<UserMenus>();
+            var data = _appSystemServices.GetEntitys<UserMenus>();
+
+            if (!request.IsNull())
+            {
+                data = data.Where(x => x.UserId == request.Id);
+            }
+            response.Total = data.Count();
+            response.Data = data.ToList();
+            return response;
+        }
+
+
+
+        /// <summary>
+        /// 保存授权
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("SaveGrant")]
+        [Authorize]
+        public ResponseDto<Users> SaveGrant([FromBody] List<UserMenus> request)
+        {
+            ResponseDto<Users> response = new ResponseDto<Users>();
+
+            var _entity = _appSystemServices.GetEntitys<UserMenus>();
+            _entity.Where(x => x.UserId == request.FirstOrDefault().UserId).ToDelete();
+            if (request.Count > 0)
+            {
+                request.ForEach(x => {
+                    _appSystemServices.Create<UserMenus>(new UserMenus() { UserId = x.UserId, MenuId = x.MenuId, CompanyId = CurrentUser.CompanyId });
+                });
+            }
+            return response;
+        }
+    }  
 }

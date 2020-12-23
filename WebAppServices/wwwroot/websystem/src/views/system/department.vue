@@ -1,47 +1,41 @@
 <template>
   <div style="margin-left:12px;margin-top:5px;">
     <el-button type="primary" icon="el-icon-circle-plus-outline" @click="create()">添加</el-button>
-    <el-input
-      v-model="filter"
-      placeholder="请输入内容"
-      style="width:220px;margin-left:5px;"
-      prefix-icon="el-icon-search"
-    />
+    <el-input v-model="filter"
+              placeholder="请输入内容"
+              style="width:220px;margin-left:5px;"
+              prefix-icon="el-icon-search" />
 
-    <vxe-table
-      resizable
-      row-id="id"
-      :tree-config="{children: 'children'}"
-      :data="tableData"
-    >
+    <vxe-table resizable
+               row-id="id"
+               :tree-config="{children: 'children'}"
+               :data="tableData">
 
       <template v-for="(item,index) in tableHead">
-        <vxe-table-column
-          v-if="hiddenColumn[item.columnName] !== true"
-          :key="index"
-          :field="item.columnName"
-          :title="item.columnDescription || item.columnName"
-          :tree-node="item.columnName == 'departmentName'"
-          show-overflow-tooltip
-        />
+        <vxe-table-column v-if="hiddenColumn[item.columnName] !== true"
+                          :key="index"
+                          :field="item.columnName"
+                          :title="item.columnDescription || item.columnName"
+                          :tree-node="item.columnName == 'departmentName'"
+                          show-overflow-tooltip />
       </template>
-      <vxe-table-column label="操作" width="200">
+      <vxe-table-column label="操作" width="400">
         <template slot-scope="scope">
+          <el-button type="success" size="small" @click="ShowDepartmentUser(scope.row)">用户管理</el-button>
+          <el-button type="success" size="small" @click="Grant(scope.row)">授权</el-button>
           <el-button type="success" size="small" @click="Modify(scope.row)">编辑</el-button>
           <el-button type="danger" size="small" @click="Remove(scope.row)">删除</el-button>
         </template>
       </vxe-table-column>
-    </vxe-table> 
+    </vxe-table>
 
-    <el-pagination
-      :current-page="paging.PageIndex"
-      :page-sizes="[5, 10, 20, 40]"
-      :page-size="paging.PageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="paging.TotalCount"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    />
+    <el-pagination :current-page="paging.PageIndex"
+                   :page-sizes="[5, 10, 20, 40]"
+                   :page-size="paging.PageSize"
+                   layout="total, sizes, prev, pager, next, jumper"
+                   :total="paging.TotalCount"
+                   @size-change="handleSizeChange"
+                   @current-change="handleCurrentChange" />
 
     <el-dialog :title="title" :visible.sync="createdialog" :close-on-click-modal="false" :close-on-press-escape="false" @close="reset">
       <el-form id="#create" ref="create" :model="model" :rules="rules" label-width="130px">
@@ -65,7 +59,7 @@
               <wlTreeSelect width="240"
                             multiple="true"
                             :props="props"
-                            :data="treedata"
+                            :data="departtreedata"
                             @change="hindleChanged"
                             v-model="selected"></wlTreeSelect>
 
@@ -100,12 +94,12 @@
               </el-radio-group>
             </el-form-item>
 
-            <el-form-item  v-else-if="item.columnName=='managerUserId'"  :label="item.columnDescription || item.columnName">
-              <el-select v-model="model.managerUserId"   collapse-tags placeholder="请选择用户">
+            <el-form-item v-else-if="item.columnName=='managerUserId'" :label="item.columnDescription || item.columnName">
+              <el-select v-model="model.managerUserId" collapse-tags placeholder="请选择用户">
                 <div class="el-input" style="width:90%;margin-left:5%;">
                   <input type="text" placeholder="请输入" class="el-input__inner" v-model="model.managerUserName" @keyup="dropDownSearch">
                 </div>
-                <el-option v-for="item in userShow"   :key="item.id"  :value="item.id"  :label="item.userName"></el-option>
+                <el-option v-for="item in userShow" :key="item.id" :value="item.id" :label="item.userName"></el-option>
               </el-select>
             </el-form-item>
 
@@ -117,16 +111,113 @@
         <el-button type="primary" :loading="createLoading" @click="Save">确 定</el-button>
       </div>
     </el-dialog>
+
+
+    <el-dialog title="部门授权" :visible.sync="grantdialog" :close-on-click-modal="false" :close-on-press-escape="false">
+      <div>
+        <el-tree :data="treedata"
+                 show-checkbox
+                 ref="tree"
+                 :default-checked-keys="departmentmenus"
+                 node-key="id"
+                 :props="defaultgrantProps">
+        </el-tree>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="grantdialog=false">取 消</el-button>
+        <el-button type="primary" @click="SaveGrant">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="部门用户管理" :visible.sync="departmentuserdialog" :close-on-click-modal="false" :close-on-press-escape="false">
+      <div>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <div>
+              <el-input placeholder="请输入内容" style="width:400px;margin-left:5px;" v-model="havefilter"
+                        prefix-icon="el-icon-search">
+              </el-input>
+
+              <el-table border :data="haveUserData">
+                <el-table-column prop="userName" label="用户名" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="name" label="姓名" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="phone" label="手机号码" show-overflow-tooltip></el-table-column>
+
+                <el-table-column label="操作" width="100">
+                  <template slot-scope="scope">
+                    <el-button type="danger" size="small" @click="RemoveDepartmentUser(scope.row)">删除</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+              <el-pagination @size-change="havehandleSizeChange"
+                             @current-change="havehandleCurrentChange"
+                             :current-page="havepaging.PageIndex"
+                             :page-sizes="[5, 10, 20, 40]"
+                             :page-size="havepaging.PageSize"
+                             layout="total, sizes, prev, pager, next, jumper"
+                             :total="havepaging.TotalCount">
+              </el-pagination>
+
+
+            </div>
+          </el-col>
+          <el-col :span="1"><div></div></el-col>
+          <el-col :span="12">
+            <div>
+              <el-input placeholder="请输入内容" style="width:400px;margin-left:5px;" v-model="chosefilter"
+                        prefix-icon="el-icon-search">
+              </el-input>
+
+              <el-table border :data="ChoseUserData">
+                <el-table-column prop="userName" label="用户名" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="name" label="姓名" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="phone" label="手机号码" show-overflow-tooltip></el-table-column>
+
+                <el-table-column label="操作" width="100">
+                  <template slot-scope="scope">
+                    <el-button type="danger" size="small" @click="SaveDepartmentUser(scope.row)">添加</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+              <el-pagination @size-change="chosehandleSizeChange"
+                             @current-change="chosehandleCurrentChange"
+                             :current-page="chosepaging.PageIndex"
+                             :page-sizes="[5, 10, 20, 40]"
+                             :page-size="chosepaging.PageSize"
+                             layout="total, sizes, prev, pager, next, jumper"
+                             :total="chosepaging.TotalCount">
+              </el-pagination>
+
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
-  import { getHeader, GetResult, Save, Remove, GetTree } from '@/api/department'
-  import {  GetResult as  GetUsers } from '@/api/user'
-import { debounce } from '@/utils'
+  import { getHeader, GetResult, Save, Remove, GetTree, SaveGrant, GetMenus, GetDepartmentUser, GetDepartmentChoseUser, SaveDepartmentUser, RemoveDepartmentUser} from '@/api/department'
+  import { GetResult as  GetUsers } from '@/api/user'
+  import { debounce } from '@/utils'
+  import { GetTree as GetMenuTree} from '@/api/menus'
 export default {
   name: 'Menus',
   data() {
     return {
+      havefilter: '',
+      chosefilter:'',
+      ChoseUserData: [],
+      haveUserData: [],
+      departmentuserdialog:false,
+      defaultgrantProps: {
+        children: 'children',
+        label: 'menuName'
+      },
+      departmentmenus: [],
+      selectdepartment: {},
+      grantdialog: false,
+      treegrantdata: [],
+
       selectUser: [],
       userShow: [],
       userShowAll:[],
@@ -136,6 +227,7 @@ export default {
         value: "id"
       }, // 配置
       treedata: [],
+      departtreedata:[],
       selected: [], 
       hiddenColumn: {
         id: true
@@ -166,6 +258,26 @@ export default {
         Filter: '',
         Model: {
         }
+      },
+      havepaging: {
+        PageSize: 20,
+        PageIndex: 1,
+        TotalCount: 0,
+        Sort: 'Id',
+        Asc: true,
+        Filter: '',
+        Model: {
+        }
+      },
+      chosepaging: {
+        PageSize: 20,
+        PageIndex: 1,
+        TotalCount: 0,
+        Sort: 'Id',
+        Asc: true,
+        Filter: '',
+        Model: {
+        }
       }
     }
   },
@@ -173,6 +285,14 @@ export default {
     filter: function(searchvalue) {
       this.paging.Filter = searchvalue
       this.GetResult()
+    },
+    havefilter: function (searchvalue) {
+      this.havepaging.Filter = searchvalue;
+      this.GetDepartmentUser();
+    },
+    chosefilter: function (searchvalue) {
+      this.chosepaging.Filter = searchvalue;
+      this.GetDepartmentChoseUser();
     }
   },
   mounted() {
@@ -184,6 +304,102 @@ export default {
     this.GetUsers()
   },
     methods: {
+      RemoveDepartmentUser: function (row) {
+        const owner = this;
+        var departmentuser = [{ userId: row.id, departmentId: owner.selectdepartment.id }]
+        RemoveDepartmentUser(departmentuser).then(response => {
+          owner.GetDepartmentUser()
+          owner.GetDepartmentChoseUser()
+        })
+      }, 
+      SaveDepartmentUser: function (row) {
+        const owner = this;
+        var departmentuser = [{ userId: row.id, departmentId: owner.selectdepartment.id }]
+        SaveDepartmentUser(departmentuser).then(response => {
+          owner.GetDepartmentUser()
+          owner.GetDepartmentChoseUser()
+        })
+      },
+      havehandleCurrentChange: function (currentPage) {
+        this.havepaging.PageIndex = currentPage;
+        this.GetDepartmentUser();
+      },
+
+      chosehandleCurrentChange: function (currentPage) {
+        this.chosepaging.PageIndex = currentPage;
+        this.GetDepartmentChoseUser();
+      },
+      havehandleSizeChange: function (size) {
+        this.havepaging.PageSize = size;
+        this.GetDepartmentUser();
+      },
+
+      chosehandleSizeChange: function (size) {
+        this.chosepaging.PageSize = size;
+        this.GetDepartmentChoseUser();
+      },
+
+      GetDepartmentUser: function () {
+        const owner = this
+        owner.havepaging.Model.Id = owner.selectdepartment.id
+        GetDepartmentUser(owner.havepaging).then(response => {
+          owner.haveUserData = response.data;
+          owner.havepaging.TotalCount = response.total
+        })
+      },
+      GetDepartmentChoseUser: function () {
+        const owner = this
+        owner.chosepaging.Model.Id = owner.selectdepartment.id
+        GetDepartmentChoseUser(owner.chosepaging).then(response => {
+          owner.ChoseUserData = response.data;
+          owner.chosepaging.TotalCount = response.total
+        })
+      }, 
+
+      ShowDepartmentUser: function (row) {
+        this.selectdepartment = row
+        this.departmentuserdialog = true;
+        this.GetDepartmentUser()
+        this.GetDepartmentChoseUser()
+      },
+      GetMenuTree: function () {
+        const owner = this
+        GetMenuTree().then(response => {
+          owner.treedata = response.data
+        })
+      },
+      SaveGrant: function () {
+        const owner = this
+
+        let keys = owner.$refs.tree.getCheckedKeys()
+        let departmentId = owner.selectdepartment.id
+        let requestdata = []
+        keys.forEach(function (item, index) {
+          //item 就是当日按循环到的对象
+          //index是循环的索引，从0开始
+          requestdata.push({ departmentId: departmentId, menuId: item })
+        })
+        SaveGrant(requestdata).then(response => {
+          owner.grantdialog = false
+
+        })
+      },
+      GetMenus: function (row) {
+        const owner = this
+        GetMenus({ id: row.id }).then(response => {
+          owner.departmentmenus = []
+          response.data.forEach(function (item, index) {
+            owner.departmentmenus.push(item.menuId);
+          });
+          this.GetMenuTree()
+        })
+      },
+      Grant: function (row) {
+        this.GetMenus(row)
+        this.grantdialog = true;
+        this.selectdepartment = row
+      },
+
       GetUsers: function (isall) {
         const owner = this
         GetUsers(owner.paging).then(response => {
@@ -222,7 +438,7 @@ export default {
       GetTree: function () {
         const owner = this
         GetTree().then(response => {
-          owner.treedata = response.data 
+          owner.departtreedata = response.data 
         })
       }, 
 
