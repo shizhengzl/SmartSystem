@@ -16,8 +16,10 @@
                          sortable="custom"></el-table-column>
       </template>
 
-      <el-table-column label="操作" width="300">
+      <el-table-column label="操作" width="400">
         <template slot-scope="scope">
+          <!--<el-button type="success" size="small" @click="Grant(scope.row)">用户角色</el-button>
+          <el-button type="success" size="small" @click="Grant(scope.row)">用户部门</el-button>-->
           <el-button type="success" size="small" @click="Grant(scope.row)">授权</el-button>
           <el-button type="success" size="small" @click="Modify(scope.row)">编辑</el-button>
           <el-button type="danger" size="small" @click="Remove(scope.row)">删除</el-button>
@@ -39,13 +41,13 @@
       <el-form id="#create" :model="model" :rules="rules" ref="create" label-width="130px">
         <template v-for="(item,index) in tableHead">
 
-          <el-form-item v-if="item.sqlType == 'nvarchar' && item.maxLength > 0"
+          <el-form-item v-if="item.sqlType == 'nvarchar' && item.maxLength > 0 && hiddenColumn[item.columnName] !== true"
                         :label="item.columnDescription || item.columnName" :prop="item.columnName">
             <el-input v-model="model[item.columnName]"
                       type="text" clearable></el-input>
           </el-form-item>
 
-          <el-form-item v-else-if="item.sqlType == 'nvarchar' && item.maxLength < 0"
+          <el-form-item v-else-if="item.sqlType == 'nvarchar' && item.maxLength < 0 && hiddenColumn[item.columnName] !== true"
                         :label="item.columnDescription || item.columnName" :prop="item.columnName">
             <el-input v-model="model[item.columnName]" :autosize="{ minRows: 2, maxRows: 4}"
                       type="textarea" clearable></el-input>
@@ -65,9 +67,10 @@
         <el-form-item label="部门" 
                       prop="departmentId">
 
-          <wlTreeSelect width="300" 
+          <wlTreeSelect width="300"    checkbox checkStrictly="true"  
                         :props="departmentprops"
                         :data="departmenttreedata"
+                        nodeKey="id"
                         @change="hindleChanged"
                         v-model="model.departmentId"></wlTreeSelect>
 
@@ -109,7 +112,7 @@
 <script>
   import { getHeader, GetResult, Save, Remove, SaveGrant, GetMenus } from '@/api/user'
   import { debounce } from '@/utils';
-  import { GetTree } from '@/api/menus'
+  import { GetCompanyTree as GetTree } from '@/api/menus'
   import { GetGrantMode } from '@/api/enum'
   import { GetResult as GetRoles } from '@/api/role'
   import {  GetTree as GetDepartmentTree } from '@/api/department'
@@ -146,10 +149,11 @@
           , modifyTime: true
           , parentName: true
           , companyId: true
+          , password:true
         },
         tableData: [],
         tableHead: [],
-        model: { roleId:[]},
+        model: { roleId: [], departmentId:[]},
         createLoading: false,
         createdialog: false,
         rules: {},
@@ -205,8 +209,12 @@
         })
       },
       hindleChanged: function (val) {
-        this.model.departmentId = val[0].id;
-        this.model.departmentName = val[0].departmentName;
+        let departmentid = [];
+        val.forEach(function (item, index) {
+          departmentid.push(item.id);
+        })
+        this.model.departmentId = departmentid;
+        //this.model.departmentName = val[0].departmentName;
       },
       GetTree: function () {
         const owner = this
@@ -269,8 +277,8 @@
       Modify: function (row) {
         this.GetRoles()
         this.GetDepartmentTree()
-        this.createdialog = true;
-        this.title = "编辑用户";
+        this.createdialog = true
+        this.title = "编辑用户"
         this.model = row;
       },
       Remove: function (row) {

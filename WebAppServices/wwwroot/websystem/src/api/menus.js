@@ -46,3 +46,13 @@ export function GetTree(data) {
     data
   })
 }
+
+
+export function GetCompanyTree(data) {
+  return request({
+    url: '/api/Menus/GetCompanyTree',
+    method: 'post',
+    data
+  })
+}
+

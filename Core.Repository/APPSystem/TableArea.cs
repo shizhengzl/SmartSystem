@@ -17,5 +17,13 @@ namespace Core.Repository
         [Description("归类名称")]
         [Column(StringLength = 200)]
         public String AreaName { get; set; }
+
+
+
+        /// <summary>
+        /// 单位ID
+        /// </summary>
+        [Description("单位ID")]
+        public Int64 CompanyId { get; set; }
     }
 }

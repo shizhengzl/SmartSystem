@@ -199,7 +199,7 @@
   import { getHeader, GetResult, Save, Remove, GetTree, SaveGrant, GetMenus, GetDepartmentUser, GetDepartmentChoseUser, SaveDepartmentUser, RemoveDepartmentUser} from '@/api/department'
   import { GetResult as  GetUsers } from '@/api/user'
   import { debounce } from '@/utils'
-  import { GetTree as GetMenuTree} from '@/api/menus'
+  import { GetCompanyTree as GetMenuTree} from '@/api/menus'
 export default {
   name: 'Menus',
   data() {

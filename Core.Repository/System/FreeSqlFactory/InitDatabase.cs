@@ -9,71 +9,88 @@ namespace Core.Repository
     public class InitDatabase
     {
         public InitDatabase(Boolean isClean = false)
-        {
-
-
+        { 
             if (isClean)
             {
                 FreeSqlFactory._Freesql.Delete<SQLConfig>().Where("1=1").ExecuteAffrows();
+
+
                 FreeSqlFactory._Freesql.Delete<Roles>().Where("1=1").ExecuteAffrows();
-                FreeSqlFactory._Freesql.Delete<Menus>().Where("1=1").ExecuteAffrows();
                 FreeSqlFactory._Freesql.Delete<RoleMenus>().Where("1=1").ExecuteAffrows();
                 FreeSqlFactory._Freesql.Delete<RoleUsers>().Where("1=1").ExecuteAffrows();
-                FreeSqlFactory._Freesql.Delete<Users>().Where("1=1").ExecuteAffrows();
-                FreeSqlFactory._Freesql.Delete<DataBaseConnection>().Where("1=1").ExecuteAffrows();
-                FreeSqlFactory._Freesql.Delete<Company>().Where("1=1").ExecuteAffrows(); 
+
+                FreeSqlFactory._Freesql.Delete<Department>().Where("1=1").ExecuteAffrows();
+                FreeSqlFactory._Freesql.Delete<DepartmentMenus>().Where("1=1").ExecuteAffrows();
+                FreeSqlFactory._Freesql.Delete<DepartmentUsers>().Where("1=1").ExecuteAffrows();
+
+                FreeSqlFactory._Freesql.Delete<Company>().Where("1=1").ExecuteAffrows();
+                FreeSqlFactory._Freesql.Delete<CompanyMenus>().Where("1=1").ExecuteAffrows();
+                 
+                FreeSqlFactory._Freesql.Delete<Users>().Where("1=1").ExecuteAffrows();  
+                FreeSqlFactory._Freesql.Delete<Menus>().Where("1=1").ExecuteAffrows(); 
+             
+
+                FreeSqlFactory._Freesql.Delete<DataBaseConnection>().Where("1=1").ExecuteAffrows(); 
                 FreeSqlFactory._Freesql.Delete<TableArea>().Where("1=1").ExecuteAffrows(); 
                 FreeSqlFactory._Freesql.Delete<TableAreaData>().Where("1=1").ExecuteAffrows();
+
+                FreeSqlFactory._Freesql.Delete<TestModule>().Where("1=1").ExecuteAffrows();
+                FreeSqlFactory._Freesql.Delete<Element>().Where("1=1").ExecuteAffrows();
             }
 
             Int64 companyid = 0;
+            Int64 jzbid = 0;
             // 初始话单位
             if (!FreeSqlFactory._Freesql.Select<Company>().Where(x => x.CompanyName == CommonEnum.SupperCompany).Any())
             {
                 Company company = new Company() {
                      CompanyName = CommonEnum.SupperCompany ,CompanyPhone = "13701859214"
                 };
-                companyid = FreeSqlFactory._Freesql.Insert<Company>(company).ExecuteIdentity(); 
+
+
+                Company jzb = new Company()
+                {
+                    CompanyName ="长沙计支宝",
+                    CompanyPhone = "13700000000"
+                };
+                companyid = FreeSqlFactory._Freesql.Insert<Company>(company).ExecuteIdentity();
+                jzbid = FreeSqlFactory._Freesql.Insert<Company>(jzb).ExecuteIdentity();
             }
 
-
-            Int64 adminrole = 0;
-            Int64 touristrole = 0; 
-
-            // 初始化角色
-            if (!FreeSqlFactory._Freesql.Select<Roles>().Where(x => x.RoleName == CommonEnum.SupperAdmin).Any())
-            {
-                Roles supperadmin = new Roles() { RoleName = CommonEnum.SupperAdmin, RoleDescription = CommonEnum.SupperAdmin, CompanyId = companyid };
-                Roles tourist = new Roles() { RoleName = CommonEnum.Tourist, RoleDescription = CommonEnum.Tourist, CompanyId = companyid };
-                adminrole = FreeSqlFactory._Freesql.Insert<Roles>(supperadmin).ExecuteIdentity();
-                touristrole = FreeSqlFactory._Freesql.Insert<Roles>(tourist).ExecuteIdentity();
-            }
-
-            Int64 adminid = 0;
+            
             Int64 shizhengid = 0;
-            Int64 youkeid = 0;
+            Int64 tanxudongid = 0;
 
             // 初始化用户 
             if (!FreeSqlFactory._Freesql.Select<Users>().Where(x => x.UserName == CommonEnum.SupperUser).Any())
             {
-                Users users = new Users() { UserName = CommonEnum.SupperUser, Password = "123456".ToMD5()  , CompanyId= companyid };
-                Users shizheng = new Users() { UserName = "shizheng",Phone= "13701859214", Password = "123456".ToMD5(),  CompanyId = companyid };
-                //Users youke = new Users() { UserName = CommonEnum.Youke, Password = "123456".ToMD5() };
-                adminid = FreeSqlFactory._Freesql.Insert<Users>(users).ExecuteIdentity();
+                Users shizheng = new Users() { UserName = "shizheng",Phone= "13701859214", NikeName="shizheng",Name="施政",IsEnabled=true,Email="shizheng89@qq.com", Password = "123456".ToMD5(),  CompanyId = companyid };
+           
                 shizhengid = FreeSqlFactory._Freesql.Insert<Users>(shizheng).ExecuteIdentity();
-                //youkeid = FreeSqlFactory._Freesql.Insert<Users>(youke).ExecuteIdentity();
+
+                var user = FreeSqlFactory._Freesql.Select<Users>().Where(x => x.Id == shizhengid).First();
+                user.Password = (user.Password + shizhengid.ToStringExtension()).ToMD5();
+                FreeSqlFactory._Freesql.Update<Users>().SetSource(user).ExecuteAffrows();
+
+                CompanyUsers companyUsers = new CompanyUsers() {  UserId = shizhengid, CompanyId = companyid, JobStatus = JobStatus.InJob};
+                FreeSqlFactory._Freesql.Insert<CompanyUsers>(companyUsers).ExecuteAffrows();
+
+
+
+                Users tanxudong = new Users() { UserName = "zhaowenyi", Phone = "15221828554", NikeName = "zhaowenyi", Name = "赵文毅", IsEnabled = true, Password = "123456".ToMD5(), CompanyId = jzbid };
+
+                tanxudongid = FreeSqlFactory._Freesql.Insert<Users>(tanxudong).ExecuteIdentity();
+
+                var usertx = FreeSqlFactory._Freesql.Select<Users>().Where(x => x.Id == tanxudongid).First();
+                usertx.Password = (usertx.Password + tanxudongid.ToStringExtension()).ToMD5();
+                FreeSqlFactory._Freesql.Update<Users>().SetSource(usertx).ExecuteAffrows();
+
+                CompanyUsers companyUserstx = new CompanyUsers() { UserId = tanxudongid, CompanyId = jzbid, JobStatus = JobStatus.InJob };
+                FreeSqlFactory._Freesql.Insert<CompanyUsers>(companyUserstx).ExecuteAffrows();
+
             }
 
-            // 初始化角色用户
-            if (!FreeSqlFactory._Freesql.Select<RoleUsers>().Where("1=1").Any())
-            {
-                RoleUsers r1 = new RoleUsers() { RoleId = adminrole, UserId = adminid };
-                RoleUsers r2 = new RoleUsers() { RoleId = adminrole, UserId = shizhengid };
-                RoleUsers r3 = new RoleUsers() { RoleId = touristrole, UserId = youkeid };
-                FreeSqlFactory._Freesql.Insert<RoleUsers>(r1).ExecuteAffrows();
-                FreeSqlFactory._Freesql.Insert<RoleUsers>(r2).ExecuteAffrows();
-                FreeSqlFactory._Freesql.Insert<RoleUsers>(r3).ExecuteAffrows();
-            }
+        
 
             // 初始化菜单
             if (!FreeSqlFactory._Freesql.Select<Menus>().Where("1=1").Any())
@@ -214,7 +231,7 @@ namespace Core.Repository
                 };
                 Menus t5 = new Menus()
                 {
-                    MenuName = "表归类数据",
+                    MenuName = "表业务数据",
                     MenuIcon = "404",
                     MenuPath = "/tableareadata",
                     Url = "/tools/tableareadata",
@@ -235,7 +252,7 @@ namespace Core.Repository
                 FreeSqlFactory._Freesql.Insert<Menus>(t2).ExecuteAffrows();
                 FreeSqlFactory._Freesql.Insert<Menus>(t3).ExecuteAffrows();
                 FreeSqlFactory._Freesql.Insert<Menus>(t4).ExecuteAffrows();
-                FreeSqlFactory._Freesql.Insert<Menus>(t5).ExecuteAffrows();
+                //FreeSqlFactory._Freesql.Insert<Menus>(t5).ExecuteAffrows();
                 FreeSqlFactory._Freesql.Insert<Menus>(t6).ExecuteAffrows();
 
                 Menus c1 = new Menus() { MenuName = "自动化测试", MenuIcon = "404", MenuPath = "/autotest", Url = "Layout", IsDeafult = true, IsAvailable = true };
@@ -276,7 +293,8 @@ namespace Core.Repository
                 DataBaseConnection dataBaseConnection = new DataBaseConnection() {
                      ConnectinString= "server=.;uid=sa;pwd=sasa;database=SmartDb;"
                      , DataBaseName= "SmartDb"
-                     , DataBaseType= FreeSql.DataType.SqlServer
+                     , DataBaseType= FreeSql.DataType.SqlServer,
+                     CompanyId = companyid
                 };
 
                 DataBaseConnection JZB_CRM = new DataBaseConnection()
@@ -286,6 +304,7 @@ namespace Core.Repository
                     DataBaseName = "JZB_CRM"
                      ,
                     DataBaseType = FreeSql.DataType.SqlServer
+                    , CompanyId = jzbid
                 };
 
                 FreeSqlFactory._Freesql.Insert<DataBaseConnection>(dataBaseConnection).ExecuteAffrows();

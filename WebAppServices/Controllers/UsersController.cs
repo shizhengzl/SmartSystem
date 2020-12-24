@@ -116,7 +116,9 @@ namespace WebAppServices.Controllers
         {
             ResponseListDto<Users> response = new ResponseListDto<Users>();
 
-            var data = _appSystemServices.GetEntitys<Users>().Where(x => x.CompanyId == CurrentUser.CompanyId);
+            var userIds = _appSystemServices.GetEntitys<CompanyUsers>().Where(x => x.CompanyId == CurrentUser.CompanyId).ToList().Select(p=>p.UserId).ToList() ;
+
+            var data = _appSystemServices.GetEntitys<Users>().Where(x => userIds.Contains(x.Id));
 
             if (!request.IsNull())
             {
@@ -136,6 +138,12 @@ namespace WebAppServices.Controllers
             }
             response.Total = data.Count();
             response.Data = data.Page(request.PageIndex, request.PageSize).ToList<Users>();
+
+            response.Data.ForEach(o=> {
+                o.DepartmentId = _appSystemServices.GetEntitys<DepartmentUsers>().Where(x => x.UserId == o.Id && x.CompanyId == o.CompanyId).ToList().Select(p => p.DepartmentId).ToList();
+
+                o.RoleId = _appSystemServices.GetEntitys<RoleUsers>().Where(x => x.UserId == o.Id && x.CompanyId == o.CompanyId).ToList().Select(p => p.RoleId).ToList();
+            });
 
             return response;
         }
@@ -158,15 +166,33 @@ namespace WebAppServices.Controllers
             {
                 var userId = _appSystemServices.Create<Users>(request);
 
-                if (!request.DepartmentId.IsNull())
-                    _appSystemServices.Create<DepartmentUsers>(new DepartmentUsers() { CompanyId = CurrentUser.CompanyId, DepartmentId = request.DepartmentId, UserId = userId });
+                // 加入单位用户
+                // 加入单位用户
+                CompanyUsers companyUsers = new CompanyUsers()
+                {
+                    UserId = userId,
+                    JobStatus = JobStatus.Audit,
+                    CompanyId = CurrentUser.CompanyId
+                };
+                _appSystemServices.Create<CompanyUsers>(companyUsers);
 
+                if (!request.DepartmentId.IsNull() && request.DepartmentId.Count > 0)
+                {
+                    List<DepartmentUsers> departmentUsers = new List<DepartmentUsers>();
+                    request.DepartmentId.ForEach(p=> {
+                        departmentUsers.Add(new DepartmentUsers() { CompanyId = CurrentUser.CompanyId, DepartmentId = p, UserId = userId });
+                    });
+                    _appSystemServices.Create<DepartmentUsers>(departmentUsers.ToArray());
+                } 
                 if (!request.RoleId.IsNull() && request.RoleId.Count > 0)
                 {
-                    request.RoleId.ForEach(p => {
-                        _appSystemServices.Create<RoleUsers>(new RoleUsers() { CompanyId = CurrentUser.CompanyId, RoleId = p, UserId = userId });
+                    List<RoleUsers> roleUsers = new List<RoleUsers>();
+                    request.RoleId.ForEach(p =>
+                    {
+                        roleUsers.Add(new RoleUsers() { CompanyId = CurrentUser.CompanyId, RoleId = p, UserId = userId });
+                        _appSystemServices.Create<RoleUsers>(roleUsers.ToArray());
                     });
-                } 
+                }
             }
             else
             {
@@ -174,17 +200,29 @@ namespace WebAppServices.Controllers
 
                 if (!request.DepartmentId.IsNull())
                 {
-                    _appSystemServices.GetEntitys<DepartmentUsers>().Where(x => x.UserId == request.Id && x.CompanyId == CurrentUser.CompanyId).ToDelete();
-                    _appSystemServices.Create<DepartmentUsers>(new DepartmentUsers() { CompanyId = CurrentUser.CompanyId, DepartmentId = request.DepartmentId, UserId = request.Id });
+                    _appSystemServices.GetEntitys<DepartmentUsers>().Where(x => x.UserId == request.Id && x.CompanyId == CurrentUser.CompanyId).ToDelete().ExecuteAffrows();
+                    _appSystemServices.GetEntitys<RoleUsers>().Where(x => x.UserId == request.Id && x.CompanyId == CurrentUser.CompanyId).ToDelete().ExecuteAffrows();
+
+                    if (!request.DepartmentId.IsNull() && request.DepartmentId.Count > 0)
+                    {
+                        List<DepartmentUsers> departmentUsers = new List<DepartmentUsers>();
+                        request.DepartmentId.ForEach(p => {
+                            departmentUsers.Add(new DepartmentUsers() { CompanyId = CurrentUser.CompanyId, DepartmentId = p, UserId = request.Id });
+                        });
+                        _appSystemServices.Create<DepartmentUsers>(departmentUsers.ToArray());
+                    }
 
                     if (!request.RoleId.IsNull() && request.RoleId.Count > 0)
                     {
-                        _appSystemServices.GetEntitys<RoleUsers>().Where(x => x.UserId == request.Id && x.CompanyId == CurrentUser.CompanyId).ToDelete();
-                        request.RoleId.ForEach(p => {
-                            _appSystemServices.Create<RoleUsers>(new RoleUsers() { CompanyId = CurrentUser.CompanyId, RoleId = p, UserId = request.Id });
+                        
+                        List<RoleUsers> roleUsers = new List<RoleUsers>();
+                        request.RoleId.ForEach(p =>
+                        {
+                            roleUsers.Add(new RoleUsers() { CompanyId = CurrentUser.CompanyId, RoleId = p, UserId = request.Id });
+                            _appSystemServices.Create<RoleUsers>(roleUsers.ToArray());
                         });
                     }
-                   
+
                 }
             }
             return response;
@@ -199,9 +237,7 @@ namespace WebAppServices.Controllers
         [Authorize]
         public ResponseDto<Boolean> Remove([FromBody] Users request)
         {
-            ResponseDto<Boolean> response = new ResponseDto<Boolean>();
-
-
+            ResponseDto<Boolean> response = new ResponseDto<Boolean>(); 
             if (string.IsNullOrEmpty(request.Id.ToStringExtension()))
             {
 
@@ -225,17 +261,8 @@ namespace WebAppServices.Controllers
         [Authorize]
         public ResponseListDto<UserDto> GetUsersList()
         {
-            ResponseListDto<UserDto> response = new ResponseListDto<UserDto>();
-            try
-            {
-                response.Data = _userServices.GetUserList(CurrentUser.CompanyId);
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "GetUsersList");
-            }
+            ResponseListDto<UserDto> response = new ResponseListDto<UserDto>(); 
+            response.Data = _userServices.GetUserList(CurrentUser.CompanyId); 
             return response;
         }
 
@@ -268,15 +295,13 @@ namespace WebAppServices.Controllers
                     return response;
                 }
 
-                user.Password = user.Password.ToMD5();
-
                 var users = _userServices.GetUser(user.Username);
                 if (users == null)
                 {
                     response.Message = "用户名不正确";
                     return response;
                 }
-                if (users.Password != user.Password)
+                if ((user.Password + users.Id.ToStringExtension()).ToMD5() != users.Password)
                 {
                     response.Message = "密码不正确";
                     return response;
@@ -343,9 +368,8 @@ namespace WebAppServices.Controllers
                     response.Success = false;
                 }
                 else
-                {
-                    user.Password = user.Password.ToMD5();
-                    response.Data = _userServices.RegisterUser(user);
+                { 
+                    response.Data = _userServices.RegisterUser(user);  
                 }
             }
             catch (Exception ex)
@@ -395,11 +419,12 @@ namespace WebAppServices.Controllers
             _entity.Where(x => x.UserId == request.FirstOrDefault().UserId).ToDelete();
             if (request.Count > 0)
             {
-                request.ForEach(x => {
+                request.ForEach(x =>
+                {
                     _appSystemServices.Create<UserMenus>(new UserMenus() { UserId = x.UserId, MenuId = x.MenuId, CompanyId = CurrentUser.CompanyId });
                 });
             }
             return response;
         }
-    }  
+    }
 }

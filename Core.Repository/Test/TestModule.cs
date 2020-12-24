@@ -62,5 +62,13 @@ namespace Core.Repository
         [Column(StringLength = 2000)]
         [Description("URL地址")]
         public String Url { get; set; }
+
+
+
+        /// <summary>
+        /// 单位ID
+        /// </summary>
+        [Description("单位ID")]
+        public Int64 CompanyId { get; set; }
     }
 }

@@ -29,7 +29,8 @@
 <script> 
 import { validUsername } from '@/utils/validate'
 import { register  } from '@/api/user'
-import { debounce } from '@/utils';
+  import { debounce } from '@/utils';
+  import md5 from 'js-md5'
 export default {
   name: 'register', 
     data() {
@@ -56,7 +57,7 @@ export default {
         phone: [{ required: true, message: '手机号不能为空' }, { pattern: /^1[12345789]\d{9}$/, message: '请输入正确的手机号码' }]
         , userName: [{ required: true, message: '用户名不能为空' }]
         , password: [{ required: true, message: '密码不能为空' },
-          { pattern: /^(\w){6,20}$/, message: '只能输入6-20个字母、数字、下划线' }]
+          { pattern: /^(\w){5,20}$/, message: '只能输入6-20个字母、数字、下划线' }]
         , passwordconfirm: [{ required: true, message: '确认密码不能为空' }, { validator: validatePass, trigger: 'blur' }]
       }
     } 
@@ -79,6 +80,8 @@ export default {
 
         this.$refs.ruleForm2.validate((valid) => { 
           if (valid) {
+            owner.ruleForm.password = md5(owner.ruleForm.password)
+            
             register(owner.ruleForm)
               .then(response => {
                 if (response.success) {

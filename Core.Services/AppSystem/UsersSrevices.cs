@@ -100,7 +100,7 @@ namespace Core.Services.AppSystem
 
 
         /// <summary>
-        /// 注册用户
+        /// 获取用户
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
@@ -109,7 +109,18 @@ namespace Core.Services.AppSystem
             var response =  FreeSqlFactory._Freesql.Select<Users>().Where(x => x.Phone == phone || x.UserName == phone).ToList().FirstOrDefault(); 
             return _mapper.Map<UserDto>(response);
         }
-         
+
+        /// <summary>
+        /// 获取实体用户
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        public Users GetEntityUser(String phone)
+        {
+            var response = FreeSqlFactory._Freesql.Select<Users>().Where(x => x.Phone == phone || x.UserName == phone).ToList().FirstOrDefault();
+            return response;
+        }
+
 
         /// <summary>
         /// 注册用户
@@ -125,9 +136,26 @@ namespace Core.Services.AppSystem
             var companyid = FreeSqlFactory._Freesql.Insert<Company>(new Company() {
                 CompanyName = dto.Phone,CompanyPhone = dto.Phone, CompanyLegal = dto.Name,GrantMode = GrantMode.CompanyGrant
             }).ExecuteIdentity();
-            entity.CompanyId = companyid;
-            FreeSqlFactory._Freesql.Insert<Users>(entity).ExecuteAffrows();
- 
+            entity.CompanyId = companyid; 
+             
+            var userid = FreeSqlFactory._Freesql.Insert<Users>(entity).ExecuteIdentity();
+
+            entity = FreeSqlFactory._Freesql.Select<Users>().Where(x=>x.Id == userid).ToList().First();
+
+            entity.Password = (entity.Password + userid.ToStringExtension()).ToMD5();
+            FreeSqlFactory._Freesql.Update<Users>().SetSource(entity).ExecuteAffrows();
+
+            // 加入单位用户
+            CompanyUsers companyUsers = new CompanyUsers()
+            {
+                UserId = userid,
+                JobStatus = JobStatus.InJob,
+                CompanyId = companyid
+            };
+
+            FreeSqlFactory._Freesql.Insert<CompanyUsers>(companyUsers).ExecuteAffrows();
+
+            dto.Id = userid;
             return result;
         }
     }

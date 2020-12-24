@@ -76,7 +76,7 @@ namespace Core.Repository
         /// </summary> 
         [Description("部门ID")]
         [Column(IsIgnore = true)]
-        public Int64 DepartmentId { get; set; }
+        public List<Int64> DepartmentId { get; set; }
 
         /// <summary>
         /// 角色ID

@@ -66,5 +66,13 @@ namespace Core.Repository
         [Description("父级名称")]
         public String ParentName { get; set; }
 
+
+
+        /// <summary>
+        /// 单位ID
+        /// </summary>
+        [Description("单位ID")]
+        public Int64 CompanyId { get; set; }
+
     }
 }

@@ -17,7 +17,7 @@
 
       <el-table-column label="操作" width="300">
         <template slot-scope="scope">
-          <el-button type="success" size="small" @click="Grant(scope.row)">授权</el-button>
+          <!--<el-button type="success" size="small" @click="Grant(scope.row)">授权</el-button>-->
           <el-button type="success" size="small" @click="Modify(scope.row)">编辑</el-button>
           <el-button type="danger" size="small" @click="Remove(scope.row)">删除</el-button>
         </template>

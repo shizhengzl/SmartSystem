@@ -43,28 +43,22 @@ namespace WebAppServices.Controllers
             _appSystemServices = appSystemServices;
         }
 
-      
+
 
         /// <summary>
         /// 获取数据库类型
         /// </summary>
         /// <returns></returns>
         [HttpPost("GetDataType")]
+        [Authorize]
         public ResponseListDto<EnumClass> GetDataType()
         {
             ResponseListDto<EnumClass> response = new ResponseListDto<EnumClass>();
-            try
-            {
-                var data = EnumExtensions.GetListEnumClass<DataType>(); 
-                response.Total = data.Count();
-                response.Data = data; 
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "GetDataType");
-            }
+
+            var data = EnumExtensions.GetListEnumClass<DataType>();
+            response.Total = data.Count();
+            response.Data = data;
+
             return response;
         }
         /// <summary>
@@ -72,21 +66,15 @@ namespace WebAppServices.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost("GetGrantMode")]
+        [Authorize]
         public ResponseListDto<EnumClass> GetGrantMode()
         {
             ResponseListDto<EnumClass> response = new ResponseListDto<EnumClass>();
-            try
-            {
-                var data = EnumExtensions.GetListEnumClass<GrantMode>();
-                response.Total = data.Count();
-                response.Data = data;
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "GetGrantMode");
-            }
+
+            var data = EnumExtensions.GetListEnumClass<GrantMode>();
+            response.Total = data.Count();
+            response.Data = data;
+
             return response;
         }
     }

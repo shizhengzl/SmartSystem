@@ -163,6 +163,40 @@ namespace WebAppServices.Controllers
             return response;
         }
 
+
+
+        /// <summary>
+        /// 获取菜单树
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("GetCompanyTree")]
+        public ResponseListDto<Menus> GetCompanyTree()
+        {
+            ResponseListDto<Menus> response = new ResponseListDto<Menus>();
+
+            var menuids = _appSystemServices.GetEntitys<CompanyMenus>().Where(x => x.CompanyId == CurrentUser.CompanyId).ToList().Select(p => p.MenuId).ToList();
+
+
+            List<Menus> data = new List<Menus>();
+
+            if (menuids.IsNull() || menuids.Count == 0)
+            {
+                data = _appSystemServices.GetEntitys<Menus>().Where(x => x.ParentId == 0 && x.IsDeafult.Value).ToList();
+            }
+            else {
+                data = _appSystemServices.GetEntitys<Menus>().Where(x => x.ParentId == 0).ToList();
+            }  
+            data.ForEach(x =>
+            {
+                GetChildren(x);
+            });
+
+            response.Data = data.ToList<Menus>();
+
+            return response;
+        }
+
         /// <summary>
         /// 获取菜单树
         /// </summary>

@@ -47,21 +47,15 @@ namespace WebAppServices.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost("GetHeader")]
+        [Authorize]
         public ResponseListDto<Column> GetHeader()
         {
             ResponseListDto<Column> response = new ResponseListDto<Column>();
-            try
-            {
-                var user = this.CurrentUser;
 
-                response.Data = _dataBaseServices.GetColumns(typeof(Element).Name);
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "GetHeader");
-            }
+            var user = this.CurrentUser;
+
+            response.Data = _dataBaseServices.GetColumns(typeof(Element).Name);
+
             return response;
         }
 
@@ -77,108 +71,97 @@ namespace WebAppServices.Controllers
             });
         }
 
-
+        /// <summary>
+        /// 获取测试模块元素
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("GetResult")]
+        [Authorize]
         public ResponseListDto<Element> GetResult([FromBody] BaseRequest<Element> request)
         {
             ResponseListDto<Element> response = new ResponseListDto<Element>();
-            try
+
+            var data = _appSystemServices.GetEntitys<Element>();
+            data = data.Where(x => x.CompanyId == CurrentUser.CompanyId);
+            if (!request.IsNull())
             {
-                var data = _appSystemServices.GetEntitys<Element>();
-
-                if (!request.IsNull())
+                if (!string.IsNullOrEmpty(request.Filter.ToStringExtension()))
                 {
-                    if (!string.IsNullOrEmpty(request.Filter.ToStringExtension()))
-                    {
-                        data = data.Where(x => x.Name.Contains(request.Filter));
-                    }
-
-                    if (request.Model.ParentId.ToInt32() > 0)
-                    {
-                        List<Int64> rlist = new List<long>();
-                        var testmodule = _appSystemServices.GetEntitys<TestModule>().Where(p => p.Id == request.Model.ParentId).ToList().FirstOrDefault();
-
-                        rlist.Add(testmodule.Id);
-                        GetChildren(testmodule, rlist);
-                        data = data.Where(x => rlist.Contains(x.ParentId));
-
-                    }
-
-                    if (!string.IsNullOrEmpty(request.Sort.ToStringExtension()))
-                    {
-                        data = data.OrderByPropertyName(request.Sort, request.Asc.ToBoolean());
-                    }
-                    else
-                    {
-                        data = data.OrderBy(x => x.Id);
-                    }
+                    data = data.Where(x => x.Name.Contains(request.Filter));
                 }
 
-                response.Total = data.Count();
-                response.Data = data.Page(request.PageIndex, request.PageSize).ToList<Element>();
-
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "GetResult");
-            }
-            return response;
-        }
-
-
-
-        [HttpPost("Save")]
-        public ResponseDto<Element> Save([FromBody] Element request)
-        {
-            ResponseDto<Element> response = new ResponseDto<Element>();
-            try
-            {
-                var _entity = _appSystemServices.GetEntitys<Element>();
-                if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
+                if (request.Model.ParentId.ToInt32() > 0)
                 {
-                    _appSystemServices.Create<Element>(request);
+                    List<Int64> rlist = new List<long>();
+                    var testmodule = _appSystemServices.GetEntitys<TestModule>().Where(p => p.Id == request.Model.ParentId).ToList().FirstOrDefault();
+
+                    rlist.Add(testmodule.Id);
+                    GetChildren(testmodule, rlist);
+                    data = data.Where(x => rlist.Contains(x.ParentId));
+
+                }
+
+                if (!string.IsNullOrEmpty(request.Sort.ToStringExtension()))
+                {
+                    data = data.OrderByPropertyName(request.Sort, request.Asc.ToBoolean());
                 }
                 else
                 {
-                    _appSystemServices.Modify<Element>(request);
+                    data = data.OrderBy(x => x.Id);
                 }
             }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "Save");
-            }
+
+            response.Total = data.Count();
+            response.Data = data.Page(request.PageIndex, request.PageSize).ToList<Element>();
+
             return response;
         }
 
 
+        /// <summary>
+        /// 保存元素
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("Save")]
+        [Authorize]
+        public ResponseDto<Element> Save([FromBody] Element request)
+        {
+            ResponseDto<Element> response = new ResponseDto<Element>();
+            var _entity = _appSystemServices.GetEntitys<Element>();
+            request.CompanyId = CurrentUser.CompanyId;
+            if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
+            {
+                _appSystemServices.Create<Element>(request);
+            }
+            else
+            {
+                _appSystemServices.Modify<Element>(request);
+            }
+            return response;
+        }
+
+        /// <summary>
+        /// 删除元素
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("Remove")]
+        [Authorize]
         public ResponseDto<Boolean> Remove([FromBody] Element request)
         {
             ResponseDto<Boolean> response = new ResponseDto<Boolean>();
-
-            try
+            if (string.IsNullOrEmpty(request.Id.ToStringExtension()))
             {
-                if (string.IsNullOrEmpty(request.Id.ToStringExtension()))
-                {
 
-                    response.Message = "Key 不能为空";
-                    response.Success = false;
-                    return response;
-                }
-
-                var _entity = _appSystemServices.GetEntitys<Element>();
-                response.Data = _entity.Where(x => x.Id == request.Id).ToDelete().ExecuteAffrows() > 0;
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
+                response.Message = "Key 不能为空";
                 response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "Remove");
-            }
+                return response;
+            } 
+            var _entity = _appSystemServices.GetEntitys<Element>();
+            response.Data = _entity.Where(x => x.Id == request.Id).ToDelete().ExecuteAffrows() > 0;
+
             return response;
         }
     }

@@ -35,5 +35,13 @@ namespace Core.Repository
         /// </summary>
         [Description("数据库类型")]
         public DataType DataBaseType { get; set; }
+
+
+        /// <summary>
+        /// 单位ID
+        /// </summary>
+        [Description("单位ID")]
+        public Int64 CompanyId { get; set; }
+
     }
 }

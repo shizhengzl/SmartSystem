@@ -70,6 +70,22 @@ namespace Core.Services
             return FreeSqlFactory._Freesql.Insert<T>(t).ExecuteIdentity();
         }
 
+
+        /// <summary>
+        /// 新增
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="baseRequest"></param>
+        /// <param name="where"></param>
+        /// <param name="orderby"></param>
+        /// <returns></returns>
+        public Boolean Create<T>(T [] t) where T : class
+        {
+            ResponseListDto<T> response = new ResponseListDto<T>();
+
+            return FreeSqlFactory._Freesql.Insert<T>(t).ExecuteAffrows() > 0;
+        }
+
         /// <summary>
         /// 修改
         /// </summary>
@@ -81,6 +97,20 @@ namespace Core.Services
         public Boolean Modify<T>(T t) where T : class
         {
             ResponseListDto<T> response = new ResponseListDto<T>(); 
+            return FreeSqlFactory._Freesql.Update<T>().SetSource(t).ExecuteAffrows() > 1;
+        }
+
+        /// <summary>
+        /// 修改
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="baseRequest"></param>
+        /// <param name="where"></param>
+        /// <param name="orderby"></param>
+        /// <returns></returns>
+        public Boolean Modify<T>(T [] t) where T : class
+        {
+            ResponseListDto<T> response = new ResponseListDto<T>();
             return FreeSqlFactory._Freesql.Update<T>().SetSource(t).ExecuteAffrows() > 1;
         }
     }

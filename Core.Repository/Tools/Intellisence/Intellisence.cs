@@ -72,5 +72,13 @@ namespace Core.Repository
         /// </summary>
         [Description("是否SQL")]
         public Boolean IsSql { get; set; }
+
+
+
+        /// <summary>
+        /// 单位ID
+        /// </summary>
+        [Description("单位ID")]
+        public Int64 CompanyId { get; set; }
     }
 }

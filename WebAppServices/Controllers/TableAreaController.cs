@@ -71,7 +71,7 @@ namespace WebAppServices.Controllers
             try
             {
                 var data = _appSystemServices.GetEntitys<TableArea>();
-
+                data = data.Where(x => x.CompanyId == CurrentUser.CompanyId);
                 if (!request.IsNull())
                 {
                     if (!string.IsNullOrEmpty(request.Filter.ToStringExtension()))
@@ -111,6 +111,7 @@ namespace WebAppServices.Controllers
             try
             {
                 var _entity = _appSystemServices.GetEntitys<TableArea>();
+                request.CompanyId = CurrentUser.CompanyId;
                 if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
                 {
                     _appSystemServices.Create<TableArea>(request);

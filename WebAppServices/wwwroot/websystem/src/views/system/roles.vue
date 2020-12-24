@@ -159,8 +159,7 @@
     , GetRoleUser, GetRoleChoseUser, SaveRoleUser, RemoveRoleUser, GetRoleMenus, SaveGrant
   } from '@/api/role'
   import { debounce } from '@/utils';
-  import { GetTree } from '@/api/menus'
-  import {  GetCompanyMenus } from '@/api/company'
+  import { GetCompanyTree as GetTree } from '@/api/menus' 
   export default {
     name: 'Roles',
     data() {

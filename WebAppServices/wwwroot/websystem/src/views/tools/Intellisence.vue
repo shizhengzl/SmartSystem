@@ -10,7 +10,7 @@
 
     <el-table style="margin-top:5px; width: 100%" border :data="tableData" @sort-change="SortChange">
       <template v-for="(item,index) in tableHead">
-        <el-table-column :key="index" :prop="capitalize(item.columnName)" :label="item.columnDescription || item.columnName" show-overflow-tooltip sortable="custom" />
+        <el-table-column :key="index" :prop="item.columnName" :label="item.columnDescription || item.columnName"     v-if="hiddenColumn[item.columnName] !== true" show-overflow-tooltip sortable="custom" />
       </template>
 
       <el-table-column label="操作" width="200">
@@ -42,7 +42,7 @@
             :prop="item.columnName"
           >
             <el-input
-              v-model="model[capitalize(item.columnName)]"
+              v-model="model[item.columnName]"
               type="textarea"
               clearable
             />
@@ -55,7 +55,7 @@
             :prop="item.columnName"
           >
             <el-input
-              v-model="model[capitalize(item.columnName)]"
+              v-model="model[item.columnName]"
               :autosize="{ minRows: 2, maxRows: 4}"
               type="textarea"
               clearable
@@ -94,6 +94,7 @@ export default {
         , modifyUserId: true
         , modifyUserName: true
         , modifyTime: true
+        , companyId : true
       },
       tableData: [],
       tableHead: [],
@@ -148,23 +149,12 @@ export default {
       const owner = this
       Remove(row).then(response => {
         owner.GetResult()
-      }).catch(function(error) {
-        console.log(error)
       })
     },
-
-    capitalize: function(value) {
-      if (!value) { return value }
-      value = value.toString()
-      return value.charAt(0).toLowerCase() + value.slice(1)
-    },
-
     getHeader: function() {
       const owner = this
       getHeader().then(response => {
         owner.tableHead = response.data
-      }).catch(function(error) {
-        console.log(error)
       })
     },
     GetResult: function() {
@@ -173,8 +163,6 @@ export default {
         owner.tableData = response.data
         
         owner.paging.TotalCount = response.total
-      }).catch(function(error) {
-        console.log(error)
       })
     },
 
@@ -183,8 +171,6 @@ export default {
       Save(owner.model).then(response => {
         owner.createdialog = false
         owner.GetResult()
-      }).catch(function(error) {
-        console.log(error)
       })
     },
 
@@ -195,6 +181,7 @@ export default {
     // 重置表单
     reset() {
       this.$refs.create.resetFields()
+      this.model = {}
     }
   }
 }</script>

@@ -65,7 +65,7 @@ namespace WebAppServices.Controllers
             try
             {
                 var data = _appSystemServices.GetEntitys<DataBaseConnection>();
-
+                data = data.Where(x => x.CompanyId == CurrentUser.CompanyId);
                 if (!request.IsNull())
                 {
                     if (!string.IsNullOrEmpty(request.Filter.ToStringExtension()))
@@ -161,6 +161,7 @@ namespace WebAppServices.Controllers
             try
             { 
                 var data = _dataBaseServices.GetDataBaseConnections();
+                data = data.Where(x => x.CompanyId == CurrentUser.CompanyId).ToList();
                 List<TreeDto> responsedto = new List<TreeDto>();
                 data.ForEach(x=> {
                     responsedto.Add(new TreeDto() { id = x.Id,label = x.DataBaseName,parentId = 0 });

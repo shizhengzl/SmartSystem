@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Core.Repository
 {
-    public class SysAuditEntity
+    public class SysAuditEntity : SysBaseEntity
     {
         /// <summary>
         /// 审核用户ID

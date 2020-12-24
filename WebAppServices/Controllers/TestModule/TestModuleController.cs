@@ -46,41 +46,42 @@ namespace WebAppServices.Controllers
         /// 获取列头
         /// </summary>
         /// <returns></returns>
-        [HttpPost("GetHeader")] 
+        [HttpPost("GetHeader")]
+        [Authorize]
         public ResponseListDto<Column> GetHeader()
         {
             ResponseListDto<Column> response = new ResponseListDto<Column>();
-            try
-            {
-                var user = this.CurrentUser;
 
-                response.Data = _dataBaseServices.GetColumns(typeof(TestModule).Name);
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "GetHeader");
-            }
+            var user = this.CurrentUser;
+
+            response.Data = _dataBaseServices.GetColumns(typeof(TestModule).Name);
+
             return response;
         }
 
 
-
+        /// <summary>
+        /// 获取yml文件
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("GetYml")]
+        [Authorize]
         public ResponseDto<String> GetYml([FromBody] BaseRequest<TestModule> request)
         {
             ResponseDto<String> response = new ResponseDto<string>();
 
-            var data = _appSystemServices.GetEntitys<TestModule>().Where(x => x.ParentId == request.Model.Id || request.Model.Id.ToInt64()  ==0).ToList();
+            var data = _appSystemServices.GetEntitys<TestModule>().Where(x => x.ParentId == request.Model.Id || request.Model.Id.ToInt64() == 0).ToList();
 
-            data.ForEach(x => {
+            data.ForEach(x =>
+            {
                 GetChildren(x);
             });
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("pages:");
             sb.AppendLine();
-            data.ForEach(x => {
+            data.ForEach(x =>
+            {
 
                 if (x.Url.ToStringExtension().Length > 0)
                 {
@@ -96,12 +97,13 @@ namespace WebAppServices.Controllers
                     sb.AppendLine();
 
                     var elements = _appSystemServices.GetEntitys<Element>().Where(p => p.ParentId == x.Id);
-                    elements.ToList().ForEach(o => { 
-                        sb.AppendFormat("         - {{type: \"{0}\",timeout: \"{1}\",value: \"{2}\",desc: \"{3}\",name: \"{4}\"}}" , o.Type,o.Timeout,o.Value,o.Desc,o.Name);
+                    elements.ToList().ForEach(o =>
+                    {
+                        sb.AppendFormat("         - {{type: \"{0}\",timeout: \"{1}\",value: \"{2}\",desc: \"{3}\",name: \"{4}\"}}", o.Type, o.Timeout, o.Value, o.Desc, o.Name);
                         sb.AppendLine();
                     });
                 }
-              
+
             });
 
             response.Data = sb.ToString();
@@ -109,114 +111,105 @@ namespace WebAppServices.Controllers
             return response;
         }
 
-
+        /// <summary>
+        /// 获取模块
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [Authorize]
         [HttpPost("GetResult")]
         public ResponseListDto<TestModule> GetResult([FromBody] BaseRequest<TestModule> request)
         {
             ResponseListDto<TestModule> response = new ResponseListDto<TestModule>();
-            try
+
+            var data = _appSystemServices.GetEntitys<TestModule>();
+            data = data.Where(x => x.CompanyId == CurrentUser.CompanyId);
+            if (!request.IsNull())
             {
-                var data = _appSystemServices.GetEntitys<TestModule>();
-
-                if (!request.IsNull())
+                if (!string.IsNullOrEmpty(request.Filter.ToStringExtension()))
                 {
-                    if (!string.IsNullOrEmpty(request.Filter.ToStringExtension()))
-                    {
-                        data = data.Where(x => x.ModuleName.Contains(request.Filter));
-                    }
-
-                    if (!string.IsNullOrEmpty(request.Sort.ToStringExtension()))
-                    {
-                        data = data.OrderByPropertyName(request.Sort, request.Asc.ToBoolean());
-                    }
-                    else
-                    {
-                        data = data.OrderBy(x => x.Id);
-                    }
+                    data = data.Where(x => x.ModuleName.Contains(request.Filter));
                 }
 
-                response.Total = data.Count();
-                response.Data = data.Page(request.PageIndex, request.PageSize).ToList<TestModule>();
-
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "GetResult");
-            }
-            return response;
-        }
-
-
-
-        [HttpPost("Save")]
-        public ResponseDto<TestModule> Save([FromBody] TestModule request)
-        {
-            ResponseDto<TestModule> response = new ResponseDto<TestModule>();
-            try
-            {
-                var _entity = _appSystemServices.GetEntitys<TestModule>();
-                if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
+                if (!string.IsNullOrEmpty(request.Sort.ToStringExtension()))
                 {
-                    _appSystemServices.Create<TestModule>(request);
+                    data = data.OrderByPropertyName(request.Sort, request.Asc.ToBoolean());
                 }
                 else
                 {
-                    _appSystemServices.Modify<TestModule>(request);
+                    data = data.OrderBy(x => x.Id);
                 }
             }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "Save");
-            }
+            response.Total = data.Count();
+            response.Data = data.Page(request.PageIndex, request.PageSize).ToList<TestModule>();
+
             return response;
         }
 
 
+        /// <summary>
+        /// 保存测试模块
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("Save")]
+        [Authorize]
+        public ResponseDto<TestModule> Save([FromBody] TestModule request)
+        {
+            ResponseDto<TestModule> response = new ResponseDto<TestModule>();
+
+            var _entity = _appSystemServices.GetEntitys<TestModule>();
+            request.CompanyId = CurrentUser.CompanyId;
+            if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
+            {
+                _appSystemServices.Create<TestModule>(request);
+            }
+            else
+            {
+                _appSystemServices.Modify<TestModule>(request);
+            }
+
+            return response;
+        }
+
+        /// <summary>
+        /// 删除测试模块
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("Remove")]
+        [Authorize]
         public ResponseDto<Boolean> Remove([FromBody] TestModule request)
         {
-            ResponseDto<Boolean> response = new ResponseDto<Boolean>();
-
-            try
+            ResponseDto<Boolean> response = new ResponseDto<Boolean>(); 
+            if (string.IsNullOrEmpty(request.Id.ToStringExtension()))
             {
-                if (string.IsNullOrEmpty(request.Id.ToStringExtension()))
-                {
 
-                    response.Message = "Key 不能为空";
-                    response.Success = false;
-                    return response;
-                }
-
-                var _entity = _appSystemServices.GetEntitys<TestModule>();
-                response.Data = _entity.Where(x => x.Id == request.Id).ToDelete().ExecuteAffrows() > 0;
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
+                response.Message = "Key 不能为空";
                 response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "Remove");
-            }
+                return response;
+            } 
+            var _entity = _appSystemServices.GetEntitys<TestModule>();
+            response.Data = _entity.Where(x => x.Id == request.Id).ToDelete().ExecuteAffrows() > 0;
+
             return response;
-        }
+        } 
 
-
-
-
-
-        
+        /// <summary>
+        /// 获取树形测试模块
+        /// </summary>
+        /// <returns></returns>
         [HttpPost("GetTree")]
+        [Authorize]
         public ResponseListDto<TestModule> GetTree()
         {
             ResponseListDto<TestModule> response = new ResponseListDto<TestModule>();
             try
             {
-                var data = _appSystemServices.GetEntitys<TestModule>().Where(x => x.ParentId == 0).ToList();
+                var data = _appSystemServices.GetEntitys<TestModule>().Where(x => x.ParentId == 0 && x.CompanyId == CurrentUser.CompanyId).ToList();
 
-                data.ForEach(x => {
+                data.ForEach(x =>
+                {
                     GetChildren(x);
                 });
 
@@ -235,7 +228,8 @@ namespace WebAppServices.Controllers
         private void GetChildren(TestModule tree)
         {
             tree.children = _appSystemServices.GetEntitys<TestModule>().Where(o => o.ParentId == tree.Id).ToList<TestModule>();
-            tree.children.ForEach(x=> {
+            tree.children.ForEach(x =>
+            {
                 GetChildren(x);
             });
         }

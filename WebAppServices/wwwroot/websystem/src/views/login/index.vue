@@ -3,7 +3,7 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title">智慧科技云计算</h3>
       </div>
 
       <el-form-item prop="username">
@@ -73,6 +73,7 @@
 </template>
 
 <script>
+import md5 from 'js-md5'
 import { validUsername } from '@/utils/validate'
 import SocialSign from './components/SocialSignin'
 import { debounce } from '@/utils'
@@ -162,7 +163,7 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           owner.loading = true
-
+          this.loginForm.password = md5(owner.loginForm.password)
           login(this.loginForm)
             .then(response => {
               setToken(response.data)
