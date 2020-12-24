@@ -130,7 +130,7 @@
                          width="80" />
         <el-table-column prop="defaultValue"
                          label="默认值"
-                         width="180" />
+                         width="80" />
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button size="small" type="success" round @click="pwdChange(scope.row,scope.$index,true)"> {{ scope.row.isSet?'保存':"编辑备注" }}</el-button>

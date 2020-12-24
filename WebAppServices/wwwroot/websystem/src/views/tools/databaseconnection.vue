@@ -43,7 +43,7 @@
         <template v-for="(item,index) in tableHead">
 
           <el-form-item v-if="item.sqlType == 'nvarchar' && item.maxLength > 0"
-                        :visible.sync="item.columnName != 'Id'"
+                        :visible.sync="hiddenColumn[item.columnName]"
                         :label="item.columnDescription || item.columnName"
                         :prop="item.columnName">
             <el-input v-model="model[capitalize(item.columnName)]"
@@ -52,7 +52,7 @@
           </el-form-item>
 
           <el-form-item v-else-if="item.sqlType == 'nvarchar' && item.maxLength < 0"
-                        :visible.sync="item.columnName != 'Id'"
+                        :visible.sync="hiddenColumn[item.columnName]"
                         :label="item.columnDescription || item.columnName"
                         :prop="item.columnName">
             <el-input v-model="model[capitalize(item.columnName)]"
@@ -68,7 +68,7 @@
             </el-radio-group>
           </el-form-item>
 
-          <el-form-item v-if="(item.sqlType == 'int'|| item.sqlType == 'bigint') && item.columnName != 'id'"
+          <el-form-item v-if="(item.sqlType == 'int'|| item.sqlType == 'bigint') && !hiddenColumn[item.columnName]"
                         :label="item.columnDescription || item.columnName"
                         :prop="item.columnName">
           
@@ -110,6 +110,7 @@ export default {
         , modifyUserId: true
         , modifyUserName: true
         , modifyTime: true
+        , companyId: true
       },
       tableData: [],
       tableHead: [],

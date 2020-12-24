@@ -105,6 +105,7 @@ namespace WebAppServices.Controllers
             try
             {
                 var _entity = _appSystemServices.GetEntitys<DataBaseConnection>();
+                request.CompanyId = CurrentUser.CompanyId;
                 if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
                 {
                     _appSystemServices.Create<DataBaseConnection>(request);

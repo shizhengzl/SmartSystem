@@ -111,6 +111,7 @@
           , modifyUserId: true
           , modifyUserName: true
           , modifyTime: true
+          , companyId: true
         },
         tableData: [],
         tableHead: [],

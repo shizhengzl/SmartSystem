@@ -221,7 +221,7 @@ namespace Core.Repository
                 };
                 Menus t4 = new Menus()
                 {
-                    MenuName = "表归类",
+                    MenuName = "业务分类",
                     MenuIcon = "404",
                     MenuPath = "/tablearea",
                     Url = "/tools/tablearea",

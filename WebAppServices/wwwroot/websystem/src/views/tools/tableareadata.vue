@@ -113,6 +113,8 @@
           , modifyUserId: true
           , modifyUserName: true
           , modifyTime: true
+          , dabaBaseId: true
+          , tableAreaId: true
         },
         tableData: [],
         tableHead: [],
