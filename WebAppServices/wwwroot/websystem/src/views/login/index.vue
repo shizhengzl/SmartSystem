@@ -99,14 +99,14 @@ export default {
       }
     }
     return {
-      //loginForm: {
-      //  username: 'shizheng',
-      //  password: '123456'
-      //},
       loginForm: {
         username: '',
         password: ''
       },
+      //loginForm: {
+      //  username: '',
+      //  password: ''
+      //},
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]

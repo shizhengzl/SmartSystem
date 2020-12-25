@@ -33,11 +33,16 @@ namespace WebAppServices.Middleware
             _sysservices.AddExexptionLogs(ex, context.ActionDescriptor.DisplayName);
 
             //_logger.LogError($"系统编号：{sysId},主机IP:{ip},堆栈信息：{ex.StackTrace},异常描述：{ex.Message}");
-            context.Result =(IActionResult) new ResponseDto<String>() {
+ 
+
+            context.Result  = new JsonResult
+            (new {
                 Success = false,
-                Message = ex.Message
-            };
+                Message = ex.Message,
+                Code = 20000
+            });
             context.ExceptionHandled = true;
+             
         }
     }
 }

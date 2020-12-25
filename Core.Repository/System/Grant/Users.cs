@@ -57,7 +57,7 @@ namespace Core.Repository
         public string Email { get; set; }
 
         /// <summary>
-        /// 如果离职情况请标记为禁用
+        /// 启用
         /// </summary> 
         [Description("启用")]
         public Boolean IsEnabled { get; set; } = true;

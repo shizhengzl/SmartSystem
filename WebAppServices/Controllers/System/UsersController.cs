@@ -54,7 +54,10 @@ namespace WebAppServices.Controllers
         }
 
 
-
+        /// <summary>
+        /// 获取用户信息
+        /// </summary>
+        /// <returns></returns>
         [HttpPost("GetUserInfo")]
         [Authorize]
         public IActionResult GetUserInfo()
@@ -164,7 +167,17 @@ namespace WebAppServices.Controllers
             request.CompanyId = CurrentUser.CompanyId;
             if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
             {
+
+
                 var userId = _appSystemServices.Create<Users>(request);
+
+                if (string.IsNullOrEmpty(request.Password))
+                {
+                    request.Id = userId;
+                    request.Password = ("123456".ToMD5() + userId.ToStringExtension()).ToMD5(); 
+                    _appSystemServices.Modify<Users>(request);
+                }
+
 
                 // 加入单位用户
                 // 加入单位用户

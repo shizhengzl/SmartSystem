@@ -1,0 +1,1074 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Core.Repository</name>
+    </assembly>
+    <members>
+        <member name="T:Core.Repository.TableArea">
+            <summary>
+            归类表
+            </summary>
+        </member>
+        <member name="P:Core.Repository.TableArea.AreaName">
+            <summary>
+            归类名称
+            </summary>
+        </member>
+        <member name="P:Core.Repository.TableArea.CompanyId">
+            <summary>
+            单位ID
+            </summary>
+        </member>
+        <member name="T:Core.Repository.TableAreaData">
+            <summary>
+            归类数据表
+            </summary>
+        </member>
+        <member name="P:Core.Repository.TableAreaData.TableAreaId">
+            <summary>
+            归类表ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.TableAreaData.DabaBaseId">
+            <summary>
+            连接字符串ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.TableAreaData.DataBaseName">
+            <summary>
+            数据库
+            </summary>
+        </member>
+        <member name="P:Core.Repository.TableAreaData.TableName">
+            <summary>
+            表名
+            </summary>
+        </member>
+        <member name="P:Core.Repository.UserDto.UserName">
+            <summary>
+            用户名
+            </summary>
+        </member>
+        <member name="P:Core.Repository.UserDto.NikeName">
+            <summary>
+            昵称
+            </summary>
+        </member>
+        <member name="P:Core.Repository.UserDto.Phone">
+            <summary>
+            手机号码
+            </summary>
+        </member>
+        <member name="P:Core.Repository.UserDto.Email">
+            <summary>
+            邮箱
+            </summary>
+        </member>
+        <member name="P:Core.Repository.UserDto.IsEnabled">
+            <summary>
+            如果离职情况请标记为禁用
+            </summary> 
+        </member>
+        <member name="P:Core.Repository.UserDto.Password">
+            <summary>
+            密码
+            </summary>
+        </member>
+        <member name="P:Core.Repository.UserDto.CompanyId">
+            <summary>
+            单位ID
+            </summary> 
+        </member>
+        <member name="P:Core.Repository.UserDto.Name">
+            <summary>
+            姓名
+            </summary>
+        </member>
+        <member name="T:Core.Repository.Column">
+            <summary>
+            列
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Column.Id">
+            <summary>
+            主键
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Column.ServerAddress">
+            <summary>
+            服务地址
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Column.DataBaseName">
+            <summary>
+            数据库名称
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Column.TableName">
+            <summary>
+            表名
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Column.TableDescription">
+            <summary>
+            表描述
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Column.ColumnName">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Column.ColumnDescription">
+            <summary>
+            描述
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Column.CSharpType">
+            <summary>
+            CsharpType
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Column.IsIdentity">
+            <summary>
+            是否自增
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Column.IsPrimarykey">
+            <summary>
+            是否主键
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Column.MaxLength">
+            <summary>
+            最大长度
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Column.IsRequire">
+            <summary>
+            是否必填
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Column.Scale">
+            <summary>
+            精度
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Column.DefaultValue">
+            <summary>
+            默认值
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Column.SQLType">
+            <summary>
+            数据库类型
+            </summary>
+        </member>
+        <member name="P:Core.Repository.DataBaseConnection.Id">
+            <summary>
+            主键
+            </summary>
+        </member>
+        <member name="P:Core.Repository.DataBaseConnection.DataBaseName">
+            <summary>
+            数据库名称
+            </summary>
+        </member>
+        <member name="P:Core.Repository.DataBaseConnection.ConnectinString">
+            <summary>
+            连接字符串
+            </summary>
+        </member>
+        <member name="P:Core.Repository.DataBaseConnection.DataBaseType">
+            <summary>
+            数据库类型
+            </summary>
+        </member>
+        <member name="P:Core.Repository.DataBaseConnection.CompanyId">
+            <summary>
+            单位ID
+            </summary>
+        </member>
+        <member name="T:Core.Repository.Generator.DataTypeConfig">
+            <summary>
+            数据类型映射关系
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Generator.DataTypeConfig.Id">
+            <summary>
+            主键
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Generator.DataTypeConfig.SQLServerType">
+            <summary>
+            SQL类型
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Generator.DataTypeConfig.MySqlType">
+            <summary>
+            Mysql类型
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Generator.DataTypeConfig.OracleType">
+            <summary>
+            Oracle类型
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Generator.DataTypeConfig.SQLiteType">
+            <summary>
+            Sqlite类型
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Generator.DataTypeConfig.CSharpType">
+            <summary>
+            C#类型
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Generator.DataTypeConfig.SQLDBType">
+            <summary>
+            数据库DB类型
+            </summary>
+        </member>
+        <member name="P:Core.Repository.FileGroup.FileName">
+            <summary>
+            文件名称
+            </summary>
+        </member>
+        <member name="P:Core.Repository.FileGroup.FilePath">
+            <summary>
+            文件路径
+            </summary>
+        </member>
+        <member name="P:Core.Repository.FileGroup.FileExt">
+            <summary>
+            文件扩展名
+            </summary>
+        </member>
+        <member name="P:Core.Repository.FileGroup.FileGroupId">
+            <summary>
+            文件组ID
+            </summary>
+        </member>
+        <member name="T:Core.Repository.FreeSqlFactory">
+            <summary>
+            数据库操作类
+            </summary>
+        </member>
+        <member name="P:Core.Repository.FreeSqlFactory.DefaultBaseConnection">
+            <summary>
+            数据库连接字符串
+            </summary>
+        </member>
+        <member name="P:Core.Repository.FreeSqlFactory.GetDataType">
+            <summary>
+            数据库类型
+            </summary>
+        </member>
+        <member name="P:Core.Repository.FreeSqlFactory.ReplaceString">
+            <summary>
+            替换字符串
+            </summary>
+        </member>
+        <member name="M:Core.Repository.FreeSqlFactory.GetFreeSql(FreeSql.DataType,System.String)">
+            <summary>
+            获取连接池
+            </summary>
+            <param name="DbType"></param>
+            <param name="Connection"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Core.Repository.FreeSqlFactory.GetFreeSql">
+            <summary>
+            获取连接池
+            </summary>
+            <param name="DbType"></param>
+            <param name="Connection"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Core.Repository.Company">
+            <summary>
+            单位表
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Company.CompanyName">
+            <summary>
+            单位名称
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Company.CorpCode">
+            <summary>
+            信用代码
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Company.CompanyAddress">
+            <summary>
+            单位地址
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Company.CompanyRegionCode">
+            <summary>
+            单位区域
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Company.CompanyLegal">
+            <summary>
+            单位法人
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Company.CompanyPhone">
+            <summary>
+            手机号
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Company.CompanyTel">
+            <summary>
+            单位电话
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Company.children">
+            <summary>
+            子单位
+            </summary> 
+        </member>
+        <member name="P:Core.Repository.Company.ParentId">
+            <summary>
+            父单位
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Company.ParentName">
+            <summary>
+            父单位名称
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Company.GrantMode">
+            <summary>
+            授权模式
+            </summary> 
+        </member>
+        <member name="P:Core.Repository.Company.IsMy">
+            <summary>
+            我的单位
+            </summary> 
+        </member>
+        <member name="T:Core.Repository.CompanyMenus">
+            <summary>
+            单位菜单表
+            </summary>
+        </member>
+        <member name="P:Core.Repository.CompanyMenus.CompanyId">
+            <summary>
+            单位ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.CompanyMenus.MenuId">
+            <summary>
+            菜单ID
+            </summary>
+        </member>
+        <member name="T:Core.Repository.CompanyUsers">
+            <summary>
+            单位用户表
+            </summary>
+        </member>
+        <member name="P:Core.Repository.CompanyUsers.CompanyId">
+            <summary>
+            单位ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.CompanyUsers.UserId">
+            <summary>
+            用户ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.CompanyUsers.JobStatus">
+            <summary>
+            在职状态
+            </summary>
+        </member>
+        <member name="T:Core.Repository.Department">
+            <summary>
+            部门表
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Department.CompanyId">
+            <summary>
+            单位ID
+            </summary> 
+        </member>
+        <member name="P:Core.Repository.Department.DepartmentName">
+            <summary>
+            部门名称
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Department.Description">
+            <summary>
+            部门描述
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Department.ManagerUserId">
+            <summary>
+            部门负责人
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Department.children">
+            <summary>
+            子节点
+            </summary> 
+        </member>
+        <member name="P:Core.Repository.Department.ParentId">
+            <summary>
+            父级部门
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Department.ParentName">
+            <summary>
+            父级名称
+            </summary>
+        </member>
+        <member name="T:Core.Repository.DepartmentMenus">
+            <summary>
+            部门菜单表
+            </summary>
+        </member>
+        <member name="P:Core.Repository.DepartmentMenus.DepartmentId">
+            <summary>
+            部门ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.DepartmentMenus.MenuId">
+            <summary>
+            菜单ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.DepartmentMenus.CompanyId">
+            <summary>
+            单位ID
+            </summary>
+        </member>
+        <member name="T:Core.Repository.DepartmentUsers">
+            <summary>
+            部门用户表
+            </summary>
+        </member>
+        <member name="P:Core.Repository.DepartmentUsers.DepartmentId">
+            <summary>
+            部门ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.DepartmentUsers.UserId">
+            <summary>
+            用户ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.DepartmentUsers.CompanyId">
+            <summary>
+            单位ID
+            </summary>
+        </member>
+        <member name="T:Core.Repository.GrantMode">
+            <summary>
+            授权模式
+            </summary>
+        </member>
+        <member name="T:Core.Repository.Menus">
+            <summary>
+            菜单表
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Menus.MenuName">
+             <summary>
+            菜单名称
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Menus.MenuLevel">
+             <summary>
+            菜单层级
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Menus.MenuOrder">
+             <summary>
+            菜单排序
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Menus.IsAvailable">
+             <summary>
+            是否启用
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Menus.Url">
+             <summary>
+            菜单URL
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Menus.MenuIcon">
+             <summary>
+            菜单图标
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Menus.MenuPath">
+             <summary>
+            菜单路径
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Menus.IsDeafult">
+             <summary>
+            默认单位菜单
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Menus.children">
+            <summary>
+            子节点
+            </summary> 
+        </member>
+        <member name="P:Core.Repository.Menus.ParentId">
+            <summary>
+            父级ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Menus.ParentName">
+            <summary>
+            父级名称
+            </summary>
+        </member>
+        <member name="T:Core.Repository.RoleMenus">
+            <summary>
+            角色菜单表
+            </summary>
+        </member>
+        <member name="P:Core.Repository.RoleMenus.RoleId">
+            <summary>
+            角色ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.RoleMenus.MenuId">
+            <summary>
+            菜单ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.RoleMenus.CompanyId">
+            <summary>
+            单位ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Roles.CompanyId">
+            <summary>
+            单位ID
+            </summary> 
+        </member>
+        <member name="P:Core.Repository.Roles.RoleName">
+            <summary>
+            角色名称
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Roles.RoleDescription">
+            <summary>
+            角色描述
+            </summary>
+        </member>
+        <member name="T:Core.Repository.RoleUsers">
+            <summary>
+            角色用户表
+            </summary>
+        </member>
+        <member name="P:Core.Repository.RoleUsers.RoleId">
+            <summary>
+            角色ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.RoleUsers.UserId">
+            <summary>
+            用户ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.RoleUsers.CompanyId">
+            <summary>
+            单位ID
+            </summary>
+        </member>
+        <member name="T:Core.Repository.UserMenus">
+            <summary>
+            用户菜单表
+            </summary>
+        </member>
+        <member name="P:Core.Repository.UserMenus.UserId">
+            <summary>
+            用户ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.UserMenus.MenuId">
+            <summary>
+            菜单ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.UserMenus.CompanyId">
+            <summary>
+            单位ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Users.UserName">
+            <summary>
+            用户名
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Users.Name">
+            <summary>
+            姓名
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Users.NikeName">
+            <summary>
+            昵称
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Users.Phone">
+            <summary>
+            手机号码
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Users.Password">
+            <summary>
+            密码
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Users.Email">
+            <summary>
+            邮箱
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Users.IsEnabled">
+            <summary>
+            启用
+            </summary> 
+        </member>
+        <member name="P:Core.Repository.Users.CompanyId">
+            <summary>
+            单位ID
+            </summary> 
+        </member>
+        <member name="P:Core.Repository.Users.DepartmentId">
+            <summary>
+            部门ID
+            </summary> 
+        </member>
+        <member name="P:Core.Repository.Users.RoleId">
+            <summary>
+            角色ID
+            </summary> 
+        </member>
+        <member name="T:Core.Repository.RequestResponseLog">
+            <summary>
+            请求日志表
+            </summary>
+        </member>
+        <member name="P:Core.Repository.RequestResponseLog.Url">
+            <summary>
+            请求地址
+            </summary>
+        </member>
+        <member name="P:Core.Repository.RequestResponseLog.Headers">
+            <summary>
+            请求Header
+            </summary>
+        </member>
+        <member name="P:Core.Repository.RequestResponseLog.Method">
+            <summary>
+            请求方法
+            </summary>
+        </member>
+        <member name="P:Core.Repository.RequestResponseLog.RequestBody">
+            <summary>
+            请求Body
+            </summary>
+        </member>
+        <member name="P:Core.Repository.RequestResponseLog.ResponseBody">
+            <summary>
+            响应Body
+            </summary>
+        </member>
+        <member name="P:Core.Repository.RequestResponseLog.ExcuteStartTime">
+            <summary>
+            执行开始时间
+            </summary>
+        </member>
+        <member name="P:Core.Repository.RequestResponseLog.ExcuteEndTime">
+            <summary>
+            执行完成时间
+            </summary> 
+        </member>
+        <member name="P:Core.Repository.RequestResponseLog.IPAddress">
+            <summary>
+            请求IP地址
+            </summary> 
+        </member>
+        <member name="P:Core.Repository.RequestResponseLog.Port">
+            <summary>
+            请求端口
+            </summary> 
+        </member>
+        <member name="P:Core.Repository.RequestResponseLog.UserName">
+            <summary>
+            用户名
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SysAuditEntity.AuditUserId">
+            <summary>
+            审核用户ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SysAuditEntity.AuditUserName">
+            <summary>
+            审核用户
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SysAuditEntity.AuditTime">
+            <summary>
+            审核时间
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SysAuditEntity.AuditNote">
+            <summary>
+            审核备注
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SysAuditEntity.FileGroupId">
+            <summary>
+            文件组ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SysBaseEntity.Id">
+            <summary>
+            主键
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SysBaseEntity.CreateUserId">
+            <summary>
+            创建用户ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SysBaseEntity.CreateUserName">
+            <summary>
+            创建用户
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SysBaseEntity.CreateTime">
+            <summary>
+            创建时间
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SysBaseEntity.ModifyUserId">
+            <summary>
+            修改用户ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SysBaseEntity.ModifyUserName">
+            <summary>
+            修改用户
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SysBaseEntity.ModifyTime">
+            <summary>
+            修改时间
+            </summary>
+        </member>
+        <member name="T:Core.Repository.SQLConfig">
+            <summary>
+            SQL配置类
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SQLConfig.Id">
+            <summary>
+            主键
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SQLConfig.Type">
+            <summary>
+            数据库类型
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SQLConfig.GetDataBaseSQL">
+            <summary>
+            查询所有数据库SQL
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SQLConfig.GetTableSQL">
+            <summary>
+            获取表
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SQLConfig.GetColumnSQL">
+            <summary>
+            获取列
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SQLConfig.GetProducuteSQL">
+            <summary>
+            获取存储过程
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SQLConfig.GetViewSQL">
+            <summary>
+            获取试图
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SQLConfig.GetIndexSQL">
+            <summary>
+            获取索引
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SQLConfig.GetSYNONYMSQL">
+            <summary>
+            获取同义词
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SQLConfig.AddExtendedproperty">
+            <summary>
+            添加列备注
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SQLConfig.ModifyExtendedproperty">
+            <summary>
+            修改列备注
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SQLConfig.AddTableExtendedproperty">
+            <summary>
+            添加表备注
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SQLConfig.ModifyTableExtendedproperty">
+            <summary>
+            修改表备注
+            </summary>
+        </member>
+        <member name="T:Core.Repository.SystemLogs">
+             <summary>
+            系统操作日志
+             </summary>
+        </member>
+        <member name="P:Core.Repository.SystemLogs.Id">
+            <summary>
+            主键
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SystemLogs.StackTrace">
+            <summary>
+            堆栈信息
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SystemLogs.Message">
+            <summary>
+            错误消息
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SystemLogs.Description">
+            <summary>
+            错误描述
+            </summary>
+        </member>
+        <member name="P:Core.Repository.SystemLogs.CreateTime">
+            <summary>
+            异常时间
+            </summary> 
+        </member>
+        <member name="T:Core.Repository.Table">
+            <summary>
+            表
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Table.Id">
+            <summary>
+            主键
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Table.ServerAddress">
+            <summary>
+            服务地址
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Table.DataBaseName">
+            <summary>
+            数据库名称
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Table.TableName">
+            <summary>
+            表名
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Table.TableDescription">
+            <summary>
+            表描述
+            </summary>
+        </member>
+        <member name="P:Core.Repository.TreeModel`1.children">
+            <summary>
+            子节点
+            </summary> 
+        </member>
+        <member name="P:Core.Repository.TreeModel`1.ParentId">
+            <summary>
+            父级ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.TreeModel`1.ParentName">
+            <summary>
+            父级名称
+            </summary>
+        </member>
+        <member name="T:Core.Repository.Element">
+            <summary>
+            页面元素
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Element.Sort">
+            <summary>
+            排序
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Element.Type">
+            <summary>
+            元素类型
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Element.Timeout">
+            <summary>
+            超时时间
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Element.Value">
+            <summary>
+            值
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Element.Desc">
+            <summary>
+            字段描述
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Element.Name">
+            <summary>
+            字段名称
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Element.ParentId">
+            <summary>
+            父级ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Element.ParentName">
+            <summary>
+            父级名称
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Element.CompanyId">
+            <summary>
+            单位ID
+            </summary>
+        </member>
+        <member name="T:Core.Repository.TestModule">
+            <summary>
+            测试模块
+            </summary>
+        </member>
+        <member name="P:Core.Repository.TestModule.Sort">
+            <summary>
+            排序
+            </summary>
+        </member>
+        <member name="P:Core.Repository.TestModule.ModuleName">
+            <summary>
+            模块名称
+            </summary>
+        </member>
+        <member name="P:Core.Repository.TestModule.Note">
+            <summary>
+            模块描述
+            </summary>
+        </member>
+        <member name="P:Core.Repository.TestModule.children">
+            <summary>
+            子节点
+            </summary> 
+        </member>
+        <member name="P:Core.Repository.TestModule.ParentId">
+            <summary>
+            父级ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.TestModule.ParentName">
+            <summary>
+            父级名称
+            </summary>
+        </member>
+        <member name="P:Core.Repository.TestModule.Url">
+            <summary>
+            URL地址
+            </summary>
+        </member>
+        <member name="P:Core.Repository.TestModule.CompanyId">
+            <summary>
+            单位ID
+            </summary>
+        </member>
+        <member name="T:Core.Repository.Intellisence">
+            <summary>
+            智能感知提示类
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Intellisence.Id">
+            <summary>
+            主键
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Intellisence.StartChar">
+            <summary>
+            激活字符
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Intellisence.DisplayText">
+            <summary>
+            显示字符
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Intellisence.SearchText">
+            <summary>
+            查询字符
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Intellisence.InsertionText">
+            <summary>
+            回车写入字符
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Intellisence.Description">
+            <summary>
+            描述
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Intellisence.DefinedSql">
+            <summary>
+            定义SQL
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Intellisence.ConnectionString">
+            <summary>
+            SQL连接字符串
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Intellisence.DataType">
+            <summary>
+            数据库类型
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Intellisence.IsSql">
+            <summary>
+            是否SQL
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Intellisence.CompanyId">
+            <summary>
+            单位ID
+            </summary>
+        </member>
+    </members>
+</doc>

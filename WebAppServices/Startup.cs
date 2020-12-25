@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -106,6 +108,12 @@ namespace WebAppServices
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Smart Api", Version = "v1" });
+
+                // 使用反射获取xml文件。并构造出文件的路径
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                // 启用xml注释. 该方法第二个参数启用控制器的注释，默认为false.
+                c.IncludeXmlComments(xmlPath, true);
             });
         }
 
@@ -125,7 +133,11 @@ namespace WebAppServices
           
             app.UseRequestResponseLogging();
             app.UseCors("cors");
-
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                //设置不限制content-type
+                ServeUnknownFileTypes = true
+            });
 
             app.UseSwagger();
 
@@ -138,7 +150,7 @@ namespace WebAppServices
             }); 
             //app.UseCors(MyAllowSpecificOrigins);
             app.UseMvc();
-            //new InitDatabase(true);
+            new InitDatabase(true);
         }
     }
 }

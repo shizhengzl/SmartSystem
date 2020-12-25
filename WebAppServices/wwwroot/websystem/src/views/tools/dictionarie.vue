@@ -71,7 +71,7 @@
     </div>
     <div class="main">
       <el-tag>{{tablename}}</el-tag>
-
+      <el-button type="primary" icon="el-icon-circle-plus-outline" @click="exports()">导出</el-button>
       <el-table :data="tableData"
                 highlight-current-row
                 height="97%"
@@ -189,7 +189,7 @@
   import {
     datadictionariesgetdatabase, datadictionariesgettables
     , datadictionariesgetcolumns, datadictionariessetextendedproperty
-    , settabledescription
+    , settabledescription, ExportTableColumnList
   } from '@/api/datadictionaries'
   import { getHeader, GetResult, Save, Remove } from '@/api/tablearea'
 
@@ -201,6 +201,7 @@ import { Level } from 'chalk';
 
     data() {
       return {
+        params: {},
         activeName:'first',
         tableData: [],
         filterText: '',
@@ -223,6 +224,9 @@ import { Level } from 'chalk';
     },
 
     methods: {
+      exports: function () {
+        this.ExportTableColumnList(this.params);
+      },
       tabhandleClick: function (tab, event) {
           
       },
@@ -282,7 +286,7 @@ import { Level } from 'chalk';
         if (data.parentId) {
           var params = '' + data.parentId + ',' + data.label;
           owner.tablename = '表名:' + data.label;
-
+          this.params = params
           owner.getcolumns(params)
         }
       },
@@ -290,7 +294,7 @@ import { Level } from 'chalk';
       handleNodeClicktype(data) {
         if (data.level == 2) {
         var ps = data.databaseid + ',' + data.label
-         
+          this.params = ps;
           this.getcolumns(ps)
         }
       },
@@ -324,16 +328,13 @@ import { Level } from 'chalk';
             }
             else if (node.level == 2) {
               var ps = node.data.databaseid +',' + node.label
-             
+             this.params = ps
               owner.getcolumns(ps)
               return resolve([])
             }
             else {
               resolve([])
             }
-          })
-          .catch(function (error) { // 请求失败处理
-            console.log(error)
           })
       },
 
@@ -357,9 +358,6 @@ import { Level } from 'chalk';
         datadictionariesgettables(node.key) 
           .then(response => {
             return resolve(response.data)
-          })
-          .catch(function (error) { // 请求失败处理
-            console.log(error)
           })
       },
 
@@ -387,9 +385,6 @@ import { Level } from 'chalk';
 
             return resolve(rs)
           })
-          .catch(function (error) { // 请求失败处理
-            console.log(error)
-          })
       },
 
       getcolumns(table) {
@@ -398,10 +393,24 @@ import { Level } from 'chalk';
           .then(response => {
             owner.tableData = response.data
           })
-          .catch(function (error) { // 请求失败处理
-            console.log(error)
+      },
+
+      ExportTableColumnList(table) {
+        const owner = this
+        ExportTableColumnList(table)
+          .then(response => {  
+            let link = document.createElement('a')
+            link.style.display = 'none'
+            link.href = process.env.VUE_APP_BASE_API + response.data
+ 
+            link.setAttribute('download', "a.xlsx")
+            document.body.appendChild(link)
+
+            link.click()
           })
       },
+
+      
       tableRowClassName({ row, rowIndex }) {
         if (rowIndex % 2 == 0) {
           return 'warning-row'
@@ -416,15 +425,11 @@ import { Level } from 'chalk';
         const getcolumn = '' + id + ',' + table
         datadictionariessetextendedproperty(tables) 
           .then(response => {
+            this.params = getcolumn
             owner.getcolumns(getcolumn)
           })
-          .catch(function (error) { // 请求失败处理
-            console.log(error)
-          })
       }
-
     }
-
   }</script>
 
 <style scoped>

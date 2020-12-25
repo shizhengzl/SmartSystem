@@ -7,8 +7,11 @@ using System.ComponentModel;
 
 namespace Core.Repository
 {
+    /// <summary>
+    /// 请求日志表
+    /// </summary>
     [Description("请求日志表")]
-    public class RequestResponseLog : SysBaseCreateTime
+    public class RequestResponseLog : SysBaseEntity
     {
         /// <summary>
         /// 请求地址
@@ -61,9 +64,9 @@ namespace Core.Repository
 
 
         /// <summary>
-        /// 请求地址
+        /// 请求IP地址
         /// </summary> 
-        [Description("请求地址")]
+        [Description("请求IP地址")]
         public String IPAddress { get; set; }
 
 

@@ -1,0 +1,561 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>WebAppServices</name>
+    </assembly>
+    <members>
+        <member name="M:WebAppServices.AutomaticInjection.AddAppServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            注册应用程序域中所有有AppService特性的服务
+            </summary>
+            <param name="services"></param>
+        </member>
+        <member name="M:WebAppServices.MemoryCacheManager.Remove(System.String)">
+            <summary>
+            移除缓存
+            </summary>
+            <param name="key"></param>
+        </member>
+        <member name="M:WebAppServices.MemoryCacheManager.SetCache``1(System.String,``0,System.Nullable{System.TimeSpan})">
+            <summary>
+            设置缓存
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="Key"></param>
+            <param name="Value"></param>
+            <param name="timespan"></param>
+        </member>
+        <member name="M:WebAppServices.MemoryCacheManager.SetRefushCache``1(System.String,``0,System.Nullable{System.TimeSpan})">
+            <summary>
+            设置缓存
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="Key"></param>
+            <param name="Value"></param>
+            <param name="timespan"></param>
+        </member>
+        <member name="M:WebAppServices.PermissionAuthorizationHandler.HandleRequirementAsync(Microsoft.AspNetCore.Authorization.AuthorizationHandlerContext,WebAppServices.PermissionAuthorizationRequirement)">
+            <summary>
+            判断是否授权
+            </summary>
+            <param name="context"></param>
+            <param name="requirement"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DataBaseConnectionController.GetHeader">
+            <summary>
+            获取连接字符串列头
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DataBaseConnectionController.GetResult(Core.UsuallyCommon.BaseRequest{Core.Repository.DataBaseConnection})">
+            <summary>
+            获取连接字符串结果
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DataBaseConnectionController.Save(Core.Repository.DataBaseConnection)">
+            <summary>
+            保存连接字符串
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DataBaseConnectionController.Remove(Core.Repository.DataBaseConnection)">
+            <summary>
+            删除连接字符串
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DataBaseConnectionController.GetDataBaseConnectionList">
+            <summary>
+            获取数据库
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DataBaseConnectionController.GetDataBaseTableList(System.Int64)">
+            <summary>
+            获取数据库表
+            </summary>
+            <param name="Id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DataBaseConnectionController.GetTableColumnList(System.String)">
+            <summary>
+            获取表列
+            </summary>
+            <param name="TableName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DataBaseConnectionController.ExportTableColumnList(System.String)">
+            <summary>
+            导出表列
+            </summary>
+            <param name="TableName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DataBaseConnectionController.SetExtendedproperty(System.String)">
+            <summary>
+            设置列属性
+            </summary>
+            <param name="TableName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DataBaseConnectionController.SetTableExtendedproperty(System.String)">
+            <summary>
+            设置表属性
+            </summary>
+            <param name="TableName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.EnumController.GetDataType">
+            <summary>
+            获取数据库类型
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.EnumController.GetGrantMode">
+            <summary>
+            获取授权模式
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.CompanyController.GetHeader">
+            <summary>
+            获取单位列头
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.CompanyController.GetResult(Core.UsuallyCommon.BaseRequest{Core.Repository.Company})">
+            <summary>
+            获取单位详情
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.CompanyController.Save(Core.Repository.Company)">
+            <summary>
+            保存单位
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.CompanyController.Remove(Core.Repository.Company)">
+            <summary>
+            删除单位
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.CompanyController.SaveGrant(System.Collections.Generic.List{Core.Repository.CompanyMenus})">
+            <summary>
+            保存授权
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.CompanyController.GetCompanyMenus(Core.Repository.Company)">
+            <summary>
+            获取单位菜单
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DepartmentController.GetHeader">
+            <summary>
+            获取列头
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DepartmentController.GetResult(Core.UsuallyCommon.BaseRequest{Core.Repository.Department})">
+            <summary>
+            获取部门
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DepartmentController.Save(Core.Repository.Department)">
+            <summary>
+            保存部门
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DepartmentController.Remove(Core.Repository.Department)">
+            <summary>
+            删除部门
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DepartmentController.GetTree">
+            <summary>
+            获取部门树
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DepartmentController.GetMenus(Core.Repository.Department)">
+            <summary>
+            获取用户菜单
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DepartmentController.SaveGrant(System.Collections.Generic.List{Core.Repository.DepartmentMenus})">
+            <summary>
+            保存授权
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DepartmentController.GetDepartmentUser(Core.UsuallyCommon.BaseRequest{Core.Repository.Department})">
+            <summary>
+            获取部门用户
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DepartmentController.GetDepartmentChoseUser(Core.UsuallyCommon.BaseRequest{Core.Repository.Department})">
+            <summary>
+            获取部门可以选择的用户
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DepartmentController.SaveDepartmentUser(System.Collections.Generic.List{Core.Repository.DepartmentUsers})">
+            <summary>
+            保存部门用户
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DepartmentController.RemoveDepartmentUser(System.Collections.Generic.List{Core.Repository.DepartmentUsers})">
+            <summary>
+            移除部门用户
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.MenusController.GetHeader">
+            <summary>
+            获取菜单头部
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.MenusController.GetResult(Core.UsuallyCommon.BaseRequest{WebAppServices.Model.MenuDto})">
+            <summary>
+            获取菜单
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.MenusController.Save(Core.Repository.Menus)">
+            <summary>
+            保存菜单
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.MenusController.Remove(Core.Repository.Menus)">
+            <summary>
+            删除菜单
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.MenusController.GetCompanyTree">
+            <summary>
+            获取菜单树
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.MenusController.GetTree">
+            <summary>
+            获取菜单树
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.RequestResponseLogController.GetHeader">
+            <summary>
+            获取请求日志头
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.RequestResponseLogController.GetResult(Core.UsuallyCommon.BaseRequest{Core.Repository.RequestResponseLog})">
+            <summary>
+            获取请求日志
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.RequestResponseLogController.Save(Core.Repository.RequestResponseLog)">
+            <summary>
+            保存请求日志
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.RequestResponseLogController.Remove(Core.Repository.RequestResponseLog)">
+            <summary>
+            删除日志
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.RolesController.GetHeader">
+            <summary>
+            获取列头
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.RolesController.GetResult(Core.UsuallyCommon.BaseRequest{Core.Repository.Roles})">
+            <summary>
+            获取角色
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.RolesController.Save(Core.Repository.Roles)">
+            <summary>
+            保存角色
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.RolesController.GetRoleUser(Core.UsuallyCommon.BaseRequest{Core.Repository.Roles})">
+            <summary>
+            获取角色用户
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.RolesController.GetRoleChoseUser(Core.UsuallyCommon.BaseRequest{Core.Repository.Roles})">
+            <summary>
+            获取角色可以选择的用户
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.RolesController.SaveRoleUser(System.Collections.Generic.List{Core.Repository.RoleUsers})">
+            <summary>
+            保存角色用户
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.RolesController.RemoveRoleUser(System.Collections.Generic.List{Core.Repository.RoleUsers})">
+            <summary>
+            移除角色用户
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.RolesController.GetRoleMenus(Core.Repository.Roles)">
+            <summary>
+            获取角色菜单
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.RolesController.SaveGrant(System.Collections.Generic.List{Core.Repository.RoleMenus})">
+            <summary>
+            保存授权
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.SQLConfigController.GetHeader">
+            <summary>
+            获取配置SQL列头
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.SQLConfigController.GetResult(Core.UsuallyCommon.BaseRequest{Core.Repository.SQLConfig})">
+            <summary>
+            获取SQL配置
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.SQLConfigController.Save(Core.Repository.SQLConfig)">
+            <summary>
+            保存SQL配置
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.SQLConfigController.Remove(Core.Repository.SQLConfig)">
+            <summary>
+            删除SQL配置
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.UsersController.GetUserInfo">
+            <summary>
+            获取用户信息
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.UsersController.GetResult(Core.UsuallyCommon.BaseRequest{Core.Repository.Users})">
+            <summary>
+            获取用户列表
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.UsersController.Save(Core.Repository.Users)">
+            <summary>
+            保存用户
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.UsersController.Remove(Core.Repository.Users)">
+            <summary>
+            删除用户
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.UsersController.GetUsersList">
+            <summary>
+            获取单位用户
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.UsersController.Register(Core.Repository.UserDto)">
+            <summary>
+            注册用户
+            </summary>
+            <param name="user"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.UsersController.GetMenus(Core.Repository.Users)">
+            <summary>
+            获取用户菜单
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.UsersController.SaveGrant(System.Collections.Generic.List{Core.Repository.UserMenus})">
+            <summary>
+            保存授权
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.ElementController.GetHeader">
+            <summary>
+            获取列头
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.ElementController.GetResult(Core.UsuallyCommon.BaseRequest{Core.Repository.Element})">
+            <summary>
+            获取测试模块元素
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.ElementController.Save(Core.Repository.Element)">
+            <summary>
+            保存元素
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.ElementController.Remove(Core.Repository.Element)">
+            <summary>
+            删除元素
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.TestModuleController.GetHeader">
+            <summary>
+            获取列头
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.TestModuleController.GetYml(Core.UsuallyCommon.BaseRequest{Core.Repository.TestModule})">
+            <summary>
+            获取yml文件
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.TestModuleController.GetResult(Core.UsuallyCommon.BaseRequest{Core.Repository.TestModule})">
+            <summary>
+            获取模块
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.TestModuleController.Save(Core.Repository.TestModule)">
+            <summary>
+            保存测试模块
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.TestModuleController.Remove(Core.Repository.TestModule)">
+            <summary>
+            删除测试模块
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.TestModuleController.GetTree">
+            <summary>
+            获取树形测试模块
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.IntellisenceController.GetHeader">
+            <summary>
+            获取代码片段列头
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.IntellisenceController.GetResult(Core.UsuallyCommon.BaseRequest{Core.Repository.Intellisence})">
+            <summary>
+            获取代码片段
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.IntellisenceController.Save(Core.Repository.Intellisence)">
+            <summary>
+            保存代码片段
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.IntellisenceController.Remove(Core.Repository.Intellisence)">
+            <summary>
+            删除代码片段
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.ValuesController.GetStringSingleColumn(System.String)">
+            <summary>
+            根据类容字符串自动切割
+            </summary>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="P:WebAppServices.LoginDto.Username">
+            <summary>
+            用户名或者Phone
+            </summary>
+        </member>
+        <member name="P:WebAppServices.LoginDto.Password">
+            <summary>
+            登录密码
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -315,6 +315,8 @@
         this.GetRoles();
         this.GetDepartmentTree()
         this.createdialog = true;
+
+      
       },
       // 重置表单
       reset() {

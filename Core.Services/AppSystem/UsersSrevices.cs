@@ -66,7 +66,7 @@ namespace Core.Services.AppSystem
               
             }
             // 判断用户是不是法人 授权所有单位菜单
-            if (company.CompanyPhone.Trim() == user.Phone.Trim())
+            if (company.CompanyPhone.Trim() == user.Phone.ToStringExtension().Trim())
             {
                 menuids = FreeSqlFactory._Freesql.Select<CompanyMenus>().Where(x => x.CompanyId == CompanyId).ToList().Select(p => p.MenuId).ToList();
             }

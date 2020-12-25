@@ -188,6 +188,17 @@ namespace Core.Repository
                 };
 
 
+                Menus m10 = new Menus()
+                {
+                    MenuName = "SQL配置",
+                    MenuIcon = "tool",
+                    MenuPath = "/sqlconfig",
+                    Url = "/system/sqlconfig",
+                    IsAvailable = true,
+                    ParentId = m1id
+                };
+
+
                 FreeSqlFactory._Freesql.Insert<Menus>(m2).ExecuteAffrows();
                 FreeSqlFactory._Freesql.Insert<Menus>(m3).ExecuteAffrows();
                 FreeSqlFactory._Freesql.Insert<Menus>(m4).ExecuteAffrows();
@@ -196,6 +207,7 @@ namespace Core.Repository
                 FreeSqlFactory._Freesql.Insert<Menus>(m7).ExecuteAffrows();
                 FreeSqlFactory._Freesql.Insert<Menus>(m8).ExecuteAffrows();
                 FreeSqlFactory._Freesql.Insert<Menus>(m9).ExecuteAffrows();
+                FreeSqlFactory._Freesql.Insert<Menus>(m10).ExecuteAffrows();
                 Menus t1 = new Menus() { MenuName = "工具管理", MenuIcon = "tool", MenuPath = "/tools", Url = "Layout", IsDeafult = true, IsAvailable = true };
                 var t1id = FreeSqlFactory._Freesql.Insert<Menus>(t1).ExecuteIdentity();
 

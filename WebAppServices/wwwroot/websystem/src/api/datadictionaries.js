@@ -83,3 +83,13 @@ export function settabledescription(table) {
     method: 'get'
   })
 }
+
+
+export function ExportTableColumnList(table) {
+  return request({
+    url: '/api/DataBaseConnection/ExportTableColumnList/' + table, // 假地址 自行替换
+    method: 'get'
+  })
+}
+
+

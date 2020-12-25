@@ -10,13 +10,13 @@
       <template v-for="(item,index) in tableHead">
         <el-table-column :prop="capitalize(item.columnName)"
                          :label="item.columnDescription || item.columnName"
-                         v-if="hiddenColumn[item.columnName] !== true"
+                         v-if="!hiddenColumn[item.columnName]"
                          :key="index"
                          show-overflow-tooltip
                          sortable="custom" ></el-table-column>
       </template>
 
-      <el-table-column label="操作" width="200">
+      <el-table-column label="操作" width="180">
         <template slot-scope="scope">
           <el-button type="success" size="small" @click="Modify(scope.row)">编辑</el-button>
           <el-button type="danger" size="small" @click="Remove(scope.row)">删除</el-button>
@@ -76,13 +76,13 @@
     data() {
       return {
         hiddenColumn: {
-          Id:true
-          , CreateUserId: true
-          , CreateUserName: true
-          , CreateTime: false
-          , ModifyUserId: true
-          , ModifyUserName: true
-          , ModifyTime: true
+          id:true
+          , createUserId: true
+          , createUserName: true
+          , createTime: false
+          , modifyUserId: true
+          , modifyUserName: true
+          , modifyTime: true
         },
         tableData: [],
         tableHead: [],

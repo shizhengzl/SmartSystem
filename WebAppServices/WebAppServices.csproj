@@ -4,6 +4,10 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>D:\smartcode\智能系统\WebAppServices\WebAppServices.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="wwwroot\DataDictionarie\**" />
     <Content Remove="wwwroot\DataDictionarie\**" />
@@ -21,6 +25,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
+    <PackageReference Include="EPPlus.Core" Version="1.5.4" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.6.0" />
@@ -38,8 +43,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\System\" />
-    <Folder Include="Controllers\AppSystem\" />
     <Folder Include="Model\TestModule\" />
     <Folder Include="wwwroot\websystem\src\views\users\" />
     <Folder Include="wwwroot\jingdong\" />
