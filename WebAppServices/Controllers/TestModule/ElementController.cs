@@ -133,10 +133,12 @@ namespace WebAppServices.Controllers
             request.CompanyId = CurrentUser.CompanyId;
             if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
             {
+                request.SetCreateDefault(this.CurrentUser);
                 _appSystemServices.Create<Element>(request);
             }
             else
             {
+                request.SetModifyDefault(this.CurrentUser);
                 _appSystemServices.Modify<Element>(request);
             }
             return response;

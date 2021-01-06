@@ -162,10 +162,12 @@ namespace WebAppServices.Controllers
             request.CompanyId = CurrentUser.CompanyId;
             if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
             {
+                request.SetCreateDefault(this.CurrentUser);
                 _appSystemServices.Create<TestModule>(request);
             }
             else
             {
+                request.SetModifyDefault(this.CurrentUser);
                 _appSystemServices.Modify<TestModule>(request);
             }
 
@@ -181,19 +183,19 @@ namespace WebAppServices.Controllers
         [Authorize]
         public ResponseDto<Boolean> Remove([FromBody] TestModule request)
         {
-            ResponseDto<Boolean> response = new ResponseDto<Boolean>(); 
+            ResponseDto<Boolean> response = new ResponseDto<Boolean>();
             if (string.IsNullOrEmpty(request.Id.ToStringExtension()))
             {
 
                 response.Message = "Key 不能为空";
                 response.Success = false;
                 return response;
-            } 
+            }
             var _entity = _appSystemServices.GetEntitys<TestModule>();
             response.Data = _entity.Where(x => x.Id == request.Id).ToDelete().ExecuteAffrows() > 0;
 
             return response;
-        } 
+        }
 
         /// <summary>
         /// 获取树形测试模块
@@ -204,23 +206,16 @@ namespace WebAppServices.Controllers
         public ResponseListDto<TestModule> GetTree()
         {
             ResponseListDto<TestModule> response = new ResponseListDto<TestModule>();
-            try
-            {
-                var data = _appSystemServices.GetEntitys<TestModule>().Where(x => x.ParentId == 0 && x.CompanyId == CurrentUser.CompanyId).ToList();
 
-                data.ForEach(x =>
-                {
-                    GetChildren(x);
-                });
+            var data = _appSystemServices.GetEntitys<TestModule>().Where(x => x.ParentId == 0 && x.CompanyId == CurrentUser.CompanyId).ToList();
 
-                response.Data = data.ToList<TestModule>();
-            }
-            catch (Exception ex)
+            data.ForEach(x =>
             {
-                response.Message = ex.Message;
-                response.Success = false;
-                _sysservices.AddExexptionLogs(ex, "GetHeader");
-            }
+                GetChildren(x);
+            });
+
+            response.Data = data.ToList<TestModule>();
+
             return response;
         }
 

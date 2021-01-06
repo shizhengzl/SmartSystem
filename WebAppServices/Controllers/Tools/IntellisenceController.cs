@@ -105,10 +105,12 @@ namespace WebAppServices.Controllers
             request.CompanyId = CurrentUser.CompanyId;
             if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
             {
+                request.SetCreateDefault(this.CurrentUser);
                 _appSystemServices.Create<Intellisence>(request);
             }
             else
             {
+                request.SetModifyDefault(this.CurrentUser);
                 _appSystemServices.Modify<Intellisence>(request);
             }
             return response;

@@ -150,7 +150,7 @@ namespace WebAppServices
             }); 
             //app.UseCors(MyAllowSpecificOrigins);
             app.UseMvc();
-            new InitDatabase(true);
+            //new InitDatabase(true);
         }
     }
 }

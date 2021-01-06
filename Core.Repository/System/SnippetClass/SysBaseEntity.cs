@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using Core.UsuallyCommon;
 
 namespace Core.Repository
 {
@@ -27,7 +28,7 @@ namespace Core.Repository
         /// </summary>
         [Description("创建用户")]
         [Column(StringLength = 100)]
-        public Int64 CreateUserName { get; set; }
+        public String CreateUserName { get; set; }
 
         /// <summary>
         /// 创建时间
@@ -47,12 +48,35 @@ namespace Core.Repository
         /// </summary>
         [Description("修改用户")]
         [Column(StringLength = 100)]
-        public Int64? ModifyUserName { get; set; }
+        public String ModifyUserName { get; set; }
 
         /// <summary>
         /// 修改时间
         /// </summary>
         [Description("修改时间")]
         public DateTime? ModifyTime { get; set; }
+
+
+        /// <summary>
+        /// 设置默认值
+        /// </summary> 
+        /// <param name="currentUser"></param>
+        public void SetCreateDefault(UserDto currentUser)
+        {
+            this.CreateUserId = currentUser.Id;
+            this.CreateUserName = currentUser.UserName;
+            this.CreateTime = System.DateTime.UtcNow;
+        }
+
+        /// <summary>
+        /// 设置编辑默认值
+        /// </summary>
+        /// <param name="currentUser"></param>
+        public void SetModifyDefault(UserDto currentUser)
+        {
+            this.ModifyUserId = currentUser.Id;
+            this.ModifyUserName = currentUser.UserName;
+            this.ModifyTime = System.DateTime.UtcNow;
+        }
     }
 }

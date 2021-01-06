@@ -110,10 +110,12 @@ namespace WebAppServices.Controllers
             request.CompanyId = CurrentUser.CompanyId;
             if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
             {
+                request.SetCreateDefault(this.CurrentUser);
                 _appSystemServices.Create<Roles>(request);
             }
             else
             {
+                request.SetModifyDefault(this.CurrentUser);
                 _appSystemServices.Modify<Roles>(request);
             }
             return response;
@@ -245,6 +247,7 @@ namespace WebAppServices.Controllers
                     if (!_entity.Any(x => x.UserId == p.UserId && x.RoleId == p.RoleId))
                     {
                         p.CompanyId = CurrentUser.CompanyId;
+                        p.SetCreateDefault(this.CurrentUser);
                         _appSystemServices.Create<RoleUsers>(p);
                     }
                 });
@@ -315,11 +318,13 @@ namespace WebAppServices.Controllers
             ResponseDto<Roles> response = new ResponseDto<Roles>();
 
             var _entity = _appSystemServices.GetEntitys<RoleMenus>();
-            _entity.Where(x => x.RoleId == request.FirstOrDefault().RoleId).ToDelete();
+            _entity.Where(x => x.RoleId == request.FirstOrDefault().RoleId).ToDelete().ExecuteAffrows();
             if (request.Count > 0)
             {
                 request.ForEach(x => {
-                    _appSystemServices.Create<RoleMenus>(new RoleMenus() { RoleId = x.RoleId, MenuId = x.MenuId,CompanyId = CurrentUser.CompanyId });
+                    var menus = new RoleMenus() { RoleId = x.RoleId, MenuId = x.MenuId, CompanyId = CurrentUser.CompanyId };
+                    menus.SetCreateDefault(this.CurrentUser);
+                    _appSystemServices.Create<RoleMenus>(menus);
                 });
             }
             return response;

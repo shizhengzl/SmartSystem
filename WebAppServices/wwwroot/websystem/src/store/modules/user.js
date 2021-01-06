@@ -1,5 +1,5 @@
 import { login, logout, getInfo, getUserInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, setToken, removeToken, setUserinfo } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 import { debounce } from '@/utils'
 
@@ -64,6 +64,7 @@ const actions = {
 
         commit('SET_ROLES', roles)
         commit('SET_NAME', name)
+        setUserinfo(name); 
         commit('SET_AVATAR', avatar)
         commit('SET_INTRODUCTION', introduction)
 

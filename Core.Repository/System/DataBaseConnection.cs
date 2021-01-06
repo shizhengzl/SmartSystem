@@ -7,6 +7,10 @@ using System.Text;
 
 namespace Core.Repository
 {
+     
+    /// <summary>
+    /// 数据库连接字符串
+    /// </summary>
     [Description("数据库连接字符串")]
     public class DataBaseConnection
     {

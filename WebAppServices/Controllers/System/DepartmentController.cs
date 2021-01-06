@@ -107,10 +107,12 @@ namespace WebAppServices.Controllers
             request.CompanyId = CurrentUser.CompanyId;
             if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
             {
+                request.SetCreateDefault(this.CurrentUser);
                 _appSystemServices.Create<Department>(request);
             }
             else
             {
+                request.SetModifyDefault(this.CurrentUser);
                 _appSystemServices.Modify<Department>(request);
             }
 
@@ -211,11 +213,13 @@ namespace WebAppServices.Controllers
             ResponseDto<Department> response = new ResponseDto<Department>();
 
             var _entity = _appSystemServices.GetEntitys<DepartmentMenus>();
-            _entity.Where(x => x.DepartmentId == request.FirstOrDefault().DepartmentId).ToDelete();
+            _entity.Where(x => x.DepartmentId == request.FirstOrDefault().DepartmentId).ToDelete().ExecuteAffrows();
             if (request.Count > 0)
             {
                 request.ForEach(x => {
-                    _appSystemServices.Create<DepartmentMenus>(new DepartmentMenus() { DepartmentId = x.DepartmentId, MenuId = x.MenuId, CompanyId = CurrentUser.CompanyId });
+                    var menus = new DepartmentMenus() { DepartmentId = x.DepartmentId, MenuId = x.MenuId, CompanyId = CurrentUser.CompanyId };
+                    menus.SetCreateDefault(this.CurrentUser);
+                    _appSystemServices.Create<DepartmentMenus>(menus);
                 });
             }
             return response;
@@ -328,6 +332,7 @@ namespace WebAppServices.Controllers
                     if (!_entity.Any(x => x.UserId == p.UserId && x.DepartmentId == p.DepartmentId))
                     {
                         p.CompanyId = CurrentUser.CompanyId;
+                        p.SetCreateDefault(this.CurrentUser);
                         _appSystemServices.Create<DepartmentUsers>(p);
                     }
                 });

@@ -6,6 +6,7 @@
 
     <div class="right-menu">
       <template v-if="device!=='mobile'">
+        <span class="right-menu-item hover-effect">{{companyName}} ,您好：{{nikename}}</span>
         <search id="header-search" class="right-menu-item" />
 
         <error-log class="errLog-container right-menu-item hover-effect" />
@@ -52,9 +53,20 @@ import Hamburger from '@/components/Hamburger'
 import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
-import Search from '@/components/HeaderSearch'
-
-export default {
+  import Search from '@/components/HeaderSearch'
+  import { getUserinfo as getUserDetail } from '@/utils/auth'
+import { getUserInfo } from '@/api/user';
+import { debounce } from '@/utils';
+  export default {
+    data() {
+      return {
+        nikename: '刘德华',
+        companyName:'智科云计算'
+      }
+    },
+    mounted() {
+      this.getUserinfos() 
+    },
   components: {
     Breadcrumb,
     Hamburger,
@@ -70,7 +82,14 @@ export default {
       'device'
     ])
   },
-  methods: {
+    methods: {
+      getUserinfos: function () {
+        var userinfo = getUserDetail()
+        let us = JSON.parse(userinfo);
+        this.nikename = us.nikeName || us.userName || us.phone;
+        this.companyName = us.companyName;
+        
+      },
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },

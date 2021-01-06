@@ -110,10 +110,12 @@ namespace WebAppServices.Controllers
             var _entity = _appSystemServices.GetEntitys<Company>();
             if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
             {
+                request.SetCreateDefault(this.CurrentUser);
                 _appSystemServices.Create<Company>(request);
             }
             else
             {
+                request.SetModifyDefault(this.CurrentUser);
                 _appSystemServices.Modify<Company>(request);
             }
             return response;
@@ -155,11 +157,13 @@ namespace WebAppServices.Controllers
             ResponseDto<Company> response = new ResponseDto<Company>();
 
             var _entity = _appSystemServices.GetEntitys<CompanyMenus>();
-            _entity.Where(x => x.CompanyId == request.FirstOrDefault().CompanyId).ToDelete();
+            _entity.Where(x => x.CompanyId == request.FirstOrDefault().CompanyId).ToDelete().ExecuteAffrows();
             if (request.Count > 0)
             { 
                 request.ForEach(x=> {
-                    _appSystemServices.Create<CompanyMenus>(new CompanyMenus() { CompanyId = x.CompanyId, MenuId = x.MenuId });
+                    var menu = new CompanyMenus() { CompanyId = x.CompanyId, MenuId = x.MenuId };
+                    menu.SetCreateDefault(this.CurrentUser);
+                    _appSystemServices.Create<CompanyMenus>(menu);
                 });
             } 
             return response;

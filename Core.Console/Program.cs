@@ -60,14 +60,46 @@ namespace Core.Console
          
         static void Main(string[] args)
         {
+            List<SearchRule> response = new List<SearchRule>();
 
-            var pwd = "shizheng";
+            var str = @"已出台CRM开发推广应用计划并发布，每天核查反馈进度情况
+已完成初稿制定
+跟石总沟通，暂无计划客户
+团建办法、督导办法没有定稿，岗位职业考核周一督促人事组织
+数据量较大，利用节假日完成
+会议前策划书已提交
+完成 完成
+材料进销存和三大材料调差产品配置完毕。";
+            List<string> keys = new List<string>() { "\r\n",  "\t", " " };
+            keys.ForEach(x=>{
+                SearchRule searchRule = new SearchRule() { SearchKey = x, SearchCount = 0 };
+                str.GetStringMatchCount(searchRule);
+                response.Add(searchRule);
 
-            var s = pwd.PasswordToSecureString();
+             
+            });
 
-            var n = s.SecureStringToPassword();
+            var sp = response.OrderBy(o => o.SearchCount).FirstOrDefault();
+            var spmax = response.OrderByDescending(o => o.SearchCount).FirstOrDefault();
 
-            var a = n;
+            var rs = str.GetStringSingleColumn(new List<string>() { sp.SearchKey });
+            rs.ForEach(x => {
+                var columns = x.GetStringSingleColumn(new List<string>() { spmax.SearchKey });
+
+                System.Console.WriteLine($"这一行共计：{columns.Count}列");
+                columns.ForEach(p=> {
+                    System.Console.WriteLine($"值：{p.ToStringExtension()}");
+                });
+             
+            });
+
+            //response.OrderByDescending(p => p.SearchCount).ToList().ForEach(o => {
+            //    var s = o.SearchKey;
+            //    var c = o.SearchCount;
+            //    System.Console.WriteLine($"key:{o.SearchKey.ToString()}   count={o.SearchCount}");
+            //});
+
+            System.Console.ReadLine();
         }
 
 

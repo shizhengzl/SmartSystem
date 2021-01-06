@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Core.UsuallyCommon
 {
@@ -10,6 +11,79 @@ namespace Core.UsuallyCommon
     /// </summary>
     public static class SearchExtensions
     {
+
+        /// <summary>
+        /// 替换满足条件字符串
+        /// </summary>
+        /// <param name="str">需要替换的字符串</param>
+        /// <param name="start">替换的开始字符串</param>
+        /// <param name="end">替换结束的字符串</param>
+        /// <param name="replace">替换成</param>
+        /// <param name="IsMax">是否按照最大规则替换 默认最小规则</param>
+        /// <returns></returns>
+        public static string ReplaceString(this string str, string start, string end, string replace, Boolean IsMax = false)
+        {
+
+            List<string> response = new List<string>();
+            var pattern = GetParttenString(start, end, IsMax);  
+            return new Regex(pattern).Replace(str, replace);
+        }
+
+        /// <summary>
+        /// 获取正则表达式
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="IsMax"></param>
+        public static String GetParttenString(string start,string end, Boolean IsMax)
+        {
+            var pattern = string.Empty;
+            if (start.Length == 1 && end.Length == 1 && chars.Any(x => x == start.ToCharArray().First()) && chars.Any(x => x == end.ToCharArray().First()))
+            {
+                pattern = @"(?is)(?<=\" + start + ")(.*" + (IsMax ? "" : "?") + ")(?=\\" + end + ")";
+            }
+            else
+            {
+                pattern = @"(?is)(?<=" + start + ")(.*" + (IsMax ? "" : "?") + ")(?=" + end + ")";
+            }
+            return pattern;
+        }
+
+        public static List<Char> chars = new List<Char>() { '{', '}', '[', ']', '(', ')' };
+
+        /// <summary>
+        /// 提起特定字符串如[日期] (日期)等
+        /// </summary>
+        /// <param name="str">需求提取的字符串</param>
+        /// <param name="start">提取的开始字符</param>
+        /// <param name="end">提取的结束字符</param>
+        /// <param name="IsMax">是否贪婪匹配 默认不贪婪提取匹配最多结果</param>
+        /// <returns></returns>
+        public static List<String> GetMatchString(this string str, string start, string end, Boolean IsMax = false)
+        {
+            List<string> response = new List<string>();
+            var pattern = GetParttenString(start, end, IsMax);
+
+            MatchCollection result = new Regex(pattern).Matches(str);
+            foreach (Match item in result)
+            {
+                response.Add(item.Value);
+            }
+            return response;
+
+            /*
+             /提取[]的值
+            string pattern1 = @"(?is)(?<=\[)(.*)(?=\])";
+            string result1 = new Regex(pattern1).Match("sadff[xxx]sdfdsf").Value;
+            //提取()的值
+            string pattern2 = @"(?is)(?<=\()(.*)(?=\))";
+            string result2 = new Regex(pattern2).Match("sadfdsf").Value;
+            //提取{}的值
+            string pattern3 = @"(?is)(?<=\{)(.*)(?=\})";
+            string result3 = new Regex(pattern3).Match("sadff[{xxx]sdfd}sf").Value;
+             */
+        }
+
         /// <summary>
         /// 查找匹配字符串
         /// </summary>
@@ -33,6 +107,33 @@ namespace Core.UsuallyCommon
             string[] linedatas = context.Split(separatingChars, System.StringSplitOptions.RemoveEmptyEntries);
             return linedatas.ToList<string>();
         }
+
+
+        /// <summary>
+        /// 根据类容字符串自动切割
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public static List<String> GetStringSingleColumn(this string context,List<String> splits )
+        { 
+            string[] linedatas = context.Split(splits.ToArray(), System.StringSplitOptions.RemoveEmptyEntries);
+            return linedatas.ToList<string>();
+        }
+
+
+
+        /// <summary>
+        /// 统计规则字符串命中次数
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public static void GetStringMatchCount(this String context , SearchRule rule)
+        {
+            string[] separatingChars = new string[] { rule.SearchKey };
+            string[] linedatas = context.Split(separatingChars, System.StringSplitOptions.RemoveEmptyEntries);
+            rule.SearchCount = linedatas.ToList<string>().Count;
+        }
+
 
         /// <summary>
         /// 查询列表近似值
@@ -132,5 +233,12 @@ namespace Core.UsuallyCommon
 
             return result;
         }
+    }
+
+    public class SearchRule
+    {
+        public String SearchKey { get; set; }
+
+        public Int64 SearchCount { get; set; }
     }
 }

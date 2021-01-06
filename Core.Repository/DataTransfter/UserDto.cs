@@ -62,5 +62,12 @@ namespace Core.Repository
         [Column(StringLength = 100)]
         [Description("姓名")]
         public string Name { get; set; }
+
+
+        /// <summary>
+        /// 单位名称
+        /// </summary> 
+        [Description("单位名称")]
+        public String CompanyName { get; set; }
     }
 }

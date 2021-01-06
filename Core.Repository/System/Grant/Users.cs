@@ -85,5 +85,7 @@ namespace Core.Repository
         [Column(IsIgnore = true)]
         public List<Int64> RoleId { get; set; }
 
+
+
     }
 }

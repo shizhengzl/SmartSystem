@@ -128,10 +128,12 @@ namespace WebAppServices.Controllers
             var _entity = _appSystemServices.GetEntitys<Menus>();
             if (string.IsNullOrEmpty(request.Id.ToStringExtension()) || request.Id.ToInt32() == 0)
             {
+                request.SetCreateDefault(this.CurrentUser);
                 _appSystemServices.Create<Menus>(request);
             }
             else
             {
+                request.SetModifyDefault(this.CurrentUser);
                 _appSystemServices.Modify<Menus>(request);
             }
 

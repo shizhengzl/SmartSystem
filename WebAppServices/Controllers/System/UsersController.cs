@@ -42,7 +42,11 @@ namespace WebAppServices.Controllers
             _appSystemServices = appSystemServices;
         }
 
-
+        /// <summary>
+        /// 获取表列头 
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
         [HttpPost("GetHeader")]
         public ResponseListDto<Column> GetHeader()
         {
@@ -80,7 +84,7 @@ namespace WebAppServices.Controllers
             // 获取用户角色
             var roles = new List<string>() { "admin" };
             // 获取用户菜单
-            return Ok(new { Success = true, code = 20000, roles, router = router, name = users.UserName, avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif" });
+            return Ok(new { Success = true, code = 20000, roles, router = router, name = users, avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif" });
         }
 
 
@@ -174,7 +178,8 @@ namespace WebAppServices.Controllers
                 if (string.IsNullOrEmpty(request.Password))
                 {
                     request.Id = userId;
-                    request.Password = ("123456".ToMD5() + userId.ToStringExtension()).ToMD5(); 
+                    request.Password = ("123456".ToMD5() + userId.ToStringExtension()).ToMD5();
+                    request.SetModifyDefault(this.CurrentUser);
                     _appSystemServices.Modify<Users>(request);
                 }
 
@@ -187,13 +192,16 @@ namespace WebAppServices.Controllers
                     JobStatus = JobStatus.Audit,
                     CompanyId = CurrentUser.CompanyId
                 };
+                companyUsers.SetCreateDefault(this.CurrentUser);
                 _appSystemServices.Create<CompanyUsers>(companyUsers);
 
                 if (!request.DepartmentId.IsNull() && request.DepartmentId.Count > 0)
                 {
                     List<DepartmentUsers> departmentUsers = new List<DepartmentUsers>();
                     request.DepartmentId.ForEach(p=> {
-                        departmentUsers.Add(new DepartmentUsers() { CompanyId = CurrentUser.CompanyId, DepartmentId = p, UserId = userId });
+                        var departuser = new DepartmentUsers() { CompanyId = CurrentUser.CompanyId, DepartmentId = p, UserId = userId };
+                        departuser.SetCreateDefault(this.CurrentUser);
+                        departmentUsers.Add(departuser);
                     });
                     _appSystemServices.Create<DepartmentUsers>(departmentUsers.ToArray());
                 } 
@@ -202,7 +210,9 @@ namespace WebAppServices.Controllers
                     List<RoleUsers> roleUsers = new List<RoleUsers>();
                     request.RoleId.ForEach(p =>
                     {
-                        roleUsers.Add(new RoleUsers() { CompanyId = CurrentUser.CompanyId, RoleId = p, UserId = userId });
+                        var roleuser = new RoleUsers() { CompanyId = CurrentUser.CompanyId, RoleId = p, UserId = userId };
+                        roleuser.SetCreateDefault(this.CurrentUser);
+                        roleUsers.Add(roleuser);
                         _appSystemServices.Create<RoleUsers>(roleUsers.ToArray());
                     });
                 }
@@ -220,7 +230,9 @@ namespace WebAppServices.Controllers
                     {
                         List<DepartmentUsers> departmentUsers = new List<DepartmentUsers>();
                         request.DepartmentId.ForEach(p => {
-                            departmentUsers.Add(new DepartmentUsers() { CompanyId = CurrentUser.CompanyId, DepartmentId = p, UserId = request.Id });
+                            var departuser = new DepartmentUsers() { CompanyId = CurrentUser.CompanyId, DepartmentId = p, UserId = request.Id };
+                            departuser.SetCreateDefault(this.CurrentUser);
+                            departmentUsers.Add(departuser);
                         });
                         _appSystemServices.Create<DepartmentUsers>(departmentUsers.ToArray());
                     }
@@ -231,7 +243,9 @@ namespace WebAppServices.Controllers
                         List<RoleUsers> roleUsers = new List<RoleUsers>();
                         request.RoleId.ForEach(p =>
                         {
-                            roleUsers.Add(new RoleUsers() { CompanyId = CurrentUser.CompanyId, RoleId = p, UserId = request.Id });
+                            var roleuser = new RoleUsers() { CompanyId = CurrentUser.CompanyId, RoleId = p, UserId = request.Id };
+                            roleuser.SetCreateDefault(this.CurrentUser);
+                            roleUsers.Add(roleuser);
                             _appSystemServices.Create<RoleUsers>(roleUsers.ToArray());
                         });
                     }
@@ -429,7 +443,7 @@ namespace WebAppServices.Controllers
             ResponseDto<Users> response = new ResponseDto<Users>();
 
             var _entity = _appSystemServices.GetEntitys<UserMenus>();
-            _entity.Where(x => x.UserId == request.FirstOrDefault().UserId).ToDelete();
+            _entity.Where(x => x.UserId == request.FirstOrDefault().UserId).ToDelete().ExecuteAffrows();
             if (request.Count > 0)
             {
                 request.ForEach(x =>

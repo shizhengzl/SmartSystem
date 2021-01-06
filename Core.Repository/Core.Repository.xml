@@ -84,6 +84,11 @@
             姓名
             </summary>
         </member>
+        <member name="P:Core.Repository.UserDto.CompanyName">
+            <summary>
+            单位名称
+            </summary> 
+        </member>
         <member name="T:Core.Repository.Column">
             <summary>
             列
@@ -162,6 +167,11 @@
         <member name="P:Core.Repository.Column.SQLType">
             <summary>
             数据库类型
+            </summary>
+        </member>
+        <member name="T:Core.Repository.DataBaseConnection">
+            <summary>
+            数据库连接字符串
             </summary>
         </member>
         <member name="P:Core.Repository.DataBaseConnection.Id">
@@ -770,6 +780,18 @@
             修改时间
             </summary>
         </member>
+        <member name="M:Core.Repository.SysBaseEntity.SetCreateDefault(Core.Repository.UserDto)">
+            <summary>
+            设置默认值
+            </summary> 
+            <param name="currentUser"></param>
+        </member>
+        <member name="M:Core.Repository.SysBaseEntity.SetModifyDefault(Core.Repository.UserDto)">
+            <summary>
+            设置编辑默认值
+            </summary>
+            <param name="currentUser"></param>
+        </member>
         <member name="T:Core.Repository.SQLConfig">
             <summary>
             SQL配置类
@@ -1010,14 +1032,44 @@
             单位ID
             </summary>
         </member>
+        <member name="T:Core.Repository.Tools.Generator.CodeSnippet">
+            <summary>
+            模板管理
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Tools.Generator.CodeSnippet.Name">
+            <summary>
+            模板名称
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Tools.Generator.CodeSnippet.Context">
+            <summary>
+            模板内容
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Tools.Generator.CodeSnippet.GeneratorPath">
+            <summary>
+            生成文件路劲
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Tools.Generator.CodeSnippet.GeneratorFileName">
+            <summary>
+            生成文件名
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Tools.Generator.CodeSnippet.IsFilter">
+            <summary>
+            帅选过滤数据
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Tools.Generator.CodeSnippet.IsEnabled">
+            <summary>
+            是否启用
+            </summary>
+        </member>
         <member name="T:Core.Repository.Intellisence">
             <summary>
             智能感知提示类
-            </summary>
-        </member>
-        <member name="P:Core.Repository.Intellisence.Id">
-            <summary>
-            主键
             </summary>
         </member>
         <member name="P:Core.Repository.Intellisence.StartChar">

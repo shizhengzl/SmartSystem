@@ -110,6 +110,21 @@
             <param name="TableName"></param>
             <returns></returns>
         </member>
+        <member name="T:WebAppServices.Controllers.BaseController">
+            <summary>
+            基类控制器
+            </summary>
+        </member>
+        <member name="P:WebAppServices.Controllers.BaseController.Token">
+            <summary>
+            获取token
+            </summary>
+        </member>
+        <member name="P:WebAppServices.Controllers.BaseController.CurrentUser">
+            <summary>
+            活当前用户
+            </summary>
+        </member>
         <member name="M:WebAppServices.Controllers.EnumController.GetDataType">
             <summary>
             获取数据库类型
@@ -390,6 +405,39 @@
             删除SQL配置
             </summary>
             <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.SystemLogsController.GetHeader">
+            <summary>
+            获取请求列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.SystemLogsController.GetResult(Core.UsuallyCommon.BaseRequest{Core.Repository.SystemLogs})">
+            <summary>
+            获取请求结果
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.SystemLogsController.Save(Core.Repository.SystemLogs)">
+            <summary>
+            保存
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.SystemLogsController.Remove(Core.Repository.SystemLogs)">
+            <summary>
+            删除日志
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.UsersController.GetHeader">
+            <summary>
+            获取表列头 
+            </summary>
             <returns></returns>
         </member>
         <member name="M:WebAppServices.Controllers.UsersController.GetUserInfo">

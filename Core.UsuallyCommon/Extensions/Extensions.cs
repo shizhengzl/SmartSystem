@@ -218,16 +218,6 @@ namespace Core.UsuallyCommon
         }
 
 
-        /// <summary>
-        /// 获取属性值
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public static string GetPropertyValue(this object obj, string name)
-        {
-            return obj.GetType().GetProperty(name).GetValue(obj, null).ToStringExtension();
-        }
     }
 }
  

@@ -84,7 +84,7 @@ export const constantRoutes = [
         path: 'dictionarie',
         component: () => import('@/views/tools/dictionarie'),
         name: 'Smart',
-        meta: { title: 'Smart System', noCache: true }
+        meta: { title: '数据字典管理', noCache: true }
       }
     ]
   }
