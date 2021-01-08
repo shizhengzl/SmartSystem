@@ -19,6 +19,16 @@
             单位ID
             </summary>
         </member>
+        <member name="P:Core.Repository.TableArea.children">
+            <summary>
+             子节点
+             </summary> 
+        </member>
+        <member name="P:Core.Repository.TableArea.ParentId">
+            <summary>
+            父级
+            </summary>
+        </member>
         <member name="T:Core.Repository.TableAreaData">
             <summary>
             归类数据表

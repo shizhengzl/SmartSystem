@@ -110,6 +110,33 @@
             <param name="TableName"></param>
             <returns></returns>
         </member>
+        <member name="M:WebAppServices.Controllers.TableAreaController.GetHeader">
+            <summary>
+            获取请求头
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.TableAreaController.GetResult(Core.UsuallyCommon.BaseRequest{Core.Repository.TableArea})">
+            <summary>
+            获取表分类
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.TableAreaController.Save(Core.Repository.TableArea)">
+            <summary>
+            保存
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.TableAreaController.Remove(Core.Repository.TableArea)">
+            <summary>
+            删除
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
         <member name="T:WebAppServices.Controllers.BaseController">
             <summary>
             基类控制器

@@ -40,28 +40,31 @@
           <div style="overflow:scroll;height:800px;">
             <el-tree ref="treetype"
                      class="filter-tree"
-                     :load="getdataare"
+            
+            :load="gettablestype"
                      node-key="id"
-                     lazy
-                     :props="defaultProps"
-                     :filter-node-method="filterNode"
-                     @node-click="handleNodeClicktype">
-              <span class="custom-tree-node" slot-scope="{ node, data }">
-                <span style="color:orangered;font-weight:600;">{{ node.label }}</span>
-                <!--<span>  {{data.description}}</span>-->
-                <span>
-                  <el-link type="warning" round
-                           v-if="data.description"
-                           size="mini"> 
-                    {{data.description}}
-                  </el-link> &nbsp; &nbsp;
-                  <el-button type="text" v-if="data.level > 1"
-                             size="mini"
-                             @click="() => updatetabledescription(node, data)">
-                    备注
-                  </el-button>
-                </span>
+             lazy
+         
+            :data="areatableData"
+            :props="defaultProps"
+            :filter-node-method="filterNode"
+            @node-click="handleNodeClicktype">
+            <span class="custom-tree-node" slot-scope="{ node, data }">
+              <span style="color:orangered;font-weight:600;">{{ node.label }}</span>
+              <!--<span>  {{data.description}}</span>-->
+              <span> 
+                <el-link type="warning" round
+                         v-if="data.description"
+                         size="mini">
+                  {{data.description}}
+                </el-link> &nbsp; &nbsp;
+                <el-button type="text" v-if="data.level > 1"
+                           size="mini"
+                           @click="() => updatetabledescription(node, data)">
+                  备注
+                </el-button>
               </span>
+            </span>
             </el-tree>
           </div>
         </el-tab-pane> 
@@ -204,6 +207,7 @@ import { Level } from 'chalk';
         params: {},
         activeName:'first',
         tableData: [],
+        areatableData: [],
         filterText: '',
         createdialog: false,
         tablename: 'TableName',
@@ -222,7 +226,9 @@ import { Level } from 'chalk';
         this.$refs.tree.filter(val)
       }
     },
-
+    mounted() {
+      this.initarea()
+    },
     methods: {
       exports: function () {
         this.ExportTableColumnList(this.params);
@@ -292,6 +298,7 @@ import { Level } from 'chalk';
       },
 
       handleNodeClicktype(data) {
+       // debugger
         if (data.level == 2) {
         var ps = data.databaseid + ',' + data.label
           this.params = ps;
@@ -299,7 +306,7 @@ import { Level } from 'chalk';
         }
       },
 
-      getdataare(node, resolve) {
+      initarea() {
         const owner = this
         GetResult({
           PageSize: 1000,
@@ -312,6 +319,36 @@ import { Level } from 'chalk';
           }
         })
           .then(response => {
+            owner.areatableData = response.data 
+            owner.areatableData.forEach(function (item, index) {
+              owner.areatableData[index].label = item.areaName;
+              owner.setchild(owner.areatableData[index])
+            }) 
+          })
+      },
+
+      setchild(arr) {
+        var owner = this;
+        arr.children.forEach(function (item, index) {
+          arr.children[index].label = item.areaName;
+          owner.setchild(arr.children[index]);
+        });
+      },
+
+      getdataare(node, resolve) {
+        const owner = this 
+        GetResult({
+          PageSize: 1000,
+          PageIndex: 1,
+          TotalCount: 0,
+          Sort: 'Id',
+          Asc: false,
+          Filter: '',
+          Model: {
+          }
+        })
+          .then(response => {
+         
             if (node.level == 0) {
 
               let d = response.data
@@ -340,6 +377,7 @@ import { Level } from 'chalk';
 
       getdatabase(node, resolve) {
         const owner = this
+      
         datadictionariesgetdatabase()
           .then(response => {
             if (node.level == 0) {
@@ -363,6 +401,13 @@ import { Level } from 'chalk';
 
       gettablestype(node, resolve) {
         var owner = this;
+
+        if (node.data.length ==0) {
+          return resolve([]);
+        }
+        if (node.data && node.data.children && node.data.children.length > 0) {
+          return resolve(node.data.children)
+        }
         let p = {
           PageSize: 20,
           PageIndex: 1,
@@ -373,10 +418,9 @@ import { Level } from 'chalk';
           Model: {
             TableAreaId:node.key
           }
-        }
+        } 
         GetResultArea(p)
           .then(response => { 
-
             let d = response.data
             var rs = [] 
             d.forEach(function (item, index) {

@@ -3,49 +3,56 @@
 
     <el-row>
       <el-col :span="8" style="height:100%">
-        <div  style="height:100%">
+        <div style="height:100%">
           <el-button type="primary" icon="el-icon-circle-plus-outline" @click="create()">添加</el-button>
           <el-input placeholder="请输入内容" style="width:220px;margin-left:5px;" v-model="filter"
                     prefix-icon="el-icon-search">
           </el-input>
 
+          <vxe-table resizable
+                     row-id="id"
+                     ref="vxetable"
+                     @current-change="selects()"
+                     highlight-current-row
+                     :tree-config="{children: 'children'}" 
+                     :data="tableData">
 
-          <el-table style="margin-top:5px; width: 100%;" ref="singleTable"
-                    highlight-current-row
-                    @current-change="CurrentChange"
-                    @row-click="selectrow" border
-                   
-                    :data="tableData"
-                    @sort-change="SortChange">
-            <el-table-column type="selection"
-                             width="55">
-            </el-table-column>
+            <!--<el-table style="margin-top:5px; width: 100%;" ref="singleTable"
+  highlight-current-row
+  @current-change="CurrentChange"
+  @row-click="selectrow" border
+  :data="tableData"
+  @sort-change="SortChange">-->
+            <!--<el-table-column type="selection"
+                   width="55">
+  </el-table-column>-->
+           
             <template v-for="(item,index) in tableHead">
-              <el-table-column :prop="item.columnName"
-                               :label="item.columnDescription || item.columnName"
-                               v-if="hiddenColumn[item.columnName] !== true"
-                               :key="index"
-                               show-overflow-tooltip
-                               sortable="custom"></el-table-column>
+              <vxe-table-column v-if="!!!hiddenColumn[item.columnName]"
+                                :key="index"
+                                :field="item.columnName"
+                                :title="item.columnDescription || item.columnName"
+                                :tree-node="item.columnName == 'areaName'"
+                                show-overflow-tooltip />
             </template>
 
-            <el-table-column label="操作" width="200">
+            <vxe-table-column title="操作" width="180">
               <template slot-scope="scope">
                 <el-button type="success" size="small" @click="Modify(scope.row)">编辑</el-button>
                 <el-button type="danger" size="small" @click="Remove(scope.row)">删除</el-button>
               </template>
-            </el-table-column>
-          </el-table>
+            </vxe-table-column>
+          </vxe-table>
 
-          <el-pagination @size-change="handleSizeChange"
-                         @current-change="handleCurrentChange"
-                         :current-page="paging.PageIndex"
-                         v-if="false"
-                         :page-sizes="[5, 10, 20, 40]"
-                         :page-size="paging.PageSize"
-                         layout="total, sizes, prev, pager, next, jumper"
-                         :total="paging.TotalCount">
-          </el-pagination>
+            <!--<el-pagination @size-change="handleSizeChange"
+                           @current-change="handleCurrentChange"
+                           :current-page="paging.PageIndex"
+                           v-if="false"
+                           :page-sizes="[5, 10, 20, 40]"
+                           :page-size="paging.PageSize"
+                           layout="total, sizes, prev, pager, next, jumper"
+                           :total="paging.TotalCount">
+            </el-pagination>-->
         </div>
       </el-col>
       <el-col :span="16">
@@ -60,15 +67,13 @@
       <el-form id="#create" :model="model" :rules="rules" ref="create" label-width="130px">
         <template v-for="(item,index) in tableHead">
 
-          <el-form-item v-if="item.sqlType == 'nvarchar' && item.maxLength > 0"
-                        :visible.sync="item.columnName != 'Id'"
+          <el-form-item v-if="item.sqlType == 'nvarchar' && item.maxLength > 0  && !!!hiddenColumn[item.columnName]"
                         :label="item.columnDescription || item.columnName" :prop="item.columnName">
             <el-input v-model="model[item.columnName]"
                       type="textarea" clearable></el-input>
           </el-form-item>
 
-          <el-form-item v-else-if="item.sqlType == 'nvarchar' && item.maxLength < 0"
-                        :visible.sync="item.columnName != 'Id'"
+          <el-form-item v-else-if="item.sqlType == 'nvarchar' && item.maxLength < 0  && !!!hiddenColumn[item.columnName]"
                         :label="item.columnDescription || item.columnName" :prop="item.columnName">
             <el-input v-model="model[item.columnName]" :autosize="{ minRows: 2, maxRows: 4}"
                       type="textarea" clearable></el-input>
@@ -79,6 +84,20 @@
               <el-radio :label="true">是</el-radio>
               <el-radio :label="false">否</el-radio>
             </el-radio-group>
+          </el-form-item>
+
+          <!--树-->
+          <el-form-item v-else-if="item.columnName == 'parentId'"
+                        :label="item.columnDescription || item.columnName"
+                        :prop="item.columnName">
+
+            <wlTreeSelect width="240"
+                          multiple="true"
+                          :props="props"
+                          :data="tableData"
+                          @change="hindleChanged"
+                          v-model="selected"></wlTreeSelect>
+
           </el-form-item>
 
         </template>
@@ -100,6 +119,11 @@
     name: 'tablearea',
     data() {
       return {
+        selected: [],
+        props: {
+          label: "areaName",
+          value: "id"
+        },
         setname: tableareadata.currentRow,
         currentRow : {},
         hiddenColumn: {
@@ -145,7 +169,22 @@
       this.getHeader();
       this.GetResult();
     },
-    methods: { 
+    methods: {
+      selects: function (t,a) {
+        var row = this.$refs.vxetable.getCurrentRecord()
+
+        const owner = this
+        //this.$refs.singleTable.clearSelection()
+        //this.$refs.singleTable.setCurrentRow(row);
+        row.flag = true;
+        Cookies.set("table", row)
+        tableareadata.currentRow.tablearea = row;
+        //this.$refs.singleTable.toggleRowSelection(row, row.flag);
+        this.$refs.apptable.GetResult(row.id);
+      },
+      hindleChanged: function (val) {
+        this.model.parentId = val[0].id; 
+      },
       CurrentChange(val) {
         this.currentRow = val;
       },
@@ -178,6 +217,7 @@
       Modify: function (row) {
         this.createdialog = true;
         this.model = row;
+        this.selected = !!row.parentId ? [row.parentId] : []; 
       },
       Remove: function (row) {
         const owner = this

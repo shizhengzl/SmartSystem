@@ -25,5 +25,19 @@ namespace Core.Repository
         /// </summary>
         [Description("单位ID")]
         public Int64 CompanyId { get; set; }
+
+        ///<summary>
+        /// 子节点
+        /// </summary> 
+        [Description("子节点")]
+        [Column(IsIgnore = true)]
+        public List<TableArea> children { get; set; }
+
+        /// <summary>
+        /// 父级
+        /// </summary>
+        [Description("父级")]
+        public Int64 ParentId { get; set; }
+         
     }
 }
