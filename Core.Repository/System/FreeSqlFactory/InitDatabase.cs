@@ -8,8 +8,31 @@ namespace Core.Repository
 {
     public class InitDatabase
     {
-        public InitDatabase(Boolean isClean = false)
-        { 
+
+        public void AddData()
+        {
+
+            if (!FreeSqlFactory._Freesql.Select<Menus>().Where(x => x.MenuName == "资料管理").Any())
+            { 
+                Menus s1 = new Menus() { MenuName = "资料管理", MenuIcon = "404", MenuPath = "/document", Url = "Layout", IsDeafult = true, IsAvailable = true };
+                var s1id = FreeSqlFactory._Freesql.Insert<Menus>(s1).ExecuteIdentity();
+
+                Menus m2 = new Menus()
+                {
+                    MenuName = "学习资料管理",
+                    MenuIcon = "404",
+                    MenuPath = "/document",
+                    Url = "/document/study",
+                    IsAvailable = true,
+                    ParentId = s1id
+                };
+
+                FreeSqlFactory._Freesql.Insert<Menus>(m2).ExecuteAffrows();
+            }
+        }
+
+        public void InitData(Boolean isClean = false)
+        {
             if (isClean)
             {
                 FreeSqlFactory._Freesql.Delete<SQLConfig>().Where("1=1").ExecuteAffrows();
@@ -25,13 +48,13 @@ namespace Core.Repository
 
                 FreeSqlFactory._Freesql.Delete<Company>().Where("1=1").ExecuteAffrows();
                 FreeSqlFactory._Freesql.Delete<CompanyMenus>().Where("1=1").ExecuteAffrows();
-                 
-                FreeSqlFactory._Freesql.Delete<Users>().Where("1=1").ExecuteAffrows();  
-                FreeSqlFactory._Freesql.Delete<Menus>().Where("1=1").ExecuteAffrows(); 
-             
 
-                FreeSqlFactory._Freesql.Delete<DataBaseConnection>().Where("1=1").ExecuteAffrows(); 
-                FreeSqlFactory._Freesql.Delete<TableArea>().Where("1=1").ExecuteAffrows(); 
+                FreeSqlFactory._Freesql.Delete<Users>().Where("1=1").ExecuteAffrows();
+                FreeSqlFactory._Freesql.Delete<Menus>().Where("1=1").ExecuteAffrows();
+
+
+                FreeSqlFactory._Freesql.Delete<DataBaseConnection>().Where("1=1").ExecuteAffrows();
+                FreeSqlFactory._Freesql.Delete<TableArea>().Where("1=1").ExecuteAffrows();
                 FreeSqlFactory._Freesql.Delete<TableAreaData>().Where("1=1").ExecuteAffrows();
 
                 FreeSqlFactory._Freesql.Delete<TestModule>().Where("1=1").ExecuteAffrows();
@@ -43,36 +66,38 @@ namespace Core.Repository
             // 初始话单位
             if (!FreeSqlFactory._Freesql.Select<Company>().Where(x => x.CompanyName == CommonEnum.SupperCompany).Any())
             {
-                Company company = new Company() {
-                     CompanyName = CommonEnum.SupperCompany ,CompanyPhone = "13701859214"
+                Company company = new Company()
+                {
+                    CompanyName = CommonEnum.SupperCompany,
+                    CompanyPhone = "13701859214"
                 };
 
 
                 Company jzb = new Company()
                 {
-                    CompanyName ="长沙计支宝",
+                    CompanyName = "长沙计支宝",
                     CompanyPhone = "13700000000"
                 };
                 companyid = FreeSqlFactory._Freesql.Insert<Company>(company).ExecuteIdentity();
                 jzbid = FreeSqlFactory._Freesql.Insert<Company>(jzb).ExecuteIdentity();
             }
 
-            
+
             Int64 shizhengid = 0;
             Int64 tanxudongid = 0;
 
             // 初始化用户 
             if (!FreeSqlFactory._Freesql.Select<Users>().Where(x => x.UserName == CommonEnum.SupperUser).Any())
             {
-                Users shizheng = new Users() { UserName = "shizheng",Phone= "13701859214", NikeName="shizheng",Name="施政",IsEnabled=true,Email="shizheng89@qq.com", Password = "123456".ToMD5(),  CompanyId = companyid };
-           
+                Users shizheng = new Users() { UserName = "shizheng", Phone = "13701859214", NikeName = "shizheng", Name = "施政", IsEnabled = true, Email = "shizheng89@qq.com", Password = "123456".ToMD5(), CompanyId = companyid };
+
                 shizhengid = FreeSqlFactory._Freesql.Insert<Users>(shizheng).ExecuteIdentity();
 
                 var user = FreeSqlFactory._Freesql.Select<Users>().Where(x => x.Id == shizhengid).First();
                 user.Password = (user.Password + shizhengid.ToStringExtension()).ToMD5();
                 FreeSqlFactory._Freesql.Update<Users>().SetSource(user).ExecuteAffrows();
 
-                CompanyUsers companyUsers = new CompanyUsers() {  UserId = shizhengid, CompanyId = companyid, JobStatus = JobStatus.InJob};
+                CompanyUsers companyUsers = new CompanyUsers() { UserId = shizhengid, CompanyId = companyid, JobStatus = JobStatus.InJob };
                 FreeSqlFactory._Freesql.Insert<CompanyUsers>(companyUsers).ExecuteAffrows();
 
 
@@ -90,7 +115,7 @@ namespace Core.Repository
 
             }
 
-        
+
 
             // 初始化菜单
             if (!FreeSqlFactory._Freesql.Select<Menus>().Where("1=1").Any())
@@ -107,7 +132,7 @@ namespace Core.Repository
                     MenuName = "菜单管理",
                     MenuIcon = "menu",
                     MenuPath = "/menus",
-                    Url = "/system/menus", 
+                    Url = "/system/menus",
                     IsAvailable = true,
                     ParentId = m1id
                 };
@@ -116,7 +141,7 @@ namespace Core.Repository
                     MenuName = "请求日志",
                     MenuIcon = "systemlog",
                     MenuPath = "/requestresponselog",
-                    Url = "/system/requestresponselog", 
+                    Url = "/system/requestresponselog",
                     IsAvailable = true,
                     ParentId = m1id
                 };
@@ -126,11 +151,11 @@ namespace Core.Repository
                     MenuName = "系统日志",
                     MenuIcon = "systemlog",
                     MenuPath = "/systemlog",
-                    Url = "/system/systemlogs", 
+                    Url = "/system/systemlogs",
                     IsAvailable = true,
                     ParentId = m1id
                 };
-                 
+
 
                 Menus m4 = new Menus()
                 {
@@ -158,7 +183,7 @@ namespace Core.Repository
                     MenuName = "单位管理",
                     MenuIcon = "company",
                     MenuPath = "/company",
-                    Url = "/system/company", 
+                    Url = "/system/company",
                     IsAvailable = true,
                     ParentId = m1id
                 };
@@ -172,7 +197,7 @@ namespace Core.Repository
                     MenuPath = "/mycompany",
                     Url = "/system/mycompany",
                     IsAvailable = true,
-                    IsDeafult =true,
+                    IsDeafult = true,
                     ParentId = s1id
                 };
 
@@ -220,7 +245,7 @@ namespace Core.Repository
                     IsDeafult = true,
                     IsAvailable = true,
                     ParentId = t1id
-                }; 
+                };
                 Menus t3 = new Menus()
                 {
                     MenuName = "代码片段",
@@ -302,11 +327,14 @@ namespace Core.Repository
             // 初始化连接字符串
             if (!FreeSqlFactory._Freesql.Select<DataBaseConnection>().Where("1=1").Any())
             {
-                DataBaseConnection dataBaseConnection = new DataBaseConnection() {
-                     ConnectinString= "server=.;uid=sa;pwd=sasa;database=SmartDb;"
-                     , DataBaseName= "SmartDb"
-                     , DataBaseType= FreeSql.DataType.SqlServer,
-                     CompanyId = companyid
+                DataBaseConnection dataBaseConnection = new DataBaseConnection()
+                {
+                    ConnectinString = "server=.;uid=sa;pwd=sasa;database=SmartDb;"
+                     ,
+                    DataBaseName = "SmartDb"
+                     ,
+                    DataBaseType = FreeSql.DataType.SqlServer,
+                    CompanyId = companyid
                 };
 
                 DataBaseConnection JZB_CRM = new DataBaseConnection()
@@ -316,7 +344,8 @@ namespace Core.Repository
                     DataBaseName = "JZB_CRM"
                      ,
                     DataBaseType = FreeSql.DataType.SqlServer
-                    , CompanyId = jzbid
+                    ,
+                    CompanyId = jzbid
                 };
 
                 FreeSqlFactory._Freesql.Insert<DataBaseConnection>(dataBaseConnection).ExecuteAffrows();
@@ -398,6 +427,12 @@ namespace Core.Repository
                 FreeSqlFactory._Freesql.Insert<SQLConfig>(configSqlserver).ExecuteAffrows();
                 FreeSqlFactory._Freesql.Insert<SQLConfig>(configMySql).ExecuteAffrows();
             }
+        }
+
+
+        public InitDatabase()
+        {
+
         }
     }
 }

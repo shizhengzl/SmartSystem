@@ -110,6 +110,43 @@
             <param name="TableName"></param>
             <returns></returns>
         </member>
+        <member name="M:WebAppServices.Controllers.DocumentController.#ctor(AutoMapper.IMapper,Core.Services.AppSystem.UsersSrevices,Core.Services.SystemServices,Core.Services.DataBaseServices,Core.Services.AppSystemServices)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="mapper"></param>
+            <param name="usersSrevices"></param>
+            <param name="sysservices"></param>
+            <param name="dataBaseServices"></param>
+            <param name="appSystemServices"></param>
+        </member>
+        <member name="M:WebAppServices.Controllers.DocumentController.GetHeader">
+            <summary>
+            获取请求头
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DocumentController.GetResult(Core.UsuallyCommon.BaseRequest{Core.Repository.Document})">
+            <summary>
+            获取文档
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DocumentController.Save(Core.Repository.Document)">
+            <summary>
+            保存
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAppServices.Controllers.DocumentController.Remove(Core.Repository.Document)">
+            <summary>
+            删除
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
         <member name="M:WebAppServices.Controllers.TableAreaController.GetHeader">
             <summary>
             获取请求头

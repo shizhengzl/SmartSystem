@@ -4,6 +4,46 @@
         <name>Core.Repository</name>
     </assembly>
     <members>
+        <member name="T:Core.Repository.Document">
+            <summary>
+            文档管理
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Document.DocumentName">
+            <summary>
+            文档名称
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Document.CompanyId">
+            <summary>
+            单位ID
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Document.children">
+            <summary>
+             子节点
+             </summary> 
+        </member>
+        <member name="P:Core.Repository.Document.ParentId">
+            <summary>
+            父级
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Document.IsFile">
+            <summary>
+            是否是文件
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Document.DocumentType">
+            <summary>
+            文件类型
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Document.DocumentData">
+            <summary>
+            文档数据
+            </summary>
+        </member>
         <member name="T:Core.Repository.TableArea">
             <summary>
             归类表
@@ -249,24 +289,29 @@
             数据库DB类型
             </summary>
         </member>
-        <member name="P:Core.Repository.FileGroup.FileName">
+        <member name="T:Core.Repository.Files">
+            <summary>
+            文件
+            </summary>
+        </member>
+        <member name="P:Core.Repository.Files.FileName">
             <summary>
             文件名称
             </summary>
         </member>
-        <member name="P:Core.Repository.FileGroup.FilePath">
+        <member name="P:Core.Repository.Files.FilePath">
             <summary>
             文件路径
             </summary>
         </member>
-        <member name="P:Core.Repository.FileGroup.FileExt">
+        <member name="P:Core.Repository.Files.FileData">
             <summary>
-            文件扩展名
+            文件
             </summary>
         </member>
-        <member name="P:Core.Repository.FileGroup.FileGroupId">
+        <member name="P:Core.Repository.Files.FileExt">
             <summary>
-            文件组ID
+            文件扩展名
             </summary>
         </member>
         <member name="T:Core.Repository.FreeSqlFactory">
